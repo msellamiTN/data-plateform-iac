@@ -1,0 +1,192 @@
+trigger:
+  branches:
+    include: [main]
+  paths:
+    include:
+      - envs/**
+
+pr:
+  branches:
+    include: [main]
+  paths:
+    include:
+      - envs/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: globalbank-snowflake
+  - name: TF_IN_AUTOMATION
+    value: 'true'
+  - name: TERRAFORM_VERSION
+    value: '1.14.5'
+
+stages:
+  - stage: Validate
+    displayName: 'Validate'
+    jobs:
+      - job: lint_validate
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '$(TERRAFORM_VERSION)'
+          - script: |
+              set -e
+              terraform fmt -check -recursive
+            displayName: 'Format check'
+          - script: |
+              set -e
+              terraform init -backend=false
+              terraform validate
+            workingDirectory: envs/dev
+            displayName: 'Validate dev'
+          - script: |
+              set -e
+              curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+              tflint --version
+              tflint --recursive
+            workingDirectory: envs/dev
+            displayName: 'tflint'
+
+  - stage: PlanDev
+    displayName: 'Plan on DEV'
+    dependsOn: Validate
+    condition: or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: plan_dev
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '$(TERRAFORM_VERSION)'
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'sc-globalbank-tfstate'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                terraform init
+                terraform plan -out=tfplan -input=false
+                terraform show -no-color tfplan > plan.txt
+              workingDirectory: envs/dev
+              addSpnToEnvironment: true
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_TOKEN)
+          - publish: envs/dev/tfplan
+            artifact: tfplan-dev
+          - publish: envs/dev/plan.txt
+            artifact: plan-lisible-dev
+
+  - stage: ApplyDev
+    displayName: 'Apply on DEV'
+    dependsOn: PlanDev
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    jobs:
+      - deployment: apply_dev
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformInstaller@1
+                  inputs:
+                    terraformVersion: '$(TERRAFORM_VERSION)'
+                - download: current
+                  artifact: tfplan-dev
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'sc-globalbank-tfstate'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      terraform init
+                      terraform apply tfplan -input=false
+                    workingDirectory: envs/dev
+                    addSpnToEnvironment: true
+                  env:
+                    TF_VAR_snowflake_token: $(SNOWFLAKE_TOKEN)
+
+  - stage: PlanUat
+    displayName: 'Plan on UAT'
+    dependsOn: ApplyDev
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    jobs:
+      - job: plan_uat
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '$(TERRAFORM_VERSION)'
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'sc-globalbank-tfstate'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                terraform init
+                terraform plan -out=tfplan -input=false
+                terraform show -no-color tfplan > plan.txt
+              workingDirectory: envs/uat
+              addSpnToEnvironment: true
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_TOKEN)
+          - publish: envs/uat/tfplan
+            artifact: tfplan-uat
+          - publish: envs/uat/plan.txt
+            artifact: plan-lisible-uat
+
+  - stage: ApplyUat
+    displayName: 'Apply on UAT'
+    dependsOn: PlanUat
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    jobs:
+      - deployment: apply_uat
+        environment: uat
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: TerraformInstaller@1
+                  inputs:
+                    terraformVersion: '$(TERRAFORM_VERSION)'
+                - download: current
+                  artifact: tfplan-uat
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'sc-globalbank-tfstate'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      set -e
+                      terraform init
+                      terraform apply tfplan -input=false
+                    workingDirectory: envs/uat
+                    addSpnToEnvironment: true
+                  env:
+                    TF_VAR_snowflake_token: $(SNOWFLAKE_TOKEN)
+
+  - stage: Audit
+    displayName: 'Drift detection'
+    dependsOn: ApplyUat
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    jobs:
+      - job: drift_check
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '$(TERRAFORM_VERSION)'
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'sc-globalbank-tfstate'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                set -e
+                terraform init
+                terraform plan -detailed-exitcode -input=false || [ $? -eq 2 ]
+              workingDirectory: envs/uat
+              addSpnToEnvironment: true
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_TOKEN)

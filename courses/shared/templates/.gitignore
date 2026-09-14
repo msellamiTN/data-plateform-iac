@@ -1,0 +1,23 @@
+# Secrets — ne jamais versionner
+snowflake-config.txt
+*.pem
+*.key
+terraform_key.pem
+
+# State local et cache Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Valeurs personnelles
+terraform.tfvars
+*.auto.tfvars

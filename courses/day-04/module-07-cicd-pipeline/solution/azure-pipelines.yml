@@ -1,0 +1,157 @@
+# Azure DevOps pipeline for Terraform CI/CD
+# This pipeline validates, plans, applies and audits Terraform changes.
+#
+# In a real project, this file would live at the repository root.
+# For this lab, we create it in labs/m07-cicd-pipeline/ to keep it self-contained.
+#
+# NOTE: For a real multi-stage deployment you must configure a remote backend
+# (e.g. Azure Blob Storage) so that Terraform state is shared between Plan,
+# Apply and Audit stages. This lab uses the default local backend and is
+# therefore suitable for demonstrating the pipeline flow only.
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: data-platform-secrets
+  - name: TF_VERSION
+    value: '1.14.5'
+  - name: TF_IN_AUTOMATION
+    value: 'true'
+
+stages:
+  - stage: Validate
+    displayName: 'Validate'
+    jobs:
+      - job: Validate
+        displayName: 'fmt, validate, tflint'
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '$(TF_VERSION)'
+
+          - script: |
+              cd labs/m06-dynamic-logic
+              terraform fmt -check -recursive
+            displayName: 'terraform fmt -check'
+
+          - script: |
+              cd labs/m06-dynamic-logic
+              terraform init -backend=false
+              terraform validate
+            displayName: 'terraform validate'
+
+          - script: |
+              sudo apt-get update && sudo apt-get install -y tflint
+              cd labs/m06-dynamic-logic
+              tflint -c ../../.tflint.hcl --recursive
+            displayName: 'tflint'
+            continueOnError: true
+
+  - stage: Plan
+    displayName: 'Plan'
+    dependsOn: Validate
+    condition: succeeded()
+    jobs:
+      - job: Plan
+        displayName: 'terraform plan'
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '$(TF_VERSION)'
+
+          - script: |
+              cd labs/m06-dynamic-logic
+              terraform init
+              terraform plan -out=tfplan -input=false
+            displayName: 'Terraform Plan'
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_PAT)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish tfplan'
+            inputs:
+              targetPath: 'labs/m06-dynamic-logic/tfplan'
+              artifact: 'tfplan'
+              publishLocation: 'pipeline'
+
+  - stage: Approval
+    displayName: 'Approval'
+    dependsOn: Plan
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: Approval
+        displayName: 'Manual approval gate'
+        environment: 'Approval'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Waiting for manual approval"
+                  displayName: 'Manual approval gate'
+
+  - stage: Apply
+    displayName: 'Apply'
+    dependsOn: Approval
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Apply
+        displayName: 'terraform apply'
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '$(TF_VERSION)'
+
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download tfplan'
+            inputs:
+              artifact: 'tfplan'
+              path: 'labs/m06-dynamic-logic/'
+
+          - script: |
+              cd labs/m06-dynamic-logic
+              terraform init
+              terraform apply -input=false tfplan
+            displayName: 'Terraform Apply'
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_PAT)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+
+  - stage: Audit
+    displayName: 'Audit'
+    dependsOn: Apply
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Audit
+        displayName: 'Drift detection'
+        steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '$(TF_VERSION)'
+
+          - script: |
+              cd labs/m06-dynamic-logic
+              terraform init
+              terraform plan -detailed-exitcode -input=false
+            displayName: 'Drift detection (terraform plan -detailed-exitcode)'
+            env:
+              TF_VAR_snowflake_token: $(SNOWFLAKE_PAT)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)

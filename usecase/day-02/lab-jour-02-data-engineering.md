@@ -1,0 +1,300 @@
+# 🧪 Lab J2 — Team DATA ENGINEERING · Amal · Lara · Fares
+
+| Élément | Valeur |
+|---|---|
+| **Durée** | 1 h |
+| **Prérequis** | Jour 1 terminé — `No changes.` obtenu |
+| **Workspace** | `environments/dev/` (le même qu'hier) |
+| **Aujourd'hui** | Terraform uniquement — plus de clic Snowsight |
+
+---
+
+## 🚀 4. Pre-Flight Diagnostic
+
+```powershell
+terraform version    # 1.14.x
+terraform plan       # doit afficher "No changes." (le code d'hier est aligné)
+```
+
+✅ **Checkpoint 0 :** `No changes.` — sinon, corrigez avant de continuer.
+
+## 🎯 3. Objectifs Pédagogiques Vérifiables
+
+- ✅ `locals.tf` introduit → `plan` = **`No changes.`** (refactoring réussi)
+- ✅ `validation` testée → `plan` **échoue** avec une valeur invalide
+- ✅ 3 objets créés via **`for_each`** → `Plan: 3 to add`
+- ✅ `terraform output` affiche mon **contrat** (noms des objets)
+- ✅ Preuve SQL : `SHOW <OBJECTS> LIKE '<PREFIX>%';` retourne mes 3 objets
+
+---
+## 🎯 1. Mission Métier & User Story
+
+> **En tant que** membre de l'équipe Data Engineering
+> **Je veux** passer de 1 table à une **collection** de tables
+> **Afin de** produire du code industrialisable : factorisé, validé, multiplié, exposé
+
+### Ma collection du jour
+
+| Propriétaire | Mes 3 tables | Dans |
+|---|---|---|
+| **Amal** | `ACCOUNTS` · `CARDS` · `TRANSACTIONS` | `APP04_RAW_DEV.LANDING` |
+| **Lara** | `DIM_CUSTOMER` · `DIM_ACCOUNT` · `DIM_PRODUCT` | `APP05_CORE_DEV.DIM` |
+| **Fares** | `ACCOUNTS` · `CARDS` · `TRANSACTIONS` | `APP01_RAW_DEV.LANDING` |
+
+---
+
+## 🏗️ 2. Architecture & Modèle Mental
+
+```mermaid
+flowchart LR
+    DEV["🧑‍💻 Apprenant"] -->|"1. terraform apply"| TF["⚙️ Terraform Engine"]
+    TF -->|"2. Ressources Snowflake"| SF["❄️ Snowflake Enterprise"]
+    SF -->|"3. Preuve SQL / CLI"| AUDIT["✅ Zero-Drift & Compliance"]
+```
+
+Dans ce lab, vous industrialisez la création et le contrôle d'objets Snowflake : le code devient la source de vérité et Terraform détecte toute dérive.
+
+---
+
+## 📝 Étape 5.1 — `locals` : arrêter de se répéter
+
+**Problème :** hier, j'ai écrit `"${var.learner_prefix}_RAW_${var.environment}"` et répété `snowflake_database.ma_db.name` partout. Si je crée 3 tables, je répète les références 3 fois.
+
+**Solution :** un `local` calcule la valeur **une fois**, et tout le monde la réutilise.
+
+Créez **`locals.tf`** :
+
+```hcl
+# Les valeurs calculées UNE SEULE FOIS, réutilisées partout.
+
+locals {
+  # Le préfixe complet : "APP04_DEV"
+  prefix_env = "${var.learner_prefix}_${var.environment}"
+
+  # Le commentaire standard de toutes mes ressources
+  common_comment = "Managed by Terraform | Training | ${var.learner_prefix}"
+}
+```
+
+Dans **`main.tf`**, remplacez les commentaires en dur :
+
+```hcl
+resource "snowflake_database" "ma_db" {
+  name    = "${var.learner_prefix}_RAW_${var.environment}"
+  comment = local.common_comment   # ← avant : "Managed by Terraform | ..."
+  # ... le reste inchangé
+}
+```
+
+```powershell
+terraform plan
+```
+
+```text
+No changes.   # ← refactoring réussi
+```
+
+> 🧠 **`No changes.` = refactoring réussi.** Vous avez changé *comment* c'est écrit, pas *ce que ça vaut*.
+
+![Le plan No changes. après l'introduction du local](../screenshots/j2-01-no-changes.png)
+
+---
+
+## 📝 Étape 5.2 — `validation` : bloquer les erreurs avant le plan
+
+**Problème :** hier, quelqu'un a tapé `environment = "developement"`. Le plan est passé — l'erreur n'a été vue qu'après l'apply.
+
+**Solution :** le bloc `validation` vérifie la valeur **avant** tout contact avec Snowflake.
+
+Votre `variables.tf` a déjà la validation sur `environment` — **testez le garde-fou** : dans `terraform.tfvars`, mettez `environment = "developement"` → `terraform plan` :
+
+```text
+╷ Error: Invalid value for variable
+╵ environment must be DEV, UAT or PROD.
+```
+
+> 🧠 **L'erreur arrive AVANT.** Remettez `DEV` → `plan` → `No changes.`
+
+![L'erreur de validation dans le terminal](../screenshots/j2-02-validation-error.png)
+
+---
+
+## 📝 Étape 5.3 — `for_each` : multiplier sans copier-coller
+
+**Problème :** je dois créer 3 tables. Copier-coller le bloc `resource` 3 fois = 3 blocs à maintenir.
+
+**Solution :** `for_each` boucle sur une **map** — un seul bloc, N objets.
+
+### 3a. Déclarez la collection dans `variables.tf`
+
+```hcl
+# La liste de mes tables — une map : clé → objet
+variable "tables" {
+  type = map(object({
+    name    = string   # le nom réel de la table
+    comment = string   # la description métier
+  }))
+  description = "Mes tables"
+}
+```
+
+### 3b. Donnez les valeurs dans `terraform.tfvars`
+
+```hcl
+# Amal — ajoutez à la fin du fichier :
+tables = {
+  accounts     = { name = "ACCOUNTS",     comment = "Comptes clients" }
+  cards        = { name = "CARDS",        comment = "Cartes bancaires" }
+  transactions = { name = "TRANSACTIONS", comment = "Flux transactions" }
+}
+```
+
+*(Lara : `customer`/`account`/`product` → `DIM_CUSTOMER`, `DIM_ACCOUNT`, `DIM_PRODUCT` · Fares : même collection qu'Amal avec le préfixe `APP01`)*
+
+### 3c. Un seul bloc dans `main.tf`
+
+```hcl
+# UN bloc → TROIS tables. for_each boucle sur la map.
+resource "snowflake_table" "collection" {
+  for_each = var.tables          # ← la boucle
+
+  database = snowflake_database.ma_db.name
+  schema   = snowflake_schema.mon_schema.name
+  name     = each.value.name     # ← le nom vient de la map
+  comment  = "${each.value.comment} | ${local.common_comment}"
+
+  column {
+    name = "ID"
+    type = "NUMBER(38,0)"
+  }
+  column {
+    name = "PAYLOAD"
+    type = "VARIANT"
+  }
+}
+```
+
+```powershell
+terraform plan
+```
+
+```text
+Plan: 3 to add, 0 to change, 0 to destroy.
+```
+
+> 🧠 **Pour ajouter une 4ᵉ table demain :** une ligne dans `terraform.tfvars`. Zéro ligne de code.
+
+![Snowsight — les 3 tables créées](../screenshots/j2-03-3-objects-snowsight.png)
+
+---
+
+## 📝 Étape 5.4 — `output` : exposer mon contrat
+
+**Problème :** les autres équipes auront besoin de mes noms de database/schema. Comment les partager ?
+
+**Solution :** `output` publie les valeurs — c'est le **contrat** de mon projet.
+
+Créez **`outputs.tf`** :
+
+```hcl
+# Ce que mon projet EXPOSE aux autres.
+
+output "database_name" {
+  description = "Ma database"
+  value       = snowflake_database.ma_db.name
+}
+
+output "schema_name" {
+  description = "Mon schema"
+  value       = snowflake_schema.mon_schema.name
+}
+
+output "table_names" {
+  description = "Toutes mes tables — clé → nom réel"
+  value       = { for k, t in snowflake_table.collection : k => t.name }
+}
+```
+
+```powershell
+terraform apply    # crée les tables
+terraform output   # affiche le contrat
+```
+
+```text
+database_name = "APP04_RAW_DEV"
+schema_name   = "LANDING"
+table_names = {
+  "accounts"     = "ACCOUNTS"
+  "cards"        = "CARDS"
+  "transactions" = "TRANSACTIONS"
+}
+```
+
+> 🧠 **`output` = ce que je promets aux autres équipes.**
+
+![terraform output dans le terminal](../screenshots/j2-04-terraform-output.png)
+
+---
+
+## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
+
+1. Dans `terraform.tfvars`, mettez **deux clés identiques** dans `tables`.
+2. `terraform plan` → Terraform refuse : les clés d'une map sont uniques.
+3. Corrigez → `No changes.`
+
+> 🧠 **La map garantit l'unicité.**
+
+---
+
+## 🤖 7. Validation Automatisée (*Check My Progress*)
+
+```powershell
+..\..\..\student-track\module-XX-environment\validate.ps1
+```
+
+*Si le script n'existe pas encore, vérifiez manuellement que `terraform plan` affiche `No changes.`*
+
+
+## 🏆 8. Défi Autonome (*Unguided Challenge*)
+
+> Ajoutez une 4ᵉ table `WIRE_TRANSFERS` **uniquement** en modifiant `terraform.tfvars`.
+
+**Critères :** `Plan: 1 to add` · `main.tf` non modifié · second plan `No changes.`
+
+---
+
+## 🧹 9. Nettoyage Contrôlé (*FinOps Teardown*)
+
+> 🔴 **Ne faites PAS `terraform destroy`** — vos ressources servent au Jour 3.
+
+---
+
+## 🃏 Anti-sèche
+
+```hcl
+# locals.tf — calculé une fois
+locals { prefix_env = "${var.learner_prefix}_${var.environment}" }
+
+# variables.tf — la collection
+variable "tables" { type = map(object({ name = string, comment = string })) }
+
+# main.tf — un bloc, N objets
+resource "snowflake_table" "collection" {
+  for_each = var.tables
+  database = snowflake_database.ma_db.name
+  schema   = snowflake_schema.mon_schema.name
+  name     = each.value.name
+}
+
+# outputs.tf — le contrat
+output "table_names" {
+  value = { for k, t in snowflake_table.collection : k => t.name }
+}
+```
+
+| Fondement | En une phrase |
+|---|---|
+| `locals` | Calculé une fois, réutilisé partout |
+| `validation` | Erreur bloquée **avant** le plan |
+| `for_each` | Un bloc + une map = N objets |
+| `output` | Ce que je publie aux autres |

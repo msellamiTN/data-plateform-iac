@@ -1,0 +1,127 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  TF_VERSION: '1.14.5'
+  TF_IN_AUTOMATION: 'true'
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform fmt
+        working-directory: labs/m06-dynamic-logic
+        run: terraform fmt -check -recursive
+
+      - name: Terraform validate
+        working-directory: labs/m06-dynamic-logic
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: tflint
+        working-directory: labs/m06-dynamic-logic
+        continue-on-error: true
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint -c ../../.tflint.hcl --recursive
+
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform plan
+        working-directory: labs/m06-dynamic-logic
+        env:
+          TF_VAR_snowflake_token: ${{ secrets.SNOWFLAKE_PAT }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        run: |
+          terraform init
+          terraform plan -out=tfplan -input=false
+
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: labs/m06-dynamic-logic/tfplan
+
+  apply:
+    name: Apply
+    runs-on: ubuntu-latest
+    needs: plan
+    if: github.ref == 'refs/heads/main'
+    environment: Approval
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: labs/m06-dynamic-logic/
+
+      - name: Terraform apply
+        working-directory: labs/m06-dynamic-logic
+        env:
+          TF_VAR_snowflake_token: ${{ secrets.SNOWFLAKE_PAT }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        run: |
+          terraform init
+          terraform apply -input=false tfplan
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    needs: apply
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Drift detection
+        working-directory: labs/m06-dynamic-logic
+        env:
+          TF_VAR_snowflake_token: ${{ secrets.SNOWFLAKE_PAT }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        run: |
+          terraform init
+          terraform plan -detailed-exitcode -input=false
