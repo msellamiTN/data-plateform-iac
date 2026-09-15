@@ -1,0 +1,21 @@
+# Secrets and credentials — never commit
+.env
+.env.*
+!secrets/.env.example
+secrets/*
+!secrets/README.md
+!secrets/.env.example
+scripts/_archive/.env-entreprise
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db

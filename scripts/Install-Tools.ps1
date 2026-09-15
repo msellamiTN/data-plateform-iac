@@ -706,9 +706,28 @@ function Install-VenvPackage {
         & $venvPython -m pip install --upgrade pip 2>&1 |
             ForEach-Object { Write-Host "       $_" -ForegroundColor DarkGray }
 
-        Write-Host "       Installing: $($Specs -join ' ')" -ForegroundColor DarkGray
-        & $venvPython -m pip install --prefer-binary @Specs 2>&1 |
-            ForEach-Object { Write-Host "       $_" -ForegroundColor DarkGray }
+        # Some packages (e.g. dbt-core-experimental-parser) fetch a prebuilt
+        # wheel directly from GitHub during their own build step, using a raw
+        # urlopen() call that does not inherit pip's trusted CA bundle. On
+        # machines with an incomplete Windows root cert store (common on
+        # locked-down training VMs) this fails with CERTIFICATE_VERIFY_FAILED
+        # even though normal pip installs from PyPI succeed. Installing
+        # certifi and pointing SSL_CERT_FILE at its bundle fixes any SSL
+        # context created in this pip subprocess, including that build step.
+        & $venvPython -m pip install --prefer-binary certifi 2>&1 | Out-Null
+        $certifiBundle = (& $venvPython -c 'import certifi; print(certifi.where())' 2>&1 | Select-Object -Last 1)
+        $previousSslCertFile = $env:SSL_CERT_FILE
+        if ($LASTEXITCODE -eq 0 -and $certifiBundle -and (Test-Path $certifiBundle)) {
+            $env:SSL_CERT_FILE = $certifiBundle
+        }
+
+        try {
+            Write-Host "       Installing: $($Specs -join ' ')" -ForegroundColor DarkGray
+            & $venvPython -m pip install --prefer-binary @Specs 2>&1 |
+                ForEach-Object { Write-Host "       $_" -ForegroundColor DarkGray }
+        } finally {
+            $env:SSL_CERT_FILE = $previousSslCertFile
+        }
 
         if ($LASTEXITCODE -ne 0) {
             Write-Host "       pip install exited with code $LASTEXITCODE" -ForegroundColor Red
