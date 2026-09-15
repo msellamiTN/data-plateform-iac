@@ -24,11 +24,11 @@ $main = Get-Text 'main.tf'
 $outputs = Get-Text 'outputs.tf'
 
 Add-Check 1 'versions.tf exists' (Test-Path (Join-Path $workspace 'versions.tf')) 'Create versions.tf in the workspace root.'
-Add-Check 1 'Snowflake provider pinned' ($versions -match 'snowflakedb/snowflake' -and $versions -match '~>\s*2\.14\.0') 'Declare snowflakedb/snowflake with ~> 2.14.0.'
-Add-Check 1 'provider.tf uses profile' ($provider -match 'profile\s*=\s*var\.snowflake_profile') 'Use the Snowflake CLI profile; do not add a password or token.'
-Add-Check 1 'No credential in provider' ($provider -notmatch 'password\s*=|token\s*=|private_key\s*=') 'Remove credentials from provider.tf.'
+Add-Check 1 'Snowflake provider pinned' ($versions -match 'snowflakedb/snowflake' -and $versions -match '=\s*2\.14\.0') 'Declare snowflakedb/snowflake with = 2.14.0.'
+Add-Check 1 'provider.tf uses PAT auth' ($provider -match 'authenticator\s*=\s*"PROGRAMMATIC_ACCESS_TOKEN"' -and $provider -match 'token\s*=') 'Use PROGRAMMATIC_ACCESS_TOKEN authenticator with token from secrets/snowflake_pat.txt.'
+Add-Check 1 'No hardcoded credential' ($provider -notmatch 'token\s*=\s*"[A-Za-z0-9]') 'Do not hardcode the token; read it from file or var.'
 
-Add-Check 2 'Required variables' ($variables -match 'variable\s+"snowflake_profile"' -and $variables -match 'variable\s+"learner_prefix"' -and $variables -match 'variable\s+"environment"' -and $variables -match 'variable\s+"warehouse_size"') 'Create the four variables from the guide.'
+Add-Check 2 'Required variables' ($variables -match 'variable\s+"snowflake_organization"' -and $variables -match 'variable\s+"snowflake_account"' -and $variables -match 'variable\s+"snowflake_user"' -and $variables -match 'variable\s+"snowflake_token"' -and $variables -match 'variable\s+"learner_prefix"' -and $variables -match 'variable\s+"environment"') 'Create snowflake_organization, snowflake_account, snowflake_user, snowflake_token, learner_prefix, and environment variables.'
 Add-Check 2 'Unique naming locals' ($locals -match 'var\.learner_prefix' -and $locals -match 'database_name' -and $locals -match 'warehouse_name') 'Build names from learner_prefix and environment.'
 Add-Check 2 'Local tfvars ignored' ((& git -C $workspace check-ignore terraform.tfvars 2>$null) -eq 'terraform.tfvars') 'terraform.tfvars must remain ignored.'
 

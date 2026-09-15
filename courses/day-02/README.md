@@ -1,6 +1,7 @@
-﻿# Jour 2 — State et Import Brownfield
+﻿# Jour 2 — Modules réutilisables et logique dynamique
 
-**Objectif :** Seécuriser le state distant et intégrer l'existant sans recréation.
+**Objectif :** Factoriser le code en modules réutilisables et piloter par métadonnées.
+**Durée :** 6 heures (2 h concepts · 4 h pratique)
 
 > [<- Catalogue](../README.md) · [Jour 1](../day-01/README.md) · **Jour 2** · [Jour 3 ->](../day-03/README.md)
 
@@ -8,26 +9,22 @@
 
 ## Contexte GlobalBank
 
-> **Email Sofia Almeida :**
->
-> *"Ou est ecrite votre convention de nommage ? Qui empeche un ingenieur de creer
-> un warehouse 4X-LARGE par erreur ? Aujourd'hui, vos parametres doivent etre
-> declares, tyres, bornes — et vos conventions ecrites a UN seul endroit."*
+> *"Onze personnes écrivent la même structure. Pourquoi l'écrire onze fois ? Et `for_each` a détruit un objet — sur une table avec des données, c'est un incident. Comment l'éviter ?"*
 
-**Aujourd'hui :** vous passez d'un objet a une collection. Vous centralisez la
-naming convention dans `locals`, ajoutez des garde-fous avec `validation`, et
-creez 3 objets d'un coup avec `for_each`.
+**Aujourd'hui :** vous passez de la copie à la factorisation. Vous apprenez `module` (réutiliser la même structure), `moved` (renommer sans détruire), `for_each` (collections stables) et `dynamic` (blocs répétés).
 
 ---
 
-## La Puissance de `for_each`
+## Les 4 niveaux de maturité
 
-| Methode | Ajout d'un 4e objet | Risque |
-|---------|---------------------|--------|
-| `count` | Reindexe tout → destruction et recreation | ⚠️ Eleve |
-| `for_each` | Ajoute uniquement l'objet manquant | ✅ Faible |
+| Niveau | Approche | Exemple |
+|---|---|---|
+| **1** | Copy-paste | 11 fichiers `main.tf` identiques |
+| **2** | Module | 1 définition réutilisable |
+| **3** | Data-driven | Ajout d'un objet = 3 lignes dans une map |
+| **4** | Platform | Modules + backends + CI/CD |
 
-> **Regle d'or :** `for_each` sur une map est le standard enterprise. `count` est un piege.
+> Aujourd'hui, on passe du Niveau 1 au Niveau 3.
 
 ---
 
@@ -35,99 +32,115 @@ creez 3 objets d'un coup avec `for_each`.
 
 ```mermaid
 flowchart LR
-    M2[M2 State] --> M3[M3 Import]
-    M3 --> J3[Jour 3]
+    M5[M5 Modules] --> M6[M6 Logique dynamique]
+    M6 --> J3[Jour 3]
 ```
 
 ## Modules
 
-| Module | Duree | Repertoire de travail | Lab | Course | Troubleshooting | Resultat attendu |
+| Module | Durée | Dossier de travail | Lab | Cours | Troubleshooting | Output attendu |
 |---|---:|---|---|---|---|---|
-| [M2 — State Management](module-02-state-management/lab.md) | 1h10 | `labs/m02-state-management/` | [lab](module-02-state-management/lab.md) | [cours](module-02-state-management/course.md) | [guide](module-02-state-management/troubleshooting.md) | [output](module-02-state-management/expected-output.md) |
-| [M3 — Import Brownfield](module-03-import-brownfield/lab.md) | 1h | `labs/m03-import-brownfield/` | [lab](module-03-import-brownfield/lab.md) | [cours](module-03-import-brownfield/course.md) | [guide](module-03-import-brownfield/troubleshooting.md) | [output](module-03-import-brownfield/expected-output.md) |
+| [M5 — Modules réutilisables](module-05-modules/lab.md) | 2 h 30 | `labs/m05-modules/` | [lab](module-05-modules/lab.md) | [cours](module-05-modules/course.md) | [guide](module-05-modules/troubleshooting.md) | [output](module-05-modules/expected-output.md) |
+| [M6 — Logique dynamique](module-06-dynamic-logic/lab.md) | 1 h 30 | `labs/m06-dynamic-logic/` | [lab](module-06-dynamic-logic/lab.md) | [cours](module-06-dynamic-logic/course.md) | [guide](module-06-dynamic-logic/troubleshooting.md) | [output](module-06-dynamic-logic/expected-output.md) |
 
 ## Workflow du jour
 
-1. **Lisez** le `course.md` du module (concepts, 15-20 min)
-2. **Realisez** le `lab.md` pas a pas (creation de fichiers, execution, checkpoints)
+1. **Lisez** le `course.md` du module (concepts, 15–20 min)
+2. **Réalisez** le `lab.md` pas à pas (création de fichiers, exécution, checkpoints)
 3. **Comparez** avec `expected-output.md`
 4. **Consultez** `troubleshooting.md` en cas d'erreur
 5. **Passez** au module suivant
 
-> Chaque module possede son propre repertoire de travail sous `labs/mXX-name/` (ex. `labs/m02-state-management/` pour M2). Chaque lab est **autonome** : il demarre par `Reset-Lab.ps1` pour un environnement propre, possede ses propres fichiers template et se termine par `terraform destroy`. Les ressources sont nommees par module (ex. `APP01_M02_RAW_DEV`).
+> Chaque module possède son propre dossier de travail sous `labs/mXX-name/`. Chaque lab est **autonome** : il démarre par `Reset-Lab.ps1` pour un environnement propre et se termine par un cleanup contrôlé. Les ressources sont nommées par module (ex. `APP01_M05_RAW_DEV`).
 
-> `[WINDOWS]` Si l'execution de scripts `.ps1` est bloquee, autorisez les scripts locaux :
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-> ```
+---
 
 ## Livrable du jour
 
-State distant sur Azure Blob Storage avec locking natif.
-Ressource brownfield importee sans recreation.
+Module Landing Zone Snowflake réutilisable et versionné. Déploiement piloté par métadonnées avec `for_each` et blocs `dynamic`.
 
 ---
 
 ## Preuves individuelles
 
-- [ ] `terraform plan` affiche `No changes.` apres l'ajout d'un local
-- [ ] Ajout d'une entree sans toucher au code → `Plan: 1 to add`
-- [ ] Preuve Snowsight : les 3 objets visibles
-- [ ] Vous pouvez expliquer les 4 roles du state (mapping, metadata, performance, syncing)
+- [ ] `terraform plan` affiche `has moved to` — 0 destruction après extraction en module
+- [ ] Ajout d'un objet via `terraform.tfvars` → `Plan: 1 to add` sans destruction
+- [ ] Vous pouvez expliquer pourquoi `for_each` est préféré à `count`
+- [ ] Vous comprenez la différence entre `moved` et `import`
+- [ ] Vous pouvez expliquer le contrat d'un module (variables + outputs)
 
 ---
 
-## [CHAOS LAB] — Casser une collection
+## [CHAOS LAB] — Casser un module
 
-> ⚠️ Exercice de rupture controlee. Pas de panic si le plan affiche des destructions.
+> ⚠️ Exercice de rupture contrôlée.
 
-**Objectif :** Comprendre pourquoi `for_each` est plus sur que `count`.
+**Objectif :** Comprendre que les modules sont des contrats.
 
-1. Ouvrez `terraform.tfvars`
-2. Supprimez la **cle du milieu** de votre map (pas la premiere, pas la derniere)
-3. Executez `terraform plan`
-4. Observez : seul l'objet correspondant est cible (pas de reindexation)
+1. Ouvrez `modules/landing-zone/variables.tf`
+2. Modifiez la valeur par défaut de `warehouse_size` (ex. `X-SMALL` → `LARGE`)
+3. Exécutez `terraform plan`
+4. Observez : TOUTES les ressources du module sont concernées
 
-**Question :** Que se passerait-il si vous aviez utilise `count` au lieu de `for_each` ?
+**Question :** Pourquoi la modification d'une seule variable affecte-t-elle tout le module ?
 
 ---
 
-## [DEFI] — Ajout sans toucher au code
+## [DÉFI] — Ajout sans toucher au code
 
 **Temps :** 10 minutes
 
-1. Ajoutez une 4e entree dans `terraform.tfvars` (pas dans `main.tf` !)
-2. Executez `terraform plan`
+1. Ajoutez un nouvel objet dans `terraform.tfvars` (pas dans `main.tf` !)
+2. Exécutez `terraform plan`
 3. Le plan doit afficher `Plan: 1 to add` — sans aucune destruction
 
-**Validation :** Le formateur verifie que vous n'avez pas modifie `main.tf`.
+**Validation :** Le formateur vérifie que vous n'avez pas modifié `main.tf`.
 
 ---
 
-## Anti-seche Jour 2
+## Anti-sèche Jour 2
 
-### Les 4 roles du state
+### `moved` vs `import`
 
-| Role | Description |
-|------|-------------|
-| **Mapping** | Lie le code Terraform aux ressources reelles |
-| **Metadata** | Stocke les IDs et attributs des ressources |
-| **Performance** | Evite de interroger l'API a chaque plan |
-| **Syncing** | Empeche les conflits entre utilisateurs |
+| Commande | Quand | Risque |
+|---|---|---|
+| `moved` | Renommer ou restructurer dans le même code | Aucun — pas de destruction |
+| `import` | Adopter une ressource existante hors Terraform | Faible — pas de recreation si correct |
 
-### Commandes essentielles
+### Structure d'un module
 
-```bash
-terraform state list                # Lister les ressources gerees
-terraform state show <RESOURCE>     # Afficher les details d'une ressource
-terraform state mv <OLD> <NEW>      # Renommer une ressource dans le state
-terraform import <RESOURCE> <ID>    # Importer une ressource existante
+```text
+modules/landing-zone/
+├── main.tf           # Les ressources
+├── variables.tf      # Les entrées (contrat)
+├── outputs.tf        # Les sorties (contrat)
+└── versions.tf       # Les versions (obligatoire)
 ```
+
+### Règles d'un module
+
+- Pas de `provider` dans le module enfant
+- Pas de `backend` dans le module enfant
+- Variables et outputs documentés
+- Pas de secrets en dur
+
+### `count` vs `for_each`
+
+| Critère | `count` | `for_each` |
+|---|---|---|
+| Type d'entrée | `number` | `map` ou `set(string)` |
+| Adressage | `res[0]`, `res[1]` | `res["clé"]` |
+| Retrait d'un élément du milieu | 🔴 Réindexe tout | ✅ Ne touche que la clé visée |
+| Bon usage | Interrupteur on/off | Collections nommées |
+
+> **Règle professionnelle :** `for_each` par défaut. `count` uniquement pour un interrupteur booléen.
+
+---
 
 ## Point de convergence (15 min)
 
 - Projection SQL montrant tous les objets
-- Trois observations de la journee
+- Trois observations de la journée
 - Justification du Jour 3
 
 ## Navigation

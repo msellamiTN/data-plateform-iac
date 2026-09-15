@@ -1,108 +1,109 @@
 # Grille d'Autonomie
 
-Cette grille evalue les competences acquises par chaque participant a chaque jour
-de la formation. Elle est utilisee par le formateur pour identifier les besoins
-de remediation.
+Cette grille évalue les compétences acquises par chaque participant à chaque jour de la formation. Elle est utilisée par le formateur pour identifier les besoins de remédiation.
 
-## Niveaux d'Aval
+## Niveaux d'évaluation
 
 | Niveau | Symbole | Description |
-|--------|---------|-------------|
-| **Autonome** | ✅ | Le participant sait executer et expliquer |
-| **Accompagne** | ⚠️ | Le participant sait executer avec aide ponctuelle |
-| **Non acquis** | ❌ | Le participant ne sait pas executer ni expliquer |
-| **Non evalue** | — | Pas encore teste |
+|---|---|---|
+| **Autonome** | ✅ | Le participant sait exécuter et expliquer |
+| **Accompagné** | ⚠️ | Le participant sait exécuter avec aide ponctuelle |
+| **Non acquis** | ❌ | Le participant ne sait pas exécuter ni expliquer |
+| **Non évalué** | — | Pas encore testé |
 
 ---
 
-## Jour 0 — Preparation
+## Jour 0 — Préparation
 
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Cloner le depot | | | |
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
+| Cloner le dépôt | | | |
 | Installer les outils | | | |
-| Configurer .env | | | |
-| Tester la connexion Snowflake | | | |
-| Authentifier Azure | | | |
+| Configurer `.env` | | | |
+| Tester la connexion Snowflake (`SELECT 1`) | | | |
+| Confirmer son préfixe apprenant | | | |
 | Lancer la validation finale | | | |
 
 ---
 
-## Jour 1 — Fondations IaC
+## Jour 1 — Workflow IaC et contrats typés
 
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Creer un objet dans Snowsight | | | |
-| Ecrire un `main.tf` simple | | | |
-| Executer `init`, `validate`, `plan`, `apply` | | | |
-| Remplacer un nom dur par une variable | | | |
-| Detecter une derive | | | |
-| Expliquer la difference `variable` vs `local` | | | |
-| Expliquer le role du `plan` | | | |
-
----
-
-## Jour 2 — Collections et State
-
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Centraliser une convention dans `locals` | | | |
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
+| Créer un objet dans Snowsight | | | |
+| Écrire un `main.tf` simple | | | |
+| Exécuter `init`, `fmt`, `validate`, `plan`, `apply` | | | |
+| Remplacer un nom en dur par une variable | | | |
+| Définir un `local` et un `output` | | | |
 | Ajouter une validation de variable | | | |
-| Creer une collection avec `for_each` | | | |
-| Ajouter un objet sans toucher au code | | | |
-| Expliquer les 4 roles du state | | | |
-| Detecter et corriger une derive | | | |
-| Executer `terraform state list` | | | |
+| Expliquer le rôle du `plan` | | | |
+| Obtenir un second plan sans changement | | | |
 
 ---
 
-## Jour 3 — Modules
+## Jour 2 — Modules et logique dynamique
 
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Creer un module simple | | | |
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
+| Créer un module simple | | | |
 | Appeler un module depuis `main.tf` | | | |
 | Expliquer `moved` vs `import` | | | |
-| Ajouter un objet via un module | | | |
-| Utiliser une `data source` | | | |
-| Expliquer pourquoi `for_each` est preferred a `count` | | | |
-| Expliquer le concept de contrat de module | | | |
+| Ajouter un objet via le module | | | |
+| Créer une collection avec `for_each` | | | |
+| Ajouter un objet sans toucher au code | | | |
+| Expliquer le contrat de module (variables + outputs) | | | |
+| Expliquer pourquoi `for_each` est préféré à `count` | | | |
 
 ---
 
-## Jour 4 — CI/CD et Environnements
+## Jour 3 — State, import et brownfield
 
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Configurer un backend Azure Blob | | | |
-| Migrer le state local vers distant | | | |
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
+| Expliquer les 4 rôles du state | | | |
+| Migrer le state local vers backend distant | | | |
+| Expliquer le mécanisme de locking | | | |
+| Exécuter `terraform state list` / `state show` | | | |
+| Importer une ressource existante | | | |
+| Détecter et corriger une dérive | | | |
+| Interpréter `plan -detailed-exitcode` | | | |
+
+---
+
+## Jour 4 — Environnements et pipeline
+
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
 | Expliquer les 3 axes d'isolation | | | |
-| Lire un pipeline CI/CD | | | |
+| Isoler DEV/UAT/PROD par répertoires | | | |
+| Distinguer workspace vs répertoire | | | |
+| Lire un pipeline CI/CD Terraform | | | |
 | Expliquer le flux Validate → Plan → Apply | | | |
-| Distinguer workspace vs repertoire | | | |
-| Expliquer le mecanisme de locking | | | |
+| Comprendre le plan immuable (artefact) | | | |
+| Vérifier qu'une config invalide est bloquée | | | |
 
 ---
 
-## Jour 5 — Production
+## Jour 5 — Snowflake avancé, sécurité et capstone
 
-| Competence | Autonome | Accompagne | Non acquis |
-|------------|----------|------------|------------|
-| Configurer l'authentification par cle | | | |
-| Definir des droits RBAC | | | |
-| Tester une action autorisee et refusee | | | |
-| Executer `terraform plan -detailed-exitcode` | | | |
+| Compétence | Autonome | Accompagné | Non acquis |
+|---|---|---|---|
+| Créer un stage et un file format | | | |
+| Exécuter un `COPY INTO` | | | |
+| Configurer l'authentification RSA/JWT | | | |
+| Définir des droits RBAC as code | | | |
+| Tester une action autorisée et refusée | | | |
+| Exécuter `terraform plan -detailed-exitcode` | | | |
 | Expliquer le zero-drift | | | |
-| Nettoyer les ressources de formation | | | |
+| Nettoyer les ressources de formation (préfixe only) | | | |
 | Expliquer l'architecture et ses limites | | | |
-| Justifier les choix de production | | | |
 
 ---
 
-## Synthese Individuelle
+## Synthèse individuelle
 
 | Participant | J0 | J1 | J2 | J3 | J4 | J5 | Statut |
-|-------------|----|----|----|----|----|----| ----|
+|---|---|---|---|---|---|---|---|
 | APP01 | | | | | | | |
 | APP02 | | | | | | | |
 | APP03 | | | | | | | |
@@ -117,18 +118,18 @@ de remediation.
 
 ---
 
-## Criteres de Remediation
+## Critères de remédiation
 
-| Situation | Parcours propose |
-|-----------|------------------|
-| Environnement seul en cause | Reparation prealable puis evaluation directe |
-| Workflow encore fragile | Lab guide puis variante |
-| Execution acquise, explication fragile | Prediction de plans et reformulation |
+| Situation | Parcours proposé |
+|---|---|
+| Environnement seul en cause | Réparation préalable puis évaluation directe |
+| Workflow encore fragile | Lab guidé puis variante |
+| Exécution acquise, explication fragile | Prédiction de plans et reformulation |
 | Socle autonome | Exercice de transfert plus exigeant |
 
 ---
 
-## Controle Differe (J+7)
+## Contrôle différé (J+7)
 
-Proposer une variante courte avec documentation autorisee.
-Mesurer la reproduction sans assistance systematique, pas la memoire des commandes.
+Proposer une variante courte avec documentation autorisée.
+Mesurer la reproduction sans assistance systématique, pas la mémoire des commandes.

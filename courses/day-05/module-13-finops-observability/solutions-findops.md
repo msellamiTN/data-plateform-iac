@@ -555,8 +555,8 @@ Utilisez le code avec précaution.2. Code Terraform Complet (main.tf)Ce script c
   required_version = ">= 1.5.0"
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -736,8 +736,8 @@ Utilisez le code avec précaution.Résultat attendu : L'équipe centrale voit la
 Utilisez le code avec précaution.modules/finops_hub/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -860,8 +860,8 @@ variable "hub_mapping_table_name" {
 Utilisez le code avec précaution.modules/finops_spoke/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -1128,8 +1128,8 @@ terraform_deploy:
 Utilisez le code avec précaution.Synthèse comparative pour l'intégration CI/CDLa Solution A (GitHub Actions) est particulièrement fluide pour la mise en œuvre de la fédération d'identité grâce à l'action native configure-aws-credentials (ou équivalents Azure/GCP), idéale si votre architecture d'entreprise repose fortement sur l'écosystème GitHub.La Solution B (GitLab CI/CD) offre un contrôle granulaire supérieur sur le cycle de vie grâce au mécanisme de dépendance des artefacts (tfplan) et permet d'ajouter une approbation manuelle (when: manual) native, assurant qu'aucune modification de politique de sécurité Snowflake ne passe en production sans un double contrôle visuel.Avez-vous besoin d'aide pour générer le script d'infrastructure Cloud de confiance (IAM Trust Policy/OIDC Provider) côté AWS, Azure ou GCP afin d'activer pleinement cette fédération d'identité pour vos runners ?Pour vous fournir une vision complète et industrialisée, voici le code source des deux solutions pour vos modules FinOps : la Solution A (Vues Sécurisées Simples) et la Solution B (Row Access Policy + Table de Mapping).Chaque solution est structurée sous forme de modules Terraform (hub et spoke) prêts à consommer votre fichier de configuration tenants_config.yaml.SOLUTION A : Multi-Vues Sécurisées par Spoke (Cloisonnement via SQL Dynamique)Dans cette approche, la sécurité est codée en dur dans une vue générée dynamiquement. Elle est simple à mettre en œuvre pour un petit nombre de tenants mais nécessite de recréer l'objet ou de complexifier le code lors de chaque ajout de Spoke.1. Module Hub (modules_sol_a/finops_hub)modules_sol_a/finops_hub/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -1179,8 +1179,8 @@ output "schema_name"   { value = snowflake_schema.finops.name }
 Utilisez le code avec précaution.2. Module Spoke (modules_sol_a/finops_spoke)modules_sol_a/finops_spoke/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -1224,8 +1224,8 @@ resource "snowflake_grant_privileges_to_account_role" "grant_select" {
 Utilisez le code avec précaution.SOLUTION B : Row Access Policy + Mapping Table (L'Approche Recommandée)Dans cette approche, la sécurité est totalement découplée. Le code de la politique et des vues reste strictement immuable. L'onboarding d'un nouveau Spoke consiste uniquement à insérer une ligne dans la table de mapping via Terraform.1. Module Hub (modules_sol_b/finops_hub)modules_sol_b/finops_hub/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }
@@ -1299,8 +1299,8 @@ output "mapping_table_name"  { value = snowflake_table.security_mapping.name }
 Utilisez le code avec précaution.2. Module Spoke (modules_sol_b/finops_spoke)modules_sol_b/finops_spoke/main.tfhclterraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = ">= 0.87.0"
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
     }
   }
 }

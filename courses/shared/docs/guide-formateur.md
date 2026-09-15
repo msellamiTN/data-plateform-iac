@@ -1,217 +1,226 @@
 # Guide du Formateur
 
-Ce document contient les notes et procedures pour le formateur de la formation
-Terraform & Snowflake.
+Ce document contient les notes et procédures pour le formateur de la formation Terraform & Snowflake.
 
-## Vue d'Ensemble
+## Vue d'ensemble
 
-| Aspect | Detail |
-|--------|--------|
-| **Duree** | 5 jours x 6 heures = 30 heures |
-| **Participants** | 11 apprenants (prefixes APP01 a APP11) |
-| **Stack** | Snowflake, Terraform, Azure, Azure DevOps, dbt |
-| **Pre-requis** | Aucun prerequis technique pour le Jour 0 |
+| Aspect | Détail |
+|---|---|
+| **Durée** | 5 jours × 6 heures = 30 heures |
+| **Participants** | 11 apprenants (préfixes `APP01` à `APP11`) |
+| **Stack apprenant** | Terraform + provider Snowflake |
+| **Stack préconfigurée** | Azure (backend, agent, service connection, external stage) + Azure DevOps (projet) |
+| **Prérequis apprenant** | Aucun — ni Azure, ni PowerShell, ni programmation |
 
 ---
 
-## Preparation Avant la Formation
+## Séparation des responsabilités
+
+### Ce que le formateur prépare (hors périmètre apprenant)
+
+| Élément | Quand | Preuve |
+|---|---|---|
+| Compte Snowflake + utilisateurs + PAT | T-15 jours | 11 utilisateurs + PAT individuels |
+| Backend Azure Blob Storage | T-7 jours | RG, storage account, conteneur `tfstate` |
+| Service principal + RBAC Blob | T-7 jours | `Storage Blob Data Contributor` sur l'object ID |
+| Projet Azure DevOps + agent + service connection | T-7 jours | Pipeline exécutable |
+| Storage account pour external stage (M09) | T-5 jours | Container accessible depuis Snowflake |
+| Entra ID / identité technique (M10) | T-5 jours | Utilisateur technique pour JWT |
+| VMs de formation (Chemin A) | T-3 jours | 11 VMs avec outils préinstallés |
+| Environnement de secours | T-3 jours | VM + backend + pipeline testés |
+
+### Ce que l'apprenant fait (périmètre cours)
+
+| Jour | Actions apprenant |
+|---|---|
+| J0 | Cloner, installer, configurer `.env`, tester `SELECT 1` |
+| J1 | Écrire HCL, `init`/`fmt`/`validate`/`plan`/`apply`, variables, outputs |
+| J2 | Créer un module, `for_each`, `moved`, `dynamic` |
+| J3 | Migrer le state vers backend préconfiguré, `import`, drift |
+| J4 | Isoler DEV/UAT/PROD, pipeline Terraform `validate`→`plan`→`apply` |
+| J5 | Stages, `COPY INTO`, RSA/JWT, RBAC, capstone, cleanup |
+
+---
+
+## Préparation avant la formation
 
 ### T-15 jours
 
 | Action | Preuve |
-|--------|--------|
-| Identifier postes, reseaux, droits et compte Snowflake | Liste des contraintes et responsables |
+|---|---|
+| Identifier postes, réseaux, droits et compte Snowflake | Liste des contraintes et responsables |
 | Confirmer les VMs ou postes de formation | 11 postes fonctionnels |
-| Verifier les versions des outils | Terraform 1.14.5, provider 2.14.0 |
+| Créer les utilisateurs Snowflake + PAT | 11 PAT individuels |
 
 ### T-7 jours
 
 | Action | Preuve |
-|--------|--------|
-| Installer Terraform et VS Code | Versions verifyes sur chaque poste |
-| Obtenir le provider Snowflake | Provider accessible |
-| Configurer Azure DevOps | Projet et pipeline prets |
+|---|---|
+| Installer Terraform et VS Code sur les VMs | Versions vérifiées sur chaque poste |
+| Préparer le backend Azure Blob Storage | RG + storage account + conteneur |
+| Configurer le service principal + RBAC | `Storage Blob Data Contributor` |
+| Configurer Azure DevOps (projet, agent, service connection) | Pipeline testé |
+| Préparer le storage account pour external stage (M09) | Container accessible |
 
 ### T-3 jours
 
 | Action | Preuve |
-|--------|--------|
-| Tester le PAT et un objet de formation dedie | Creation, lecture et nettoyage controles |
-| Verifier les droits RBAC | Permissions suffisantes |
+|---|---|
+| Tester le PAT et un objet de formation dédié | Création, lecture et nettoyage contrôlés |
+| Vérifier les droits RBAC Snowflake | Permissions suffisantes pour M11 |
 | Tester la pipeline CI/CD | Pipeline fonctionnelle |
+| Préparer l'identité technique pour JWT (M10) | Utilisateur + clé configurés |
 
 ### T-1 jour
 
 | Action | Preuve |
-|--------|--------|
-| Confirmer acces, validite du PAT et postes de secours | Decision de demarrage |
-| Dernier test de connectivite | Tous les postes OK |
-| Preparer le plan de secours | Environnement de secours teste |
+|---|---|
+| Confirmer accès, validité du PAT et postes de secours | Décision de démarrage |
+| Dernier test de connectivité | Tous les postes OK |
+| Préparer le plan de secours | Environnement de secours testé |
 
 ---
 
-## Credentials et Secrets
+## Credentials et secrets
 
-### Structure des Identifiants
+### Structure des identifiants
 
 | Identifiant | Usage | Distribution |
-|-------------|-------|--------------|
-| Prefixe apprenant | Nommage des ressources | Fourni en debut de session |
-| PAT Snowflake | CLI et Terraform | Individuel, saisi dans .env |
+|---|---|---|
+| Préfixe apprenant | Nommage des ressources | Fourni en début de session |
+| PAT Snowflake | CLI et Terraform | Individuel, saisi dans `.env` |
 | Username + password | Interface web Snowsight | Individuel |
-| Service principal Azure | Authentification Azure | Partage pour tout le groupe |
+| Paramètres Azure backend | State distant | Dans `.env.example` (non secret) |
+| Service principal | Pipeline (préconfiguré) | Injecté dans Azure DevOps, non visible par l'apprenant |
 
-### Regles de Securite
+### Règles de sécurité
 
 1. **Jamais** de secret dans Git, les captures ou les rapports
-2. **Jamais** de PAT colle dans une commande
-3. **Jamais** de password dans un fichier du depot
-4. **Toujours** utiliser le PAT via saisie masquee
+2. **Jamais** de PAT collé dans une commande
+3. **Jamais** de password dans un fichier du dépôt
+4. **Toujours** utiliser le PAT via saisie masquée
 5. **Toujours** nettoyer les credentials en fin de session
+6. **Jamais** `ACCOUNTADMIN` comme solution de dépannage
 
 ---
 
-## Gestion des Equipes
+## Gestion des équipes
 
-### Nommage des Resources
+### Nommage des ressources
 
 ```text
-<PREFIXE_APPRENANT>_<ZONE>_<ENVIRONNEMENT>
+<PREFIXE_APPRENANT>_M<MODULE>_<ZONE>_<ENVIRONNEMENT>
 ```
 
 Exemples :
-- `APP01_RAW_DEV` (Database)
-- `WH_APP01_INGEST_DEV` (Warehouse)
-- `APP01_M01_RAW_DEV` (Resource du module M01)
+- `APP01_M01_RAW_DEV` (Database du Module 1)
+- `WH_APP01_M01_ETL_DEV` (Warehouse du Module 1)
+- `APP01_M05_RAW_DEV` (Database du Module 5)
 
-### Regles d'Isolation
+### Règles d'isolation
 
 | Aspect | Isolation |
-|--------|-----------|
-| Resources Snowflake | Par prefixe apprenant |
-| State Terraform | Par prefixe apprenant |
-| Pipelines | Par prefixe apprenant |
+|---|---|
+| Resources Snowflake | Par préfixe apprenant + module |
+| State Terraform | Par préfixe apprenant + module |
+| Pipelines | Par préfixe apprenant |
 | Environment | DEV → UAT → PROD |
 
 ---
 
-## Animation de la Formation
+## Animation de la formation
 
-### Les 3 Regles d'Or
+### Les 3 règles d'or
 
-> **Regle 1 :** Jamais une ligne de Terraform avant d'avoir clique le meme objet dans Snowsight.
+> **Règle 1 :** Jamais une ligne de Terraform avant d'avoir cliqué le même objet dans Snowsight.
 >
-> **Regle 2 :** Jamais de `terraform destroy` sans plan prealable ni confirmation.
+> **Règle 2 :** Jamais de `terraform destroy` sans plan préalable ni confirmation.
 >
-> **Regle 3 :** Jamais de secret dans Git, les captures ou les rapports.
+> **Règle 3 :** Jamais de secret dans Git, les captures ou les rapports.
 
-### Points de Convergence (15 min par jour)
+### Points de convergence (15 min par jour)
 
-A la fin de chaque jour :
+À la fin de chaque jour :
 
-1. **Projection SQL** montrant tous les objets crees
-2. **Trois observations** extraites de la journee
+1. **Projection SQL** montrant tous les objets créés
+2. **Trois observations** extraites de la journée
 3. **Justification** du lendemain
 
-### Chaos Labs
+### Chaos labs
 
-| Jour | Chaos Lab | Objectif |
-|------|-----------|----------|
-| J2 | Casser une collection | Comprendre `for_each` vs `count` |
-| J3 | Casser un module | Comprendre les contrats de module |
-| J4 | State Lock (par paires) | Decouvrir le locking |
+| Jour | Chaos lab | Objectif |
+|---|---|---|
+| J2 | Casser un module | Comprendre les contrats de module |
+| J3 | State lock (par paires) | Découvrir le locking |
+| J4 | Validation cassée | Vérifier que le pipeline bloque |
 
-### Defis
+### Défis
 
-| Jour | Defi | Temps |
-|------|------|-------|
+| Jour | Défi | Temps |
+|---|---|---|
 | J2 | Ajout sans toucher au code | 10 min |
-| J3 | Ajout via module | 10 min |
-| J4 | Convergence de modules | 15 min |
-| J5 | Capstone zero-drift | 1h |
+| J5 | Capstone zero-drift | 1 h |
 
 ---
 
-## Evaluation
+## Évaluation
 
-### Contrat de Validation (par module)
+### Contrat de validation (par module)
 
-| Niveau | Controle |
-|--------|----------|
+| Niveau | Contrôle |
+|---|---|
 | 1 | Structure et absence de placeholders/secrets |
 | 2 | `terraform fmt -check` et `terraform validate` |
 | 3 | Assertions sur le plan Terraform |
-| 4 | Preuve fonctionnelle Snowflake, Snow CLI ou dbt |
+| 4 | Preuve fonctionnelle Snowflake ou Snow CLI |
 | 5 | Second plan sans changement inattendu |
-| 6 | Challenge evalue par criteres |
+| 6 | Challenge évalué par critères |
 
-### Grille d'Autonomie
+### Grille d'autonomie
 
 Voir [grille-autonomie.md](grille-autonomie.md).
 
-### Criteres de Remediation
+### Critères de remédiation
 
 | Situation | Parcours |
-|-----------|----------|
-| Environnement seul en cause | Reparation prealable puis evaluation |
-| Workflow encore fragile | Lab guide puis variante |
-| Execution acquise, explication fragile | Prediction de plans et reformulation |
+|---|---|
+| Environnement seul en cause | Réparation préalable puis évaluation |
+| Workflow encore fragile | Lab guidé puis variante |
+| Exécution acquise, explication fragile | Prédiction de plans et reformulation |
 | Socle autonome | Exercice de transfert plus exigeant |
 
 ---
 
-## Plan de Secours
+## Plan de secours
 
 Voir [guide-reprise.md](guide-reprise.md).
 
 ---
 
-## Preparing l'Avance (Jours 4-5)
+## Post-formation
 
-### Pre-Requis Avance
+### Contrôle différé (J+7)
 
-| Controle | Statut |
-|----------|--------|
-| Azure CLI disponible | |
-| Abonnement et contexte connus | |
-| Conteneur Blob et autorisations prets | |
-| Projet Azure DevOps et connexion de service | |
-| Capacite d'execution d'un agent | |
-| Acces au backend et depuis l'agent | |
-
-### Contenu Avance
-
-| Jour | Modules | Duree |
-|------|---------|-------|
-| J4 | M7 (CI/CD) + M8 (Environnements) | 6h |
-| J5 | M9 (Ingestion) + M10 (Auth) + M11 (RBAC) + M12 (Capstone) + M13+M14 (FinOps) | 6h |
-
----
-
-## Post-Formation
-
-### Controle Differe (J+7)
-
-1. Proposer une variante courte avec documentation autorisee
-2. Mesurer la reproduction sans assistance systematique
-3. Documenter les resultats
+1. Proposer une variante courte avec documentation autorisée
+2. Mesurer la reproduction sans assistance systématique
+3. Documenter les résultats
 
 ### Feedback
 
 Recueillir le feedback des 11 participants :
 
 1. Aspects positifs
-2. Points a ameliorer
-3. Suggestions d'amelioration
-4. difficultes rencontrees
+2. Points à améliorer
+3. Suggestions d'amélioration
+4. Difficultés rencontrées
 
 ---
 
-## Contacts Utiles
+## Contacts utiles
 
-| Role | Nom | Contact |
-|------|-----|---------|
+| Rôle | Nom | Contact |
+|---|---|---|
 | Commanditaire | | |
 | Concepteur | | |
-| Referent technique | | |
+| Référent technique | | |
 | Relecteur | | |

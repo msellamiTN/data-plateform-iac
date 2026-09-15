@@ -1,6 +1,7 @@
-﻿# Jour 3 — Modules et Logique Dynamique
+﻿# Jour 3 — State, import et brownfield
 
-**Objectif :** Composants reutilisables et déploiement piloté par métadonnées.
+**Objectif :** Sécuriser le state, intégrer l'existant sans recréation, détecter la dérive.
+**Durée :** 6 heures (2 h concepts · 4 h pratique)
 
 > [<- Catalogue](../README.md) · [Jour 2](../day-02/README.md) · **Jour 3** · [Jour 4 ->](../day-04/README.md)
 
@@ -8,30 +9,24 @@
 
 ## Contexte GlobalBank
 
-> **Email Sofia Almeida :**
->
-> *"for_each a detruit un objet. Sur une table avec des donnees, c'est un incident.
-> Comment l'eviter ? Comment adopter vos objets legacy sans les detruire ?*
->
-> *Et un constat : onze personnes ecrivent la meme structure.
-> Pourquoi l'ecrire onze fois ?"*
+> *"Où est écrite votre convention de nommage ? Mon `terraform.tfstate` est sur mon portable. Si un casse, la plateforme est orpheline. Et mon entreprise a déjà 200 bases créées avant Terraform."*
 
-**Aujourd'hui :** vous passez de la copie a la factorisation. Vous apprenez
-`moved` (renommer sans detruire), `import` (adopter l'existant), `module`
-(reutiliser la meme structure), et `data source` (lire ce que vous n'avez pas cree).
+**Aujourd'hui :** vous passez d'un state local à un state distant préparé par le formateur. Vous apprenez le verrouillage, l'import d'objets existants, la détection de dérive et le réalignement.
+
+> Le backend Azure Blob Storage est **préconfiguré par le formateur**. Vous consommez les paramètres fournis ; vous ne créez ni storage account, ni resource group, ni service principal.
 
 ---
 
-## Les 4 Niveaux de Maturite
+## Les 4 rôles du state
 
-| Niveau | Approche | Exemple |
-|--------|----------|---------|
-| **1** | Copy-paste | 11 fichiers `main.tf` identiques |
-| **2** | Module | 1 definition reutilisable |
-| **3** | Data-driven | Ajout d'un objet = 3 lignes dans une map |
-| **4** | Platform | Modules + backends + CI/CD |
+| Rôle | Description |
+|---|---|
+| **Mapping** | Lie le code Terraform aux ressources réelles |
+| **Métadonnées** | Stocke les IDs et attributs des ressources |
+| **Performance** | Évite d'interroger l'API à chaque plan |
+| **Syncing** | Empêche les conflits entre utilisateurs via le verrouillage |
 
-> Aujourd'hui, on passe du Niveau 1 au Niveau 3.
+> 🔒 Le state contient les valeurs en clair, y compris les attributs sensibles. Il est traité comme un fichier de mots de passe : jamais dans Git, toujours chiffré au repos.
 
 ---
 
@@ -39,105 +34,105 @@
 
 ```mermaid
 flowchart LR
-    M5[M5 Modules] --> M6[M6 Dynamic]
-    M6 --> J4[Jour 4]
+    M2[M2 State Management] --> M3[M3 Import Brownfield]
+    M3 --> J4[Jour 4]
 ```
 
 ## Modules
 
-| Module | Duree | Repertoire de travail | Lab | Course | Troubleshooting | Resultat attendu |
+| Module | Durée | Dossier de travail | Lab | Cours | Troubleshooting | Output attendu |
 |---|---:|---|---|---|---|---|
-| [M5 — Modules reutilisables](module-05-modules/lab.md) | 1h | `labs/m05-modules/` | [lab](module-05-modules/lab.md) | [cours](module-05-modules/course.md) | [guide](module-05-modules/troubleshooting.md) | [output](module-05-modules/expected-output.md) |
-| [M6 — Logique dynamique](module-06-dynamic-logic/lab.md) | 1h | `labs/m06-dynamic-logic/` | [lab](module-06-dynamic-logic/lab.md) | [cours](module-06-dynamic-logic/course.md) | [guide](module-06-dynamic-logic/troubleshooting.md) | [output](module-06-dynamic-logic/expected-output.md) |
+| [M2 — State Management](module-02-state-management/lab.md) | 2 h 30 | `labs/m02-state-management/` | [lab](module-02-state-management/lab.md) | [cours](module-02-state-management/course.md) | [guide](module-02-state-management/troubleshooting.md) | [output](module-02-state-management/expected-output.md) |
+| [M3 — Import Brownfield](module-02-state-management/module-03-import-brownfield/lab.md) | 1 h 30 | `labs/m03-import-brownfield/` | [lab](module-02-state-management/module-03-import-brownfield/lab.md) | [cours](module-02-state-management/module-03-import-brownfield/course.md) | [guide](module-02-state-management/module-03-import-brownfield/troubleshooting.md) | [output](module-02-state-management/module-03-import-brownfield/expected-output.md) |
 
 ## Workflow du jour
 
-1. **Lisez** le `course.md` du module (concepts, 15-20 min)
-2. **Realisez** le `lab.md` pas a pas (creation de fichiers, execution, checkpoints)
+1. **Lisez** le `course.md` du module (concepts, 15–20 min)
+2. **Réalisez** le `lab.md` pas à pas (création de fichiers, exécution, checkpoints)
 3. **Comparez** avec `expected-output.md`
 4. **Consultez** `troubleshooting.md` en cas d'erreur
 5. **Passez** au module suivant
 
-> Chaque module possede son propre repertoire de travail sous `labs/mXX-name/` (ex. `labs/m05-modules/` pour M5). Chaque lab est **autonome** : il demarre par `Reset-Lab.ps1` pour un environnement propre, possede ses propres fichiers template et se termine par `terraform destroy`. Les ressources sont nommees par module (ex. `APP01_M05_RAW_DEV`).
+> Chaque module possède son propre dossier de travail sous `labs/mXX-name/`. Chaque lab est **autonome** : il démarre par `Reset-Lab.ps1` pour un environnement propre et se termine par un cleanup contrôlé. Les ressources sont nommées par module (ex. `APP01_M02_RAW_DEV`).
 
-> `[WINDOWS]` Si l'execution de scripts `.ps1` est bloquee, autorisez les scripts locaux :
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-> ```
+---
 
 ## Livrable du jour
 
-Module Landing Zone reutilisable et versionné.
-Déploiement piloté par métadonnées avec for_each et dynamic blocks.
+State distant sur Azure Blob Storage avec locking natif (backend préconfiguré). Ressource brownfield importée sans recréation. Dérive détectée et corrigée.
 
 ---
 
 ## Preuves individuelles
 
-- [ ] `terraform plan` affiche `has moved to` — 0 destruction
-- [ ] Ajout d'un 5e objet via le module → `Plan: 1 to add`
-- [ ] Vous pouvez expliquer pourquoi `for_each` est preferred a `count`
-- [ ] Vous comprenez la difference entre `moved` et `import`
+- [ ] `terraform state list` affiche vos ressources après migration
+- [ ] `terraform plan` affiche `No changes.` après migration du state
+- [ ] Un objet existant est importé sans recréation
+- [ ] Vous pouvez expliquer les 4 rôles du state
+- [ ] Vous avez détecté une dérive via `terraform plan` et corrigé
+- [ ] Vous comprenez pourquoi le state ne se commit pas dans Git
 
 ---
 
-## [CHAOS LAB] — Casser un module
+## [CHAOS LAB] — State lock (par paires)
 
-> ⚠️ Exercice de rupture controlee.
+> ⚠️ Exercice de rupture contrôlée. Deux personnes collaborent.
 
-**Objectif :** Comprendre que les modules sont des contrats.
+**Objectif :** Découvrir le verrouillage du state distant.
 
-1. Ouvrez `modules/landing-zone/variables.tf`
-2. Modifiez la valeur par defaut de `warehouse_size` (ex. `X-SMALL` → `LARGE`)
-3. Executez `terraform plan`
-4. Observez : TOUTES les ressources du module sont concernees
+1. Deux personnes partagent la même clé de state (même backend Azure Blob)
+2. Personne A exécute `terraform apply`
+3. Personne B exécute `terraform plan` en même temps
+4. Observez : un des deux reçoit un message de lock
 
-**Question :** Pourquoi la modification d'une seule variable affecte-t-elle tout le module ?
+**Question :** Que se passerait-il sans mécanisme de locking ?
 
----
-
-## [DEFI] — Ajout sans toucher au code
-
-**Temps :** 10 minutes
-
-1. Ajoutez un 5e objet dans `terraform.tfvars` (pas dans `main.tf` !)
-2. Executez `terraform plan`
-3. Le plan doit afficher `Plan: 1 to add` — sans aucune destruction
-
-**Validation :** Le formateur verifie que vous n'avez pas modifie `main.tf`.
+> 🔴 `terraform force-unlock` n'est utilisé qu'en dernier recours, après vérification que le processus qui posé le verrou est mort.
 
 ---
 
-## Anti-seche Jour 3
+## Anti-sèche Jour 3
 
-### `moved` vs `import`
+### Commandes de state
 
-| Commande | Quand | Risque |
-|----------|-------|--------|
-| `moved` | Renommer ou restructurer dans le meme code | Aucun — pas de destruction |
-| `import` | Adopter une ressource existante hors Terraform | Faible — pas de recreation si correctly |
-
-### Structure d'un module
-
-```text
-modules/landing-zone/
-├── main.tf           # Les ressources
-├── variables.tf      # Les entrees (contrat)
-├── outputs.tf        # Les sorties (contrat)
-└── versions.tf       # Les versions (obligatoire)
+```bash
+terraform state list                # Lister les ressources gérées
+terraform state show <RESOURCE>     # Afficher les détails d'une ressource
+terraform state mv <OLD> <NEW>      # Renommer dans le state
+terraform import <RESOURCE> <ID>   # Importer une ressource existante
+terraform plan -detailed-exitcode   # 0 = pas de drift, 2 = drift détecté
 ```
 
-### Règles d'un module
+### Backend azurerm (préconfiguré)
 
-- Pas de `provider` dans le module
-- Pas de `backend` dans le module
-- Variables et outputs documentes
-- Pas de secrets en dur
+```hcl
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-data2ai-tf-state"
+    storage_account_name = "sadata2aitfstatemsn"
+    container_name       = "tfstate"
+    key                  = "training/APP01/m02/terraform.tfstate"
+    use_zuread_auth     = true
+  }
+}
+```
+
+> Le resource group, le storage account et le conteneur sont créés par le formateur. Vous ne faites que référencer ces paramètres et lancer `terraform init -migrate-state`.
+
+### Codes de sortie `plan -detailed-exitcode`
+
+| Code | Signification |
+|---:|---|
+| 0 | Aucun changement — pas de drift |
+| 1 | Erreur (auth, syntaxe, réseau) |
+| 2 | Changements en attente — drift détecté |
+
+---
 
 ## Point de convergence (15 min)
 
 - Projection SQL montrant tous les objets
-- Trois observations de la journee
+- Trois observations de la journée
 - Justification du Jour 4
 
 ## Navigation

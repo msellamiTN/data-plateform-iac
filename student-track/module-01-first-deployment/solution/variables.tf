@@ -1,7 +1,23 @@
-variable "snowflake_profile" {
+variable "snowflake_organization" {
   type        = string
-  description = "Snowflake CLI profile configured during Module 00"
-  default     = "terraform_svc"
+  description = "Snowflake organization name (from .env)"
+}
+
+variable "snowflake_account" {
+  type        = string
+  description = "Snowflake account name (from .env)"
+}
+
+variable "snowflake_user" {
+  type        = string
+  description = "Snowflake user name (from .env)"
+}
+
+variable "snowflake_token" {
+  type        = string
+  description = "Snowflake PAT (injected via TF_VAR_snowflake_token or read from secrets/snowflake_pat.txt)"
+  sensitive   = true
+  default     = ""
 }
 
 variable "learner_prefix" {
@@ -9,8 +25,8 @@ variable "learner_prefix" {
   description = "Unique uppercase prefix assigned to the learner"
 
   validation {
-    condition     = can(regex("^[A-Z][A-Z0-9_]{1,11}$", var.learner_prefix))
-    error_message = "learner_prefix must contain 2-12 uppercase letters, digits, or underscores."
+    condition     = can(regex("^[A-Z][A-Z0-9]{2,4}$", var.learner_prefix))
+    error_message = "learner_prefix must contain 3-5 uppercase letters or digits."
   }
 }
 
@@ -20,8 +36,8 @@ variable "environment" {
   default     = "DEV"
 
   validation {
-    condition     = contains(["DEV", "TEST"], var.environment)
-    error_message = "environment must be DEV or TEST."
+    condition     = contains(["DEV", "UAT", "PROD"], var.environment)
+    error_message = "environment must be DEV, UAT or PROD."
   }
 }
 

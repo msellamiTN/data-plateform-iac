@@ -5,8 +5,10 @@
 > **Parcours :** Industrialisation d'une Data Platform · **Jour 4 / 5**
 > **Modules couverts :** M08 (Multi-environnements) + M07 (Pipeline Azure DevOps)
 > **Durée :** 6 heures (2 h de concepts guidés · 4 h de pratique)
-> **Prérequis :** Jours 1 à 3 terminés — vous savez écrire, gérer le state et factoriser en modules
-> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 4, 6, 7, 9 · Microsoft *AZ-400*
+> **Prérequis :** Jours 1 à 3 terminés — vous savez écrire, factoriser en modules, gérer le state et importer l'existant
+> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 4, 6, 7, 9
+
+> Le projet Azure DevOps, l'agent et la connexion de service sont **préconfigurés par le formateur**. Le lab se concentre sur l'écriture et l'exécution du pipeline Terraform.
 
 ---
 

@@ -1,2 +1,2 @@
-﻿# main.tf — created by learner
+# main.tf — created by learner
 

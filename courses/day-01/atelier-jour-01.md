@@ -7,6 +7,7 @@
 > **Durée :** 6 heures (2 h de concepts guidés · 4 h de pratique)
 > **Niveau :** Débutant Terraform · **Prérequis Terraform : aucun**
 > **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 1, 2, 3, 6, 7, 8
+> **Prérequis Azure :** Aucun — la connexion se fait via PAT Snowflake.
 
 ---
 

@@ -1,2 +1,2 @@
-﻿# outputs.tf — created by learner
+# outputs.tf — created by learner
 

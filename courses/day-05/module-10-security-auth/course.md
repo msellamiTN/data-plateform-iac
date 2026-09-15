@@ -6,6 +6,8 @@
 
 Une identité partagée avec mot de passe empêche l'attribution des actions et augmente le risque de compromission. JWT, Key Vault et rotation séparent identité, secret et autorisation.
 
+> Le Key Vault Azure et l'identité technique Entra ID sont **préconfigurés par le formateur**. L'apprenant génère ses clés RSA localement (hors Git) et apprend à les injecter sans les exposer.
+
 ## Contexte architecture
 
 ```mermaid

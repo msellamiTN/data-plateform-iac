@@ -1,8 +1,8 @@
 ﻿# Cours Mx — <Capacité professionnelle>
 
 **Durée de lecture :** <durée>  
-**Piste :** `[CORE]` / `[AZURE]` / `[AWS]` / `[GCP]`  
-**Prérequis :** <checkpoint observable>
+**Piste :** `[CORE]`  
+**Prérequis :** <`snow sql -q 'SELECT 1' -c training` réussi ; Terraform 1.14.x>
 
 ## Scénario professionnel
 

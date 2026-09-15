@@ -1,164 +1,147 @@
-# Preparation de l'Avance
+# Préparation de l'Avancé
 
-Ce document decrit les pre-requis et la preparation necessaires avant de commencer
-les 2 jours d'avance (Jours 3-4).
+Ce document décrit les prérequis et la préparation nécessaires avant de commencer les 2 jours avancés (Jours 4 et 5).
 
-## Pre-Requis : Initiation Terminee
+> L'avancé conserve le même périmètre : Terraform + Snowflake. Azure DevOps est utilisé uniquement pour exécuter un pipeline Terraform. Les ressources Azure (backend, agent, service connection, storage pour external stage) sont **préconfigurées par le formateur**.
 
-Avant de commencer l'avance, le participant doit maitriser les competences
-du socle d'initiation :
+## Prérequis : Initiation terminée
 
-| Competence | Critere |
-|------------|---------|
-| Workflow Terraform | `init`, `validate`, `plan`, `apply` |
-| State | Comprendre les 4 roles, lire le state |
-| Collections | `for_each`, `locals`, `validation` |
-| Modules | Creer et appeler un module simple |
-| CI/CD | Pipeline basic Azure DevOps |
-| Environnements | Isolation DEV/UAT/PROD |
+Avant de commencer l'avancé, le participant doit maîtriser les compétences du socle d'initiation :
 
-> Si une faiblesse est detectee, une consolidation ciblee est menee avant
-> le demarrage de l'avance.
+| Compétence | Critère |
+|---|---|
+| Workflow Terraform | `init`, `validate`, `plan`, `apply`, `output`, `state list` |
+| Variables & outputs | Contrats typés, `locals`, validations |
+| Modules | Créer et appeler un module simple |
+| State | Comprendre les 4 rôles, lire le state, migration vers backend distant |
+| Import & drift | Importer un objet existant, détecter et corriger une dérive |
+| `for_each` | Collections stables, ajout par données |
 
-## Pre-Requis Materiels
+> Si une faiblesse est détectée, une consolidation ciblée est menée avant le démarrage de l'avancé.
 
-### Poste de Formation
+## Prérequis matériels
 
-Meme configuration que l'initiation, plus :
+### Poste de formation
 
-| Composant | Minimum | Recommande |
-|-----------|---------|------------|
-| RAM | 8 GB | 16 GB |
-| Disque | 50 GB libres | 100 GB |
+Même configuration que l'initiation.
 
-### Logiciels Supplémentaires
+### Logiciels supplémentaires
 
 | Logiciel | Version | Usage |
-|----------|---------|-------|
-| Azure CLI | 2.83.0 | Authentification Azure |
-| OpenSSL | Dernier | Generation de cles RSA |
+|---|---|---|
+| OpenSSL | Dernier | Génération de clés RSA (Jour 5) |
 
-## Pre-Requis Cloud
+> Azure CLI est préinstallé sur les VM de formation (Chemin A). En installation locale (Chemin B), il est optionnel : le backend est consommé via les paramètres fournis.
 
-### Azure
+## Prérequis Cloud (préconfigurés par le formateur)
 
-| Element | Detail |
-|---------|--------|
-| Abonnement | Actif et accessible |
-| Service Principal | Fourni dans secrets/shared-sp.txt |
-| Conteneur Blob | Cree et accessible |
-| Key Vault | Configure avec les secrets |
-| Azure DevOps | Projet et connexion de service |
+### Azure — préconfiguré, non administré par l'apprenant
+
+| Élément | Détail |
+|---|---|
+| Backend Blob Storage | Accessible, paramètres dans `.env` |
+| Projet Azure DevOps | Prêt, agent et service connection configurés |
+| Storage account pour external stage | Préparé pour M09 (Jour 5) |
+| Entra ID / identité technique | Préparé pour M10 (Jour 5) |
 
 ### Snowflake
 
-| Element | Detail |
-|---------|--------|
+| Élément | Détail |
+|---|---|
 | Compte | Actif |
-| Role | SECURITYADMIN (pour RBAC) |
-| Warehouse | DEMO |
-| Utilisateur technique | Cree pour la pipeline |
+| Rôle | `SYSADMIN` + rôle de training pour RBAC |
+| Warehouse | Démonstration |
+| Utilisateur technique | Préparé pour le pipeline (Jour 4) |
 
-## Preparation
+## Préparation apprenant
 
-### Etape 1 : Verifier l'Initiation
+### Étape 1 : Vérifier l'initiation
 
 ```bash
-# Verifier que les ressources d'initiation sont presentes
+# Vérifier que les ressources d'initiation sont présentes
 terraform state list
 
-# Verifier que le plan est clean
+# Vérifier que le plan est clean
 terraform plan -detailed-exitcode
 ```
 
-**Resultat attendu :** Exit code 0 (pas de changement)
+**Résultat attendu :** Exit code 0 (pas de changement)
 
-### Etape 2 : Configurer Azure
-
-```bash
-# Authentifier Azure
-az login --service-principal -u <APP_ID> -p <SECRET> --tenant <TENANT_ID>
-
-# Verifier l'abonnement
-az account show
-
-# Creer le conteneur Blob (si pas encore fait)
-az storage container create --name tfstate --account-name <STORAGE_ACCOUNT>
-```
-
-### Etape 3 : Configurer le Backend Distant
+### Étape 2 : Consommer le backend distant
 
 ```bash
-# Depuis environments/dev/
-terraform init -migrate-state
+# Depuis le dossier du lab — le backend est déjà configuré
+terraform init
 ```
 
-### Etape 4 : Tester la Pipeline
+> Le backend Azure Blob est préconfiguré. Vous ne créez pas le storage account ni le conteneur. Vous référencez les paramètres fournis dans `.env`.
+
+### Étape 3 : Tester le pipeline (Jour 4)
 
 ```bash
 # Pousser vers Azure DevOps
 git push origin main
 
-# Verifier que le pipeline se lance
+# Vérifier que le pipeline se lance
 # (dans Azure DevOps > Pipelines)
 ```
 
-### Etape 5 : Generer les Cles RSA
+> Le projet, l'agent et la service connection sont préconfigurés. Vous n'administrez pas Azure DevOps.
+
+### Étape 4 : Générer les clés RSA (Jour 5)
 
 ```bash
-# Generer une cle privee
+# Générer une clé privée
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -out snowflake_key.p8
 
-# Generer la cle publique
+# Générer la clé publique
 openssl rsa -in snowflake_key.p8 -pubout -out snowflake_key.pub
-
-# Creer l'utilisateur Snowflake avec la cle publique
-snowsql -q "CREATE USER training_svc SET RSA_PUBLIC_KEY='...'"
 ```
 
-## Verification Pre-Session
+> 🔒 Les clés privées ne sont **jamais** dans Git. Elles sont gitignored et injectées au runtime.
+
+## Vérification pré-session
 
 | Check | Action | Preuve |
-|-------|--------|--------|
+|---|---|---|
 | Initiation | `terraform plan -detailed-exitcode` | Exit 0 |
-| Azure CLI | `az account show` | Affiche la souscription |
-| Key Vault | `az keyvault secret show ...` | Secret accessible |
-| Blob Storage | `az storage container show ...` | Conteneur accessible |
-| Azure DevOps | Pipeline green | Dernier build reussi |
+| Backend distant | `terraform init` | State migré sans erreur |
 | Snowflake | `snow sql -q 'SELECT 1' -c training` | Connexion OK |
-| Cles RSA | `ls -la *.p8 *.pub` | Cles generees |
+| Pipeline | Push de test | Pipeline déclenché |
+| Clés RSA | `ls -la *.p8 *.pub` | Clés générées (Jour 5) |
 
-## Environnement de Secours
+## Environnement de secours
 
-| Element | Statut |
-|---------|--------|
-| VM de secours | Prete |
+| Élément | Statut |
+|---|---|
+| VM de secours | Prête |
 | Backend distant | Accessible |
-| Credentials | Configures |
+| Credentials | Configurés |
 | Pipeline | Fonctionnelle |
-| Teste | Oui |
+| Testé | Oui |
 
 ## Timing
 
-| Moment | Action | Duree |
-|--------|--------|-------|
-| T-7 jours | Verifier les prerequis initiation | 2h |
-| T-5 jours | Configurer Azure et le backend | 3h |
-| T-3 jours | Tester la pipeline et les cles | 2h |
-| T-1 jour | Derniere verification | 1h |
+| Moment | Action | Durée |
+|---|---|---|
+| T-7 jours | Vérifier les prérequis initiation | 2 h |
+| T-5 jours | Vérifier le backend et le pipeline (formateur) | 3 h |
+| T-3 jours | Tester le pipeline et les clés | 2 h |
+| T-1 jour | Dernière vérification | 1 h |
 
-## Contenu Avance
+## Contenu avancé
 
-| Jour | Modules | Duree | Livrable |
-|------|---------|-------|----------|
-| J4 | M7 (CI/CD) + M8 (Environnements) | 6h | Pipeline + isolation |
-| J5 | M9 (Ingestion) + M10 (Auth) + M11 (RBAC) + M12 (Capstone) + M13+M14 (FinOps) | 6h | Plateforme complete |
+| Jour | Modules | Durée | Livrable |
+|---|---|---|---|
+| J4 | M8 (Environnements) + M7 (Pipeline CI/CD) | 6 h | Environnements isolés + pipeline Terraform |
+| J5 | M9 (Snowflake avancé) + M10 (Auth) + M11 (RBAC) + M12 (Capstone) | 6 h | Plateforme sécurisée + zero-drift + cleanup |
+| Annexe | M13 (FinOps) + M14 (Data products) | Optionnel | Hors parcours 3+2 |
 
 ## Escalade
 
 | Situation | Action |
-|-----------|--------|
-| Azure non accessible | Utiliser l'environnement de secours |
-| Pipeline echoue | Verifier les logs Azure DevOps |
-| Cle RSA invalide | Regenerer avec OpenSSL |
-| Snowflake refuse l'auth | Verifier l'utilisateur et les permissions |
+|---|---|
+| Backend inaccessible | Contacter le formateur (problème infrastructure) |
+| Pipeline échoue | Vérifier les logs Azure DevOps, le code Terraform |
+| Clé RSA invalide | Régénérer avec OpenSSL |
+| Snowflake refuse l'auth | Vérifier l'utilisateur et les permissions |

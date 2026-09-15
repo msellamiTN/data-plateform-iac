@@ -1,6 +1,6 @@
 # 🧪 Lab M1 — Créer votre premier projet Terraform Snowflake
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-03/module-02-state-management/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -667,4 +667,4 @@ terraform plan
 
 ## Navigation
 
-[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M2 ->](../../day-02/module-02-state-management/lab.md)
+[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M2 ->](../../day-03/module-02-state-management/lab.md)

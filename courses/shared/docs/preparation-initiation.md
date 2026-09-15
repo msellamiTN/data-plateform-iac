@@ -1,63 +1,71 @@
-# Preparation de l'Initiation
+# Préparation de l'Initiation
 
-Ce document decrit les pre-requis et la preparation necessaires avant de commencer
-les 3 jours d'initiation (Jours 0-2).
+Ce document décrit les prérequis et la préparation nécessaires avant de commencer les 3 jours d'initiation (Jours 1 à 3).
 
-## Pre-Requis Materiels
+> Azure est une dépendance d'environnement **préconfigurée par le formateur**. Les apprenants ne créent ni subscription, ni service principal, ni storage account, ni Key Vault. Les paramètres du backend distant sont fournis et consommés tels quels.
 
-### Poste de Formation
+## Prérequis matériels
 
-| Composant | Minimum | Recommande |
-|-----------|---------|------------|
+### Poste de formation
+
+| Composant | Minimum | Recommandé |
+|---|---|---|
 | OS | Windows 10, Linux, macOS | Windows 11 |
 | RAM | 8 GB | 16 GB |
 | Disque | 50 GB libres | 100 GB |
-| Reseau | Internet | Internet haut debit |
+| Réseau | Internet | Internet haut débit |
 
-### Logiciels Requis
+### Logiciels requis (apprenant)
 
-| Logiciel | Version | Installation |
-|----------|---------|--------------|
-| Terraform | 1.14.5 | Via script d'installation |
-| VS Code | Derniere | Marketplace |
-| Git | Dernier | Via script d'installation |
-| Snowflake CLI | Dernier | Via script d'installation |
-| Python | 3.12 | Via script d'installation |
-| Azure CLI | 2.83.0 | Via script d'installation |
-| dbt | <3.0.0 | Via script d'installation |
-| tflint | 0.50.0 | Via script d'installation |
+| Logiciel | Version | Rôle dans le parcours |
+|---|---|---|
+| Terraform | 1.14.5 | Workflow IaC |
+| VS Code | Dernière | Éditeur |
+| Git | Dernier | Versionnement |
+| Snowflake CLI | Dernier | Vérification `SELECT 1`, preuves SQL |
 
-## Pre-Requis Cloud
+### Logiciels optionnels ou préinstallés
 
-### Snowflake
+| Logiciel | Statut | Raison |
+|---|---|---|
+| Azure CLI | Préinstallé (Chemin A) ou optionnel | Utilisé uniquement pour consommer le backend, pas pour l'administrer |
+| Python | Optionnel | Non requis pour le parcours principal |
+| dbt | Hors périmètre | Non couvert dans les 3 jours d'initiation |
+| tflint | Optionnel | Bonus de validation, non évalué |
+| OpenSSL | Jour 5 uniquement | Génération de clés RSA (avancé) |
 
-| Element | Detail |
-|---------|--------|
+## Prérequis Cloud
+
+### Snowflake (fourni par le formateur)
+
+| Élément | Détail |
+|---|---|
 | Compte | Fourni par le formateur |
-| Organisation | Fournie dans .env.example |
-| Role | SYSADMIN (ou role de training) |
-| Warehouse | DEMO (pour les exercices) |
-| PAT | Individuel, genere dans Snowsight |
+| Organisation | Fournie dans `.env.example` |
+| Rôle | `SYSADMIN` ou rôle de training |
+| Warehouse | Démonstration (pour les exercices) |
+| PAT | Individuel, généré dans Snowsight |
 
-### Azure
+### Azure (préconfiguré par le formateur — consommé, non administré)
 
-| Element | Detail |
-|---------|--------|
-| Abonnement | Partage via SP |
-| Service Principal | Fourni dans secrets/shared-sp.txt |
-| Conteneur Blob | Pour le state Terraform |
-| Key Vault | Pour les secrets |
+| Élément | Détail |
+|---|---|
+| Subscription | Préconfigurée, paramètres dans `.env.example` |
+| Backend Blob Storage | Pour le state Terraform (Jour 3) |
+| Service connection Azure DevOps | Pour le pipeline (Jour 4) |
 
-## Preparation
+> L'apprenant reçoit les paramètres (`ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`, etc.) dans `.env.example`. Il ne crée aucune de ces ressources.
 
-### Etape 1 : Cloner le Depot
+## Préparation apprenant
+
+### Étape 1 : Cloner le dépôt
 
 ```bash
 git clone https://github.com/msellamiTN/data-platform-starter.git "$HOME/Data2AI-Labs/data-platform"
 cd "$HOME/Data2AI-Labs/data-platform"
 ```
 
-### Etape 2 : Installer les Outils
+### Étape 2 : Installer les outils
 
 **Windows :**
 ```powershell
@@ -70,27 +78,25 @@ chmod +x scripts/install-tools.sh
 ./scripts/install-tools.sh
 ```
 
-### Etape 3 : Configurer .env
+### Étape 3 : Configurer `.env`
 
 ```bash
-cp .env.example .env
+cp secrets/.env.example .env
 ```
 
-Editer `.env` et ajouter :
-- `LEARNER_PREFIX` : votre prefixe (APP01 a APP11)
-- `SNOWFLAKE_PAT` : votre PAT genere dans Snowsight
+Éditer `.env` et ajouter uniquement :
+- `LEARNER_PREFIX` : votre préfixe (`APP01` à `APP11`)
+- `SNOWFLAKE_PAT` : votre PAT généré dans Snowsight
 
-### Etape 4 : Tester la Connexion
+### Étape 4 : Tester la connexion Snowflake
 
 ```bash
-# Snowflake
 snow sql -q 'SELECT 1' -c training
-
-# Azure
-az account show
 ```
 
-### Etape 5 : Validation Finale
+> La connexion Azure n'est pas testée par l'apprenant en initiation. Le backend est consommé au Jour 3 avec les paramètres fournis.
+
+### Étape 5 : Validation finale
 
 **Windows :**
 ```powershell
@@ -102,38 +108,38 @@ az account show
 ./scripts/test-lab-connectivity.sh
 ```
 
-**Resultat attendu :**
+**Résultat attendu :**
 ```text
 Toolchain status: READY
 Test-LabConnectivity -> Status: READY (0 FAIL)
 ```
 
-## Verification Pre-Session
+## Vérification pré-session
 
 | Check | Action | Preuve |
-|-------|--------|--------|
+|---|---|---|
 | Terraform | `terraform version` | Affiche 1.14.x |
-| Snowflake | `snow sql -q 'SELECT 1' -c training` | Retourne un resultat |
-| Azure | `az account show` | Affiche la souscription |
+| Snowflake | `snow sql -q 'SELECT 1' -c training` | Retourne un résultat |
 | Git | `git status` | Fonctionne dans le projet |
-| .env | `git check-ignore .env` | Retourne `.env` |
+| `.env` | `git check-ignore .env` | Retourne `.env` |
+| Préfixe | `echo $LEARNER_PREFIX` | `APP01` à `APP11` |
 
-## Environnement de Secours
+## Environnement de secours
 
-Un environnement de secours doit etre pret :
+Un environnement de secours doit être prêt :
 
-| Element | Statut |
-|---------|--------|
-| VM de secours | Prete |
-| Copie du depot | Clonee |
-| Credentials | Configures |
-| Teste | Oui |
+| Élément | Statut |
+|---|---|
+| VM de secours | Prête |
+| Copie du dépôt | Clonée |
+| Credentials | Configurés |
+| Testé | Oui |
 
 ## Timing
 
-| Moment | Action | Duree |
-|--------|--------|-------|
-| T-15 jours | Identifier postes et droits | 2h |
-| T-7 jours | Installer et verifier les outils | 4h |
-| T-3 jours | Tester PAT et connectivite | 2h |
-| T-1 jour | Derniere verification | 1h |
+| Moment | Action | Durée |
+|---|---|---|
+| T-15 jours | Identifier postes et droits | 2 h |
+| T-7 jours | Installer et vérifier les outils | 4 h |
+| T-3 jours | Tester PAT et connectivité Snowflake | 2 h |
+| T-1 jour | Dernière vérification | 1 h |

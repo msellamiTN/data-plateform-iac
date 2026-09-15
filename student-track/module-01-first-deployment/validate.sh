@@ -28,10 +28,10 @@ check() {
 contains() { [[ -f "$workspace/$1" ]] && grep -Eq "$2" "$workspace/$1"; }
 
 check 1 'versions.tf exists' 'test -f "$workspace/versions.tf"' 'Create versions.tf.'
-check 1 'Snowflake provider pinned' 'contains versions.tf "snowflakedb/snowflake" && contains versions.tf "~>[[:space:]]*2\\.14\\.0"' 'Pin ~> 2.14.0.'
-check 1 'provider uses profile' 'contains provider.tf "profile[[:space:]]*=[[:space:]]*var\\.snowflake_profile"' 'Use the Snowflake CLI profile.'
-check 1 'No provider credential' '! contains provider.tf "password[[:space:]]*=|token[[:space:]]*=|private_key[[:space:]]*="' 'Remove credentials from provider.tf.'
-check 2 'Required variables' 'contains variables.tf "variable[[:space:]]+\"snowflake_profile\"" && contains variables.tf "variable[[:space:]]+\"learner_prefix\"" && contains variables.tf "variable[[:space:]]+\"environment\"" && contains variables.tf "variable[[:space:]]+\"warehouse_size\""' 'Create the four variables.'
+check 1 'Snowflake provider pinned' 'contains versions.tf "snowflakedb/snowflake" && contains versions.tf "=[[:space:]]*2\\.14\\.0"' 'Pin = 2.14.0.'
+check 1 'provider uses PAT auth' 'contains provider.tf "PROGRAMMATIC_ACCESS_TOKEN" && contains provider.tf "token[[:space:]]*="' 'Use PROGRAMMATIC_ACCESS_TOKEN with token from file or var.'
+check 1 'No hardcoded credential' '! contains provider.tf "token[[:space:]]*=[[:space:]]*\"[A-Za-z0-9]"' 'Do not hardcode the token.'
+check 2 'Required variables' 'contains variables.tf "variable[[:space:]]+\"snowflake_organization\"" && contains variables.tf "variable[[:space:]]+\"snowflake_account\"" && contains variables.tf "variable[[:space:]]+\"snowflake_user\"" && contains variables.tf "variable[[:space:]]+\"snowflake_token\"" && contains variables.tf "variable[[:space:]]+\"learner_prefix\"" && contains variables.tf "variable[[:space:]]+\"environment\""' 'Create the six required variables.'
 check 2 'Unique naming locals' 'contains locals.tf "var\\.learner_prefix" && contains locals.tf "database_name" && contains locals.tf "warehouse_name"' 'Build names from learner_prefix.'
 check 2 'Local tfvars ignored' 'git -C "$workspace" check-ignore terraform.tfvars >/dev/null 2>&1' 'Ignore terraform.tfvars.'
 check 3 'Database resource' 'contains main.tf "resource[[:space:]]+\"snowflake_database\"[[:space:]]+\"raw\""' 'Create snowflake_database.raw.'

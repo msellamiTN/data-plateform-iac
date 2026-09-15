@@ -68,10 +68,12 @@ sequenceDiagram
 Ordre de création :
 
 1. `snowflake_storage_integration`
-2. Azure AD application / Managed Identity (trust Snowflake)
+2. Azure AD application / Managed Identity (trust Snowflake) — **préconfiguré par le formateur**
 3. `snowflake_stage` referencing integration
 4. `snowflake_file_format`
 5. `snowflake_pipe`
+
+> L'apprenant consomme les paramètres de la storage integration fournis par le formateur. Il ne crée ni le storage account, ni l'application Entra ID, ni la Managed Identity.
 
 ## 3. Exemple stage (concept)
 

@@ -1,347 +1,148 @@
-﻿# Formation Terraform & Snowflake
+﻿# Formation Terraform & Snowflake — Parcours officiel
 
-## Parcours Officiel — 5 Jours x 6 Heures = 30 Heures
+**Format :** 5 jours × 6 heures = **30 heures**
+**Public :** 11 participants hétérogènes — data analysts, data engineers, business developers, BI engineers
+**Prérequis apprenant :** aucun. Le parcours ne suppose ni Azure, ni Azure DevOps, ni PowerShell, ni expérience de programmation.
+**Résultat visé :** chaque participant sait configurer le provider Snowflake, déployer des objets Snowflake avec Terraform, lire un plan, détecter une dérive, factoriser avec des modules et livrer une preuve de cleanup.
 
-> **Contexte :** GlobalBank migre son datawarehouse vers Snowflake. Le predecesseur a tout construit a la main dans Snowsight. L'Inspection Generale demande qui a cree quoi, quand, et pourquoi. Personne ne peut repondre.
->
-> **Notre mission :** reconstruire la plateforme en tant que code.
-
-**Stack :** Snowflake Enterprise · Terraform · Azure · Azure DevOps · dbt
-
-**References :** [`PROGRAMME_FORMATION.md`](../PROGRAMME_FORMATION.md) · [architecture](shared/docs/architecture-reference.md) · [naming](shared/docs/naming-conventions.md) · [troubleshooting](shared/docs/guide-troubleshooting.md) · [reprise](shared/docs/guide-reprise.md)
+> Azure n'est pas un sujet de cours. Les ressources nécessaires au state distant, au pipeline et à l'ingestion externe sont **préprovisionnées par le formateur**. Les apprenants consomment les paramètres fournis ; ils ne créent ni subscription, ni service principal, ni agent, ni Key Vault, ni storage account.
 
 ---
 
-## Le Fil Conducteur : GlobalBank
+## Objectifs d'apprentissage
 
-Chaque jour commence par un email de **Sofia Almeida** (Head of Data Platform) qui pose le probleme business du jour.
+À la fin de la formation, un participant peut :
 
-| Jour | Email de Sofia | Probleme |
-|------|----------------|----------|
-| J0 | Pas d'email — on prepare les outils | — |
-| J1 | Pas d'email — on decouvre le workflow | Le predecesseur a tout fait a la main |
-| J2 | *"Ou est ecrite votre convention de nommage ? Qui empeche un warehouse 4X-LARGE ?"* | Pas de garde-fous |
-| J3 | *"for_each a detruit un objet. Sur une table avec des donnees, c'est un incident."* | Pas de facteurisation |
-| J4 | *"Le state vit sur 11 ordinateurs. Si un casse, la plateforme est orpheline."* | Pas de backend distant |
-| J5 | *"Lundi, on va en production. Pas d'apply sans review et preuve."* | Pas de governance |
+1. Expliquer le modèle `code → plan → apply → state → preuve`.
+2. Authentifier Terraform au provider Snowflake sans écrire de secret dans Git.
+3. Exécuter `init`, `fmt`, `validate`, `plan`, `apply`, `output` et `state list`.
+4. Utiliser `variables`, `locals`, `outputs`, validations et conventions de nommage.
+5. Expliquer le rôle du state, du backend distant et du locking.
+6. Détecter une dérive, importer un objet existant et utiliser `moved`.
+7. Créer et appeler un module Snowflake réutilisable.
+8. Piloter des ressources stables avec `for_each` et des maps.
+9. Comprendre une pipeline Terraform `validate → plan → approbation → apply`.
+10. Déployer une petite plateforme Snowflake sécurisée, vérifier le zero-drift et nettoyer uniquement ses ressources préfixées.
 
 ---
 
-## Comment Utiliser Ce Parcours
+## Architecture pédagogique
 
-### Workflow par module
-
-1. **Ouvrez le bon dossier** : `labs/mXX-name/` (repertoire dedie au module)
-2. **Lisez `course.md`** — les concepts avant le code
-3. **Executez `lab.md`** — sans consulter la solution
-4. **Verifiez vos preuves** — comparez a `expected-output.md`
-5. **Utilisez `troubleshooting.md`** — avant de demander de l'aide
-6. **Terminez le challenge** — evaluation integree
-
-### Les 3 Regles d'Or
-
-> **Regle 1 :** Jamais une ligne de Terraform avant d'avoir clique le meme objet dans Snowsight.
->
-> **Regle 2 :** Jamais de `terraform destroy` sans plan prealable ni confirmation.
->
-> **Regle 3 :** Jamais de secret dans Git, les captures ou les rapports.
-
-## Legend
-
-| Badge | Portee |
-|---|---|
-| `[CORE]` | Obligatoire : Terraform, Snowflake, Azure, Azure DevOps |
-| `[ANNEXE]` | Comparaison AWS ou GCP, non executee |
-| `[WINDOWS]`, `[UNIX]` | Commande propre au shell |
-| `[CHECK]` | Checkpoint ou preuve |
-| `[SECURITY]` | Identite, privilege ou secret |
-| `[COST]` | Ressource facturable |
-| `[CLEANUP]` | Nettoyage controle |
-| `[CHAOS]` | Exercice de rupture controlee |
-| `[DEFI]` | Challenge temps limite |
-
-## Convention de nommage
-
-```text
-<PREFIXE_APPRENANT>_<ZONE>_<ENVIRONNEMENT>
+```mermaid
+flowchart TD
+    D0[Jour 0<br/>Diagnostic optionnel] --> D1[Jour 1<br/>Workflow Terraform]
+    D1 --> D2[Jour 2<br/>Modules et for_each]
+    D2 --> D3[Jour 3<br/>State, import, drift]
+    D3 --> D4[Jour 4<br/>Environnements et pipeline]
+    D4 --> D5[Jour 5<br/>Snowflake avancé et sécurité]
+    D5 --> OPT[Annexes<br/>M13 FinOps · M14 Data Products]
 ```
 
-Exemples : `ABC_RAW_DEV`, `ABC_ETL_UAT`. Les environnements sont **DEV**, **UAT** et **PROD** dans un compte Snowflake unique.
-
-> Chaque participant recoit un prefixe unique (APP01 a APP11). C'est votre identite dans la plateforme.
-
-## Architecture des labs — isolation par module
-
-Chaque module possede son **propre repertoire de travail** sous `labs/`. Cette architecture remplace l'ancien repertoire partage `environments/dev/` et garantit que chaque lab est **autonome** (aucune dependance entre labs).
-
-```text
-labs/
-  m01-iac-workflow/         # M1: Premieres ressources Terraform
-  m02-state-management/     # M2: Migration du state distant
-  m03-import-brownfield/    # M3: Import de ressources existantes
-  m04-variables-outputs/    # M4: Variables, validations, outputs
-  m05-modules/              # M5: Extraction de module
-  m06-dynamic-logic/        # M6: for_each, dynamic blocks
-  m07-cicd-pipeline/        # M7: Pipeline Azure DevOps
-  m08-environments/         # M8: Deploiement multi-environnement
-  m09-snowflake-advanced/   # M9: Stages, file formats, COPY
-  m10-security-auth/        # M10: Authentification JWT key-pair
-  m11-rbac/                 # M11: Roles et grants RBAC
-  m12-capstone/             # M12: Assemblage capstone
-  m13-finops-observability/ # M13: FinOps avec dbt
-  m14-data-products/        # M14: Data products
-```
-
-### Proprietes de chaque lab
-
-- **Repertoire dedie** avec fichiers template (`provider.tf`, `versions.tf`, `variables.tf`, `terraform.tfvars.example`).
-- **Nommage des ressources par module** : `APP01_M01_RAW_DEV`, `APP01_M05_RAW_DEV`, etc. — chaque lab cree des ressources uniques, sans collision avec les autres labs.
-- **Demarrage propre** : executez `Reset-Lab.ps1` avant de commencer pour repartir d'un environnement sain (supprime le state, les ressources et les fichiers generes du lab precedent).
-- **Cleanup final** : chaque lab se termine par `terraform destroy` pour nettoyer les ressources Snowflake et Azure.
-- **Autonome** : aucun lab ne depend d'un autre — vous pouvez realiser les modules dans l'ordre ou reprendre un module isole.
-
-> `[CLEANUP]` `Reset-Lab.ps1` (dans `scripts/`) est l'outil de nettoyage officiel. Il reinitialise un lab donne avant de commencer ou pour repartir a zero.
-
----
-
-## Jour 0 — Preparer votre environnement (1 h 30)
-
-> [Point d'entree Day 0 ->](day-00/README.md)
-
-Le Jour 0 est **automatise** : clonez le projet type, executez les scripts, configurez les connexions Snowflake et Azure. Aucune ressource Cloud n'est creee.
-
-| Etape | Duree | Support |
+| Bloc | Jours | Intention |
 |---|---:|---|
-| Installation et verification des outils | 40 min | [Lab Jour 0](day-00/module-00-setup/lab.md) |
-| Connexion Snowflake + Azure + validation | 50 min | [Lab Jour 0](day-00/module-00-setup/lab.md) |
-| **Total** | **1 h 30** | |
-
-**Livrable :** `Toolchain status: READY` + `snow sql -q 'SELECT 1' -c training` + `Test-LabConnectivity -> READY`
-
-**Preuves individuelles :**
-- [ ] Terraform version affiche 1.14.x
-- [ ] `snow sql -q 'SELECT 1' -c training` retourne un resultat
-- [ ] Prefixe apprenant identifie (APP01 a APP11)
+| Préparation | J0 optionnel | Éliminer les incidents d'outillage avant la formation |
+| Initiation | J1–J3 | Construire les gestes Terraform essentiels sur Snowflake |
+| Avancé | J4–J5 | Industrialiser, connecter et sécuriser sans transformer le cours en formation Azure |
+| Approfondissement | Après J5 | M13/M14 en option, hors critère de réussite du parcours 3+2 |
 
 ---
 
-## Jour 1 — Fondations IaC et Variables (3 h 50)
+## Carte des modules
 
-> [Point d'entree Day 1 ->](day-01/README.md)
+| Jour | Module | Objectif | Dossier officiel | Espace de travail |
+|---:|---|---|---|---|
+| 0 | M00 — Environnement | `SELECT 1`, préfixe, secrets hors Git | [module-00-setup](day-00/module-00-setup/course.md) | `labs/m00-setup/` |
+| 1 | M01 — Workflow IaC | provider Snowflake, database/schema/warehouse, apply, second plan | [module-01-iac-workflow](day-01/module-01-iac-workflow/course.md) | `labs/m01-iac-workflow/` |
+| 1 | M04 — Variables & outputs | contrats typés, `locals`, validations, naming | [module-04-variables-outputs](day-01/module-04-variables-outputs/course.md) | `labs/m04-variables-outputs/` |
+| 2 | M05 — Modules | contrat module, landing-zone Snowflake, `moved` | [module-05-modules](day-02/module-05-modules/course.md) | `labs/m05-modules/` |
+| 2 | M06 — Logique dynamique | maps, `for_each`, `dynamic`, ajout par données | [module-06-dynamic-logic](day-02/module-06-dynamic-logic/course.md) | `labs/m06-dynamic-logic/` |
+| 3 | M02 — State | state local → distant, locking, `state list/show`, `detailed-exitcode` | [module-02-state-management](day-03/module-02-state-management/course.md) | `labs/m02-state-management/` |
+| 3 | M03 — Brownfield | import, drift contrôlé, adoption sans recréation | [module-03-import-brownfield](day-03/module-02-state-management/module-03-import-brownfield/course.md) | `labs/m03-import-brownfield/` |
+| 4 | M08 — Environnements | DEV/UAT/PROD par répertoires, isolation du state | [module-08-environments](day-04/module-08-environments/course.md) | `labs/m08-environments/` |
+| 4 | M07 — Pipeline | pipeline Terraform : fmt/validate/plan/artifact/approval/apply/audit | [module-07-cicd-pipeline](day-04/module-07-cicd-pipeline/course.md) | `labs/m07-cicd-pipeline/` |
+| 5 | M09 — Snowflake avancé | stages, file formats, `COPY INTO`, connectivité | [module-09-snowflake-advanced](day-05/module-09-snowflake-advanced/course.md) | `labs/m09-snowflake-advanced/` |
+| 5 | M10 — Auth & secrets | PAT → RSA/JWT, provider aliases, gestion des secrets | [module-10-security-auth](day-05/module-10-security-auth/course.md) | `labs/m10-security-auth/` |
+| 5 | M11 — RBAC | rôles fonctionnels, grants, future grants, action refusée | [module-11-rbac](day-05/module-11-rbac/course.md) | `labs/m11-rbac/` |
+| 5 | M12 — Capstone | assemblage, review, zero-drift, cleanup prouvé | [module-12-capstone](day-05/module-12-capstone/course.md) | `labs/m12-capstone/` |
+| Annexe | M13 — FinOps | monitors, tags, lectures de coûts | [module-13-finops-observability](day-05/module-13-finops-observability/course.md) | `labs/m13-finops-observability/` |
+| Annexe | M14 — Data products | extension facultative, hors parcours obligatoire | [module-14-data-products](day-05/module-14-data-products/course.md) | `labs/m14-data-products/` |
 
-> **Email Sofia :** *Le predecesseur a tout construit a la main. L'Inspection Generale demande qui a cree quoi, quand, et pourquoi. Personne ne peut repondre. Notre mission : reconstruire la plateforme en tant que code.*
-
-| Module | Duree | Lab | Course | Troubleshooting |
-|---|---:|---|---|---|
-| M1 — IaC Workflow | 3h | [lab](day-01/module-01-iac-workflow/lab.md) | [cours](day-01/module-01-iac-workflow/course.md) | [guide](day-01/module-01-iac-workflow/troubleshooting.md) |
-| M4 — Variables & Outputs | 50 min | [lab](day-01/module-04-variables-outputs/lab.md) | [cours](day-01/module-04-variables-outputs/course.md) | [guide](day-01/module-04-variables-outputs/troubleshooting.md) |
-
-**Livrable :** database, schema et warehouse Snowflake crees par un projet ecrit par l'apprenant, et contrats types.
-
-**Preuves individuelles :**
-- [ ] `terraform plan` affiche `No changes.` apres l'apply
-- [ ] Preuve SQL : `SHOW WAREHOUSES LIKE '<PREFIX>%';` retourne mon objet
-- [ ] Variable modifiee → `terraform plan` detecte la difference
-
-**Point de convergence (15 min) :**
-- Projection SQL montrant tous les objets crees
-- Trois observations de la journee
-- Justification du Jour 2
-
----
-
-## Jour 2 — State et Import Brownfield (2 h 10)
-
-> [Point d'entree Day 2 ->](day-02/README.md)
-
-> **Email Sofia :** *"Ou est ecrite votre convention de nommage ? Qui empeche un ingenieur de creer un warehouse 4X-LARGE par erreur ? Aujourd'hui, vos parametres doivent etre declares, tyres, bornes — et vos conventions ecrites a UN seul endroit."*
-
-| Module | Duree | Lab | Course | Troubleshooting |
-|---|---:|---|---|---|
-| M2 — State Management | 1h10 | [lab](day-02/module-02-state-management/lab.md) | [cours](day-02/module-02-state-management/course.md) | [guide](day-02/module-02-state-management/troubleshooting.md) |
-| M3 — Import Brownfield | 1h | [lab](day-02/module-03-import-brownfield/lab.md) | [cours](day-02/module-03-import-brownfield/course.md) | [guide](day-02/module-03-import-brownfield/troubleshooting.md) |
-
-**Livrable :** state distant securise sur Azure Blob Storage et ressource brownfield importee sans recreation.
-
-**Preuves individuelles :**
-- [ ] `terraform plan` affiche `No changes.` apres l'ajout d'un local
-- [ ] Ajout d'une entree sans toucher au code → `Plan: 1 to add`
-- [ ] Preuve Snowsight : les 3 objets visibles
-
-**[CHAOS LAB] — Casser une collection :**
-Supprimez une cle du milieu de votre map. Observez que `for_each` ne detruit que l'objet cible (contrairement a `count` qui reindexe tout).
-
-**Point de convergence (15 min) :**
-- Projection SQL montrant tous les objets
-- Trois observations de la journee
-- Justification du Jour 3
+> Les dossiers `courses/day-XX` reflètent l'emplacement actuel du dépôt, pas nécessairement le numéro pédagogique affiché. Utilisez la table ci-dessus comme source de vérité.
 
 ---
 
-## Jour 3 — Modules et Logique Dynamique (2 h)
+## Modalité des labs
 
-> [Point d'entree Day 3 ->](day-03/README.md)
+Chaque lab est **autonome** et suit le même contrat :
 
-> **Email Sofia :** *"for_each a detruit un objet. Sur une table avec des donnees, c'est un incident. Comment l'eviter ? Comment adopter vos objets legacy sans les detruire ? Et un constat : onze personnes ecrivent la meme structure. Pourquoi l'ecrire onze fois ?"*
+1. mission métier et modèle mental ;
+2. préflight non destructif ;
+3. étapes guidées avec checkpoints ;
+4. incident contrôlé ou diagnostic ;
+5. défi à trois niveaux ;
+6. validation automatique ou manuelle ;
+7. cleanup limité au préfixe du participant.
 
-| Module | Duree | Lab | Course | Troubleshooting |
-|---|---:|---|---|---|
-| M5 — Modules reutilisables | 1h | [lab](day-03/module-05-modules/lab.md) | [cours](day-03/module-05-modules/course.md) | [guide](day-03/module-05-modules/troubleshooting.md) |
-| M6 — Logique dynamique | 1h | [lab](day-03/module-06-dynamic-logic/lab.md) | [cours](day-03/module-06-dynamic-logic/course.md) | [guide](day-03/module-06-dynamic-logic/troubleshooting.md) |
+### Préparer un espace de travail
 
-**Livrable :** module Landing Zone reutilisable et deploiement pilote par metadonnees.
-
-**Preuves individuelles :**
-- [ ] `terraform plan` affiche `has moved to` — 0 destruction
-- [ ] Ajout d'un 5e objet via le module → `Plan: 1 to add`
-- [ ] Explication : pourquoi `for_each` est preferred a `count`
-
-**[CHAOS LAB] — Casser un module :**
-Modifiez une valeur par defaut dans le module. Observez la propagation a toutes les ressources.
-
-**[DEFI] — Ajout sans toucher au code :**
-Ajoutez un 5e objet en modifiant UNIQUEMENT `terraform.tfvars`. Le plan doit montrer `1 to add`.
-
-**Point de convergence (15 min) :**
-- Projection SQL montrant tous les objets
-- Trois observations de la journee
-- Justification du Jour 4
-
----
-
-## Jour 4 — CI/CD et Environnements (2 h 05)
-
-> [Point d'entree Day 4 ->](day-04/README.md)
-
-> **Email Sofia :** *"Le state vit sur 11 ordinateurs. Si un casse, la plateforme est orpheline. Inacceptable. Lundi, on va en production. Pas d'apply sans review et preuve."*
-
-| Module | Duree | Lab | Course | Troubleshooting |
-|---|---:|---|---|---|
-| M7 — CI/CD Pipeline | 1h15 | [lab](day-04/module-07-cicd-pipeline/lab.md) | [cours](day-04/module-07-cicd-pipeline/course.md) | [guide](day-04/module-07-cicd-pipeline/troubleshooting.md) |
-| M8 — Environnements | 50 min | [lab](day-04/module-08-environments/lab.md) | [cours](day-04/module-08-environments/course.md) | [guide](day-04/module-08-environments/troubleshooting.md) |
-
-**Livrable :** pipeline CI/CD avec quality gates sur Azure DevOps et environnements isoles (DEV/UAT/PROD).
-
-**Preuves individuelles :**
-- [ ] Pipeline execute depuis l'agent (pas en local)
-- [ ] States et noms distincts entre DEV et PROD
-- [ ] Plan enregistré published comme potentiellement sensible
-
-**[CHAOS LAB] — State Lock (par paires) :**
-Deux personnes partagent une cle de state. Decouvrez le probleme de corruption, puis le mecanisme de lease le resout.
-
-**[DEFI] — Convergence de modules :**
-Trois versions d'un module, une retenue (par vote). Enseignement : la gouvernance de modules est un processus social.
-
-**Point de convergence (15 min) :**
-- Projection SQL montrant tous les objets
-- Trois observations de la journee
-- Justification du Jour 5
-
----
-
-## Jour 5 — Snowflake Avance, Securite, Capstone, FinOps & Data Products (5 h 20)
-
-> [Point d'entree Day 5 ->](day-05/README.md)
-
-> **Email Sofia :** *"Lundi, on va en production. Pas d'apply sans review et preuve. Les cles ne voyagent plus sur Slack. Nous devons justifier chaque credit consomme."*
-
-| Module | Duree | Lab | Course | Troubleshooting |
-|---|---:|---|---|---|
-| M9 — Ingestion et ressources avancees | 1h30 | [lab](day-05/module-09-snowflake-advanced/lab.md) | [cours](day-05/module-09-snowflake-advanced/course.md) | [guide](day-05/module-09-snowflake-advanced/troubleshooting.md) |
-| M10 — Identite technique et Key Vault | 50 min | [lab](day-05/module-10-security-auth/lab.md) | [cours](day-05/module-10-security-auth/course.md) | [guide](day-05/module-10-security-auth/troubleshooting.md) |
-| M11 — RBAC as Code | 1h | [lab](day-05/module-11-rbac/lab.md) | [cours](day-05/module-11-rbac/course.md) | [guide](day-05/module-11-rbac/troubleshooting.md) |
-| M12 — Capstone | 1h | [lab](day-05/module-12-capstone/lab.md) | [cours](day-05/module-12-capstone/course.md) | [guide](day-05/module-12-capstone/troubleshooting.md) |
-| M13 — FinOps & Observabilite | 30 min | [lab](day-05/module-13-finops-observability/lab.md) | [cours](day-05/module-13-finops-observability/course.md) | [guide](day-05/module-13-finops-observability/troubleshooting.md) |
-| M14 — Data Products | 30 min | [lab](day-05/module-14-data-products/lab.md) | [cours](day-05/module-14-data-products/course.md) | [guide](day-05/module-14-data-products/troubleshooting.md) |
-
-**Livrable :** plateforme composee et evaluee, pipeline de qualite, indicateurs FinOps et Data Products gouvernes. Capstone avec zero-drift et cleanup verifie.
-
-**Preuves individuelles :**
-- [ ] `terraform plan -detailed-exitcode` = 0 (zero drift)
-- [ ] Action autorisee et action refusee testees
-- [ ] Cleanup verifie cote Snowique ET cote Azure
-- [ ] Projet explique et limites documentees
-
-**[DEFI] — Capstone :**
-Deploiement complet de la plateforme avec validation zero-drift. Presentation des preuves.
-
----
-
-## Structure standard d'un module
-
-Chaque module du catalogue (`courses/day-XX/module-XX-name/`) contient la **pedagogie** (cours, lab, troubleshooting, solution). Le **code de travail** de l'apprenant vit dans le repertoire dedie `labs/mXX-name/` du projet type clone.
-
-```text
-courses/day-XX/module-XX-name/      # pedagogie (lecture)
-├── course.md           ← concepts (lire avant le lab)
-├── lab.md              ← atelier pratique pas a pas
-├── expected-output.md  ← resultats attendus pour comparaison
-├── troubleshooting.md  ← diagnostics non destructifs
-├── slides.md           ← support de presentation
-├── starter/            ← squelette (sans code de ressource)
-├── solution/           ← solution de reference (ne pas copier)
-└── assets/             ← diagrammes et captures
-
-labs/mXX-name/                      # code de travail (execution)
-├── provider.tf         ← provider Terraform
-├── versions.tf         ← contraintes de versions
-├── variables.tf        ← variables du lab
-├── terraform.tfvars.example  ← valeurs d'exemple
-├── main.tf             ← ecrit par l'apprenant pendant le lab
-└── outputs.tf          ← outputs du lab
+```powershell
+# Depuis la racine du dépôt
+.\scripts\Reset-Lab.ps1 -LearnerPrefix APP01 -Lab M01
 ```
 
-Le `starter/` ne contient pas le code que l'apprenant doit apprendre a ecrire. Il peut contenir des donnees, validateurs et assets non pedagogiques. La solution est separee et n'est jamais copiee automatiquement dans le workspace. Le repertoire `labs/mXX-name/` fournit les fichiers template (provider, versions, variables) et l'apprenant y ecrit son `main.tf` pendant le lab.
+ou, de façon équivalente :
 
-## Navigation rapide
+```powershell
+.\scripts\New-StudentWorkspace.ps1 -Module 1 -LearnerPrefix APP01
+```
 
-| Jour | Modules | Point d'entree |
-|---|---|---|
-| Jour 0 | M00 | [day-00/README.md](day-00/README.md) |
-| Jour 1 | M1, M4 | [day-01/README.md](day-01/README.md) |
-| Jour 2 | M2, M3 | [day-02/README.md](day-02/README.md) |
-| Jour 3 | M5, M6 | [day-03/README.md](day-03/README.md) |
-| Jour 4 | M7, M8 | [day-04/README.md](day-04/README.md) |
-| Jour 5 | M9 → M14 | [day-05/README.md](day-05/README.md) |
+Le workspace attendu est `labs/mXX-<nom>/`. Les validateurs self-paced sont lancés par :
 
-## Contrat de validation
+```powershell
+.\scripts\SelfPacedLab.ps1 -Module 1 -All
+.\scripts\SelfPacedLab.ps1 -Module 1 -All -Report
+```
 
-| Niveau | Controle |
-|---|---|
-| 1 | Structure et absence de placeholders/secrets |
-| 2 | `terraform fmt -check` et `terraform validate` |
-| 3 | Assertions sur le plan Terraform |
-| 4 | Preuve fonctionnelle Snowflake, Snow CLI ou dbt |
-| 5 | Second plan sans changement inattendu |
-| 6 | Challenge evalue par criteres |
+### Preuve attendue
 
-## Regles de securite
+Chaque participant doit pouvoir montrer :
 
-- aucun secret dans Git, les captures ou les rapports;
-- aucun mot de passe Snowflake dans une racine enseignee;
-- aucun `.terraform/`, state ou plan distribue dans un starter;
-- ressources prefixees par apprenant et suffixees par environnement;
-- warehouse economique avec auto-suspend;
-- avertissement et portee avant toute destruction ou policy reseau;
-- cleanup verifie cote Snowique **et** cote Azure;
-- role d'administration limite aux operations qui l'exigent reellement.
-
-## Versions
-
-Les versions des outils et providers sont definies dans la [politique de versions](../docs/version-policy.md). Aucun support ne redefinit une version localement.
+- `terraform fmt -check` : vert ;
+- `terraform validate` : vert ;
+- `terraform plan` : actions comprises avant `apply` ;
+- `terraform state list` : objets uniquement préfixés `APPxx_Mxx` ;
+- `SHOW ... LIKE 'APPxx_Mxx_%'` : preuve côté Snowflake ;
+- second `terraform plan -detailed-exitcode` : `0` après cleanup ou après apply stable.
 
 ---
 
-## Supports Historiques (Legacy)
+## Sécurité et coûts
 
-> **Attention :** Les dossiers ci-dessous contiennent d'anciens supports de formation. Ils sont conserves a des fins de reference mais ne doivent plus etre utilises comme instructions d'execution.
+- Aucun PAT, mot de passe, clé privée ou secret ne doit être écrit dans un fichier `.tf`, `terraform.tfvars`, rapport ou capture.
+- Le PAT sert de mécanisme d'amorçage. L'authentification RSA/JWT est introduite au Jour 5.
+- `ACCOUNTADMIN` n'est jamais une solution de dépannage.
+- Les warehouses de formation restent `X-SMALL`, `initially_suspended = true`, avec `auto_suspend` court.
+- Le state est une donnée sensible : il n'est pas commité et le backend distant est préparé par le formateur.
+- `terraform destroy` est toujours précédé d'un plan et limité au périmètre `APPxx` + `Mxx`.
 
-| Dossier | Contenu | Statut |
-|---------|---------|--------|
-| `initiation/` | Ancien parcours GlobalBank (equipes) | Absorbe dans le parcours actuel |
-| `terraform-initiation-3jours/` | Ancien parcours individuel 3 jours | Absorbe dans les Jours 1-3 |
-| `terraform-avance-2jours/` | Ancien parcours avance 2 jours | Absorbe dans les Jours 4-5 |
-| `export/` | Exports plats (artifacts de build) | Archive |
+---
 
-> Ces dossiers ne sont pas des points d'entree officiels. Utilisez `day-00/` a `day-05/` comme seul parcours.
+## Documents transverses
+
+- [Préparation initiation](shared/docs/preparation-initiation.md)
+- [Préparation avancé](shared/docs/preparation-avance.md)
+- [Guide formateur](shared/docs/guide-formateur.md)
+- [Grille d'autonomie](shared/docs/grille-autonomie.md)
+- [Troubleshooting](shared/docs/guide-troubleshooting.md)
+- [Reprise après incident](shared/docs/guide-reprise.md)
+- [Architecture de référence](shared/docs/architecture-reference.md)
+- [Conventions de nommage](shared/docs/naming-conventions.md)
+
+## Jours
+
+- [Jour 0 — Diagnostic](day-00/README.md)
+- [Jour 1 — Workflow](day-01/README.md)
+- [Jour 2 — State](day-02/README.md)
+- [Jour 3 — Modules](day-03/README.md)
+- [Jour 4 — Industrialisation](day-04/README.md)
+- [Jour 5 — Sécurité & capstone](day-05/README.md)

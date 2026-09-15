@@ -1,6 +1,7 @@
-# Jour 4 — CI/CD et Environnements
+# Jour 4 — Environnements isolés et pipeline Terraform
 
-**Objectif :** Pipeline GitOps et isolation multi-environnements.
+**Objectif :** Isoler DEV/UAT/PROD par répertoires et exécuter Terraform via un pipeline Azure DevOps.
+**Durée :** 6 heures (2 h concepts · 4 h pratique)
 
 > [<- Catalogue](../README.md) · [Jour 3](../day-03/README.md) · **Jour 4** · [Jour 5 ->](../day-05/README.md)
 
@@ -8,29 +9,24 @@
 
 ## Contexte GlobalBank
 
-> **Email Sofia Almeida :**
->
-> *"Le state vit sur 11 ordinateurs. Si un casse, la plateforme est orpheline.
-> Inacceptable.*
->
-> *Lundi, on va en production. Pas d'apply sans review et preuve."*
+> *"Le state vit sur 11 ordinateurs. Si un casse, la plateforme est orpheline. Inacceptable. Lundi, on va en production. Pas d'apply sans review et preuve."*
 
-**Aujourd'hui :** vous separez l'execution du stockage. Le state va dans Azure
-Blob Storage avec locking. La pipeline CI/CD valide, planifie, attend
-l'approbation, puis applique. DEV, UAT et PROD sont isoles.
+**Aujourd'hui :** vous séparez l'exécution du stockage. Le state distant est consommé (backend préconfiguré). La pipeline CI/CD valide, planifie, attend l'approbation, puis applique le **même** artefact de plan. DEV, UAT et PROD sont isolés par répertoires.
+
+> Le projet Azure DevOps, l'agent et la connexion de service sont **préconfigurés par le formateur**. Vous n'administrez ni le projet, ni l'agent, ni les service connections. Le lab se concentre sur le pipeline Terraform.
 
 ---
 
-## Les 3 Axes d'Isolation
+## Les 3 axes d'isolation
 
 | Axe | DEV | UAT | PROD |
-|-----|-----|-----|------|
+|---|---|---|---|
 | **State** | `tfstate-dev` | `tfstate-uat` | `tfstate-prod` |
 | **Nommage** | `*_DEV` | `*_UAT` | `*_PROD` |
-| **Identite** | SP dev | SP uat | SP prod |
+| **Identité** | fournie | fournie | fournie |
 
-> **Piege workspace :** `terraform workspace select prod` oublie → apply accidentel en prod.
-> **Solution :** les repertoires isolent les trois axes, pas les workspaces.
+> **Piège workspace :** `terraform workspace select prod` oublié → apply accidentel en prod.
+> **Solution :** les répertoires isolent les trois axes, pas les workspaces.
 
 ---
 
@@ -38,111 +34,103 @@ l'approbation, puis applique. DEV, UAT et PROD sont isoles.
 
 ```mermaid
 flowchart LR
-    M7[M7 CI/CD] --> M8[M8 Envs]
-    M8 --> J5[Jour 5]
+    M8[M8 Environnements] --> M7[M7 Pipeline CI/CD]
+    M7 --> J5[Jour 5]
 ```
+
+> **Pourquoi M8 avant M7 ?** Un pipeline **promeut** un changement à travers des environnements. Sans environnements, il n'y a rien à promouvoir. On construit d'abord la route, ensuite le véhicule.
 
 ## Modules
 
-| Module | Duree | Repertoire de travail | Lab | Course | Troubleshooting | Resultat attendu |
+| Module | Durée | Dossier de travail | Lab | Cours | Troubleshooting | Output attendu |
 |---|---:|---|---|---|---|---|
-| [M7 — CI/CD Pipeline](module-07-cicd-pipeline/lab.md) | 1h15 | `labs/m07-cicd-pipeline/` | [lab](module-07-cicd-pipeline/lab.md) | [cours](module-07-cicd-pipeline/course.md) | [guide](module-07-cicd-pipeline/troubleshooting.md) | [output](module-07-cicd-pipeline/expected-output.md) |
-| [M8 — Environnements](module-08-environments/lab.md) | 50 min | `labs/m08-environments/` | [lab](module-08-environments/lab.md) | [cours](module-08-environments/course.md) | [guide](module-08-environments/troubleshooting.md) | [output](module-08-environments/expected-output.md) |
+| [M8 — Environnements](module-08-environments/lab.md) | 2 h | `labs/m08-environments/` | [lab](module-08-environments/lab.md) | [cours](module-08-environments/course.md) | [guide](module-08-environments/troubleshooting.md) | [output](module-08-environments/expected-output.md) |
+| [M7 — CI/CD Pipeline](module-07-cicd-pipeline/lab.md) | 2 h | `labs/m07-cicd-pipeline/` | [lab](module-07-cicd-pipeline/lab.md) | [cours](module-07-cicd-pipeline/course.md) | [guide](module-07-cicd-pipeline/troubleshooting.md) | [output](module-07-cicd-pipeline/expected-output.md) |
 
 ## Workflow du jour
 
-1. **Lisez** le `course.md` du module (concepts, 15-20 min)
-2. **Realisez** le `lab.md` pas a pas (creation de fichiers, execution, checkpoints)
+1. **Lisez** le `course.md` du module (concepts, 15–20 min)
+2. **Réalisez** le `lab.md` pas à pas
 3. **Comparez** avec `expected-output.md`
 4. **Consultez** `troubleshooting.md` en cas d'erreur
 5. **Passez** au module suivant
 
-> Chaque module possede son propre repertoire de travail sous `labs/mXX-name/` (ex. `labs/m07-cicd-pipeline/` pour M7). Chaque lab est **autonome** : il demarre par `Reset-Lab.ps1` pour un environnement propre, possede ses propres fichiers template et se termine par `terraform destroy`. Les ressources sont nommees par module (ex. `APP01_M07_RAW_DEV`).
+> Chaque lab est **autonome** : il démarre par `Reset-Lab.ps1` et se termine par un cleanup contrôlé. Les ressources sont nommées par module (ex. `APP01_M07_RAW_DEV`).
 
-> `[WINDOWS]` Si l'execution de scripts `.ps1` est bloquee, autorisez les scripts locaux :
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-> ```
+---
 
 ## Livrable du jour
 
-Pipeline CI/CD avec quality gates sur Azure DevOps.
-Environnements isoles (DEV/UAT/PROD) avec state et nommage séparés.
+Environnements isolés (DEV/UAT/PROD) avec states et nommages séparés. Pipeline Azure DevOps limité à Terraform : `fmt` → `validate` → `plan` → artefact → approbation → `apply` du même plan → audit.
 
 ---
 
 ## Preuves individuelles
 
-- [ ] Pipeline execute depuis l'agent (pas en local)
 - [ ] States et noms distincts entre DEV et PROD
-- [ ] Plan enregistre publie comme potentiellement sensible
-- [ ] Vous pouvez expliquer la difference entre workspace et repertoire
+- [ ] Le pipeline s'exécute depuis l'agent (pas en local)
+- [ ] Une configuration invalide est bloquée par `validate`
+- [ ] Le plan est publié comme artefact avant approbation
+- [ ] L'apply exécute le **même** plan que celui approuvé
+- [ ] Vous pouvez expliquer la différence entre workspace et répertoire
 
 ---
 
-## [CHAOS LAB] — State Lock (par paires)
+## [CHAOS LAB] — Validation délibérément cassée
 
-> ⚠️ Exercice de rupture controlee. Deux personnes collaborent.
+> ⚠️ Exercice de rupture contrôlée.
 
-**Objectif :** Decouvrir le probleme de corruption du state.
+**Objectif :** Vérifier que le pipeline bloque une configuration invalide.
 
-1. Deux personnes partagent la meme cle de state (meme backend Azure Blob)
-2. Personne A execute `terraform apply` en cours
-3. Personne B execute `terraform apply` en meme temps
-4. Observez : un des deux recoit un message de lock
+1. Introduisez une erreur de syntaxe dans `main.tf` (ex. accolade manquante)
+2. Poussez vers la branche du pipeline
+3. Observez : le stage `Validate` échoue et bloque la PR
 
-**Question :** Que se passerait-il sans mechanisme de locking ?
-
----
-
-## [DEFI] — Convergence de modules
-
-**Temps :** 15 minutes
-
-1. Le formateur presente 3 versions d'un meme module
-2. En binome, choisissez la meilleure version
-3. Votez et justifiez votre choix
-
-**Enseignement :** La gouvernance de modules est un processus social, pas seulement technique.
+**Question :** Pourquoi `Validate` tourne-t-il sur les PR sans credentials ?
 
 ---
 
-## Anti-seche Jour 4
+## Anti-sèche Jour 4
 
-### Pipeline CI/CD GitOps
+### Pipeline CI/CD Terraform
 
 ```mermaid
 flowchart LR
     GIT[Git Push] --> VAL[Validate]
     VAL --> PLAN[Plan]
-    PLAN --> APPROVE{Approbation}
-    APPROVE -->|Approuve| APPLY[Apply]
-    APPROVE -->|Rejete| REJECT[Rejet]
-    APPLY --> AUDIT[Audit/Drift]
+    PLAN --> ART[Artefact tfplan]
+    ART --> APPROVE{Approbation}
+    APPROVE -->|Approuvé| APPLY[Apply tfplan]
+    APPROVE -->|Rejeté| REJECT[Rejet]
+    APPLY --> AUDIT[Audit -detailed-exitcode]
 ```
 
-### Les 6 etapes d'un pipeline
+### Les étapes du pipeline
 
-| Etape | Controle | Bloquant ? |
-|-------|----------|------------|
-| Validate | fmt, validate, tflint | ✅ Oui |
-| Plan | Plan Terraform | ✅ Oui |
-| Approbation | Revue humaine | ✅ Oui |
-| Apply | Application | ✅ Oui |
-| Audit | Drift detection | ⚠️ Warning |
+| Étape | Controle | Bloquant ? |
+|---|---|---|
+| Validate | `fmt -check`, `validate` | ✅ Oui |
+| Plan | `plan -out=tfplan` + publication artefact | ✅ Oui |
+| Approbation | Revue humaine du plan | ✅ Oui |
+| Apply | `apply tfplan` (le plan approuvé) | ✅ Oui |
+| Audit | `plan -detailed-exitcode` | ⚠️ Warning |
 
-### Commandes essentielles
+> 🔒 Le plan immuable garantit que ce qui est approuvé est exactement ce qui est appliqué. `terraform apply tfplan` ne replanifie pas.
 
-```bash
-terraform plan -detailed-exitcode   # Exit 0 = pas de changement, 2 = changements
-terraform output                    # Afficher les sorties
-terraform state list                # Lister les ressources
-```
+### Codes de sortie `plan -detailed-exitcode`
+
+| Code | Signification |
+|---:|---|
+| 0 | Aucun changement — pas de drift |
+| 1 | Erreur |
+| 2 | Changements en attente — drift détecté |
+
+---
 
 ## Point de convergence (15 min)
 
 - Projection SQL montrant tous les objets
-- Trois observations de la journee
+- Trois observations de la journée
 - Justification du Jour 5
 
 ## Navigation

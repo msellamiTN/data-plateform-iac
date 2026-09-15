@@ -6,7 +6,7 @@
 # No secret is written in .tf files. The token stays in the locals block.
 
 locals {
-  pat_file        = "${path.module}/../../../../secrets/snowflake_pat.txt"
+  pat_file        = "${path.module}/../../secrets/snowflake_pat.txt"
   snowflake_token = try(trim(file(local.pat_file), "\n\r"), var.snowflake_token, "")
 }
 
