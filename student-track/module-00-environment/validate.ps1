@@ -28,7 +28,7 @@ if (Test-Path $envFile) {
     Add-Check 'No unresolved identifiers' ($envText -notmatch '<[^>]+>') 'Replace every <placeholder> value in .env.'
 }
 
-$connection = if ($env:SNOWFLAKE_TERRAFORM_CONNECTION) { $env:SNOWFLAKE_TERRAFORM_CONNECTION } else { 'terraform_svc' }
+$connection = if ($env:SNOWFLAKE_CONNECTION) { $env:SNOWFLAKE_CONNECTION } else { 'training' }
 if (Test-Tool 'snow') {
     $previousErrorAction = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'

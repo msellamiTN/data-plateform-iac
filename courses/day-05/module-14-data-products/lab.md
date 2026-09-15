@@ -12,15 +12,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` Ã  la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, rÃ©initialisez le lab pour partir d'un Ã©tat propre :
 >
@@ -45,6 +45,8 @@ Les domaines SALES et FINANCE doivent livrer des donnÃ©es avec autonomie sans 
 > **En tant que :** Data Product Owner  
 > **Je veux :** dÃ©ployer des data products avec un module Terraform rÃ©utilisable et Snow CLI  
 > **Afin de :** livrer des donnÃ©es en autonomie tout en respectant sÃ©curitÃ©, coÃ»ts et standards
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

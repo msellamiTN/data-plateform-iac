@@ -1,12 +1,12 @@
-# 🎓 Atelier Jour 2 — Factoriser : modules réutilisables et logique dynamique
+# 🎓 Atelier Jour 2 — Le State Terraform
 
-## *Du copier-coller au composant versionné — modules, `for_each`, `for`, `dynamic` et `count`*
+## *La mémoire, le backend distant, le verrouillage, l'import brownfield et la dérive*
 
 > **Parcours :** Industrialisation d'une Data Platform · **Jour 2 / 5**
-> **Modules couverts :** M05 (Module Landing Zone) + M06 (Metadata-driven IaC)
+> **Modules couverts :** M02 (State distant Azure Blob Storage) + M03 (Import brownfield et alignement)
 > **Durée :** 6 heures (2 h de concepts guidés · 4 h de pratique)
 > **Prérequis :** Jour 1 terminé — vous savez écrire et appliquer une configuration Terraform
-> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 5, 6, 8
+> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 4, 5, 7, 9
 
 ---
 
@@ -1008,9 +1008,9 @@ Get-Location
 
 ---
 
-## B.3 — Étape 2 : bootstrapper le backend Azure
+## B.3 — Étape 2 : vérifier le backend Azure préconfiguré
 
-> 🧠 **Rappel du paradoxe.** Le Storage Account est créé **avec Azure CLI**, pas avec Terraform. Terraform ne peut pas gérer le magasin où il range sa propre mémoire.
+> 🧠 **Rappel du paradoxe.** Le Storage Account ne peut pas être créé par Terraform — Terraform ne peut pas gérer le magasin où il range sa propre mémoire. Dans cette formation, **le formateur a déjà bootstrapé le backend** (Resource Group, Storage Account, conteneur `tfstate`, rôle `Storage Blob Data Contributor` pour votre identité). Vous le **consommez**, vous ne l'administrez pas.
 
 ### 📝 Action 2.1 — Vérifier les variables Azure
 
@@ -1043,15 +1043,15 @@ echo "Location:        $ARM_LOCATION"
 ```
 </details>
 
-### 📝 Action 2.2 — Créer le Resource Group
+### 📝 Action 2.2 — Vérifier le Resource Group
 
 <details open>
 <summary>🪟 <b>Windows (PowerShell)</b></summary>
 
 ```powershell
-az group create `
+az group show `
     --name $env:ARM_RESOURCE_GROUP `
-    --location $env:ARM_LOCATION `
+    --query "{name:name, location:location, state:properties.provisioningState}" `
     --output table
 ```
 </details>
@@ -1060,97 +1060,16 @@ az group create `
 <summary>🐧 <b>Linux/macOS (Bash)</b></summary>
 
 ```bash
-az group create \
+az group show \
     --name "$ARM_RESOURCE_GROUP" \
-    --location "$ARM_LOCATION" \
+    --query "{name:name, location:location, state:properties.provisioningState}" \
     --output table
 ```
 </details>
 
-✅ **Checkpoint :** `provisioningState : Succeeded`.
+✅ **Checkpoint :** `state : Succeeded`. Si `ResourceGroupNotFound`, le backend n'est pas provisionné — contactez le formateur.
 
-> 💡 Si `ARM_LOCATION` n'est pas définie, utilisez une région disponible pour votre abonnement : `northeurope` ou `francecentral`. Certaines régions comme `westeurope` refusent parfois de nouveaux clients.
-> ```powershell
-> az account list-locations --query "[].name" -o table
-> ```
-
-### 📝 Action 2.3 — Créer le Storage Account
-
-<details open>
-<summary>🪟 <b>Windows (PowerShell)</b></summary>
-
-```powershell
-az storage account create `
-    --name $env:ARM_STORAGE_ACCOUNT `
-    --resource-group $env:ARM_RESOURCE_GROUP `
-    --location $env:ARM_LOCATION `
-    --sku "Standard_LRS" `
-    --encryption-services blob `
-    --output table
-```
-</details>
-
-<details>
-<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
-
-```bash
-az storage account create \
-    --name "$ARM_STORAGE_ACCOUNT" \
-    --resource-group "$ARM_RESOURCE_GROUP" \
-    --location "$ARM_LOCATION" \
-    --sku "Standard_LRS" \
-    --encryption-services blob \
-    --output table
-```
-</details>
-
-✅ **Checkpoint :** `provisioningState : Succeeded`.
-
-> 💡 Si le compte existe déjà : `A storage account with the provided name is found. Will continue to update the existing account.` C'est **normal** — la commande est idempotente et conserve le contenu existant.
-
-| Paramètre | Choix | Raison |
-|---|---|---|
-| `--sku Standard_LRS` | Redondance locale | 💰 Le SKU le moins cher. En production réelle : `Standard_ZRS` ou `GRS` — un state perdu est une catastrophe |
-| `--encryption-services blob` | Chiffrement au repos | 🔒 Obligatoire, le state contient des secrets |
-
-> 🔒 **En production réelle, on ajouterait :**
-> - `--min-tls-version TLS1_2` — chiffrement en transit ;
-> - `--allow-blob-public-access false` — jamais d'accès anonyme ;
-> - le **versioning** des blobs et le **soft delete** — pour restaurer un state écrasé ;
-> - un **Private Endpoint** — pour retirer le compte de l'internet public.
-
-### 📝 Action 2.4 — Créer le conteneur
-
-<details open>
-<summary>🪟 <b>Windows (PowerShell)</b></summary>
-
-```powershell
-az storage container create `
-    --name $env:ARM_CONTAINER `
-    --account-name $env:ARM_STORAGE_ACCOUNT `
-    --auth-mode login `
-    --output table
-```
-</details>
-
-<details>
-<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
-
-```bash
-az storage container create \
-    --name "$ARM_CONTAINER" \
-    --account-name "$ARM_STORAGE_ACCOUNT" \
-    --auth-mode login \
-    --output table
-```
-</details>
-
-✅ **Checkpoint :** `Created: True` (créé) **ou** `Created: False` (existait déjà — également valide, la commande est idempotente).
-
-> 🔒 **`--auth-mode login` est important.** Il force Azure CLI à utiliser l'identité de la session (le Service Principal) plutôt qu'une *account key*. Sans lui, Azure CLI tente de récupérer une clé partagée et affiche un avertissement.
-> Si vous obtenez `AuthorizationPermissionMismatch`, demandez au formateur d'attribuer au SP le rôle `Storage Blob Data Contributor`.
-
-### 📝 Action 2.5 — Vérifier
+### 📝 Action 2.3 — Vérifier le Storage Account
 
 <details open>
 <summary>🪟 <b>Windows (PowerShell)</b></summary>
@@ -1159,7 +1078,8 @@ az storage container create \
 az storage account show `
     --name $env:ARM_STORAGE_ACCOUNT `
     --resource-group $env:ARM_RESOURCE_GROUP `
-    --query "name" -o tsv
+    --query "{name:name, sku:sku.name, tls:minimumTlsVersion}" `
+    --output table
 ```
 </details>
 
@@ -1170,11 +1090,48 @@ az storage account show `
 az storage account show \
     --name "$ARM_STORAGE_ACCOUNT" \
     --resource-group "$ARM_RESOURCE_GROUP" \
+    --query "{name:name, sku:sku.name, tls:minimumTlsVersion}" \
+    --output table
+```
+</details>
+
+✅ **Checkpoint :** le nom du Storage Account s'affiche.
+
+> 🔒 **Comment le formateur l'a durci (à retenir pour la production) :**
+> - `Standard_LRS` — SKU le moins cher, suffisant pour la formation (en prod : `ZRS`/`GRS` — un state perdu est une catastrophe) ;
+> - chiffrement au repos activé — le state contient des secrets ;
+> - TLS 1.2 minimum, accès public aux blobs désactivé, versioning + soft delete pour restaurer un state écrasé.
+
+### 📝 Action 2.4 — Vérifier le conteneur `tfstate`
+
+<details open>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+az storage container show `
+    --name $env:ARM_CONTAINER `
+    --account-name $env:ARM_STORAGE_ACCOUNT `
+    --auth-mode login `
     --query "name" -o tsv
 ```
 </details>
 
-✅ **Checkpoint 2 :** le nom du Storage Account s'affiche.
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+az storage container show \
+    --name "$ARM_CONTAINER" \
+    --account-name "$ARM_STORAGE_ACCOUNT" \
+    --auth-mode login \
+    --query "name" -o tsv
+```
+</details>
+
+✅ **Checkpoint 2 :** `tfstate` s'affiche.
+
+> 🔒 **`--auth-mode login` est important.** Il force Azure CLI à utiliser l'identité de la session (le Service Principal) plutôt qu'une *account key*. Sans lui, Azure CLI tente de récupérer une clé partagée et affiche un avertissement.
+> Si vous obtenez `AuthorizationPermissionMismatch`, demandez au formateur de vérifier le rôle `Storage Blob Data Contributor` du SP.
 
 ---
 
@@ -2873,10 +2830,10 @@ terraform plan -lock-timeout=5m         # ✅ réessayer 5 min (CI/CD)
 terraform plan -lock-timeout=0s         # échouer immédiatement (test)
 terraform force-unlock <LOCK_ID>        # 🔴 DERNIER RECOURS
 
-# ── Azure CLI — bootstrap et inspection ──────────────────────
-az group create --name RG --location LOC
-az storage account create --name SA --resource-group RG --sku Standard_LRS --encryption-services blob
-az storage container create --name tfstate --account-name SA --auth-mode login
+# ── Azure CLI — inspection du backend préconfiguré ─────────────
+az group show --name RG -o table
+az storage account show --name SA --resource-group RG -o table
+az storage container show --name tfstate --account-name SA --auth-mode login -o tsv
 az storage blob list --account-name SA --container-name tfstate --auth-mode login --query "[].name" -o tsv
 az storage blob delete --account-name SA --container-name tfstate --name "chemin/terraform.tfstate" --auth-mode login
 ```

@@ -12,15 +12,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +45,8 @@ Le propriétaire de la plateforme doit attribuer les crédits consommés, détec
 > **En tant que :** FinOps Engineer  
 > **Je veux :** configurer dbt avec `dbt_snowflake_monitoring` pour suivre les crédits et détecter les warehouses inactifs  
 > **Afin de :** prévenir les dépassements budgétaires avant la facture
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

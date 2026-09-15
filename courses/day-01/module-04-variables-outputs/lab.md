@@ -1,6 +1,6 @@
 ﻿# 🧪 Lab M4 — Variables, locals, outputs et lifecycle
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../../day-03/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
+> [<- Jour 1](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
 
 | Élément | Valeur |
 |---|---|
@@ -12,15 +12,15 @@
 | **Cleanup** | Conserver — `Reset-Lab.ps1` nettoie au redémarrage |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +45,8 @@ Des valeurs dispersées et non validées rendent les environnements incohérents
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** structurer les variables Terraform avec validations, locals et outputs exploitables  
 > **Afin de :** garantir des environnements cohérents et reproductibles
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -574,4 +576,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M3](../../day-03/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-02/module-05-modules/lab.md)
+[<- Lab M3](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-03/module-05-modules/lab.md)

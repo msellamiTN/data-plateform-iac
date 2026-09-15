@@ -13,7 +13,7 @@ done
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 workspace="${STUDENT_WORKSPACE:-$PWD}"
-connection="${SNOWFLAKE_TERRAFORM_CONNECTION:-terraform_svc}"
+connection="${SNOWFLAKE_CONNECTION:-training}"
 passed=0
 total=0
 results=()

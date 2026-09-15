@@ -45,6 +45,8 @@ Une entreprise ne remplace pas une plateforme Snowflake existante pour adopter T
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** importer une ressource Snowflake existante (brownfield) dans Terraform  
 > **Afin de :** aligner l'infrastructure réelle avec le code versionné sans interruption de service
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

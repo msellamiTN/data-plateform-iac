@@ -1025,14 +1025,14 @@ flowchart LR
 
 > ⚠️ **Le point de friction n°1 de cette formation.** Les variables d'environnement **ne survivent pas** à la fermeture d'un terminal. Chaque **nouveau** terminal exige de rejouer `Learner-Login`. 90 % des messages « ça ne marche pas » viennent de là.
 
-### Étape B.1.1 — Se connecter
+### Étape B.1.1 — Se connecter (mode Snowflake-only)
 
 <details open>
 <summary>🪟 <b>Windows (PowerShell)</b></summary>
 
 ```powershell
 cd "$HOME\Data2AI-Labs\data-platform"
-.\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 ```
 </details>
 
@@ -1041,48 +1041,37 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ```bash
 cd "$HOME/Data2AI-Labs/data-platform"
-source ./scripts/learner-login.sh APP01
+source ./scripts/learner-login.sh APP01 --snowflake-only
 ```
 </details>
 
-**Ce que le script fait pour vous :**
+**Ce que le script fait pour vous (Jours 1-3) :**
 
 | Action | Pourquoi |
 |---|---|
 | Charge `TF_VAR_snowflake_token` depuis `secrets/snowflake_pat.txt` | Le PAT n'est jamais tapé à la main |
-| Exporte `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`, `ARM_CLIENT_ID`… | Nécessaire dès le Jour 2 (backend Azure) |
 | Exporte `LEARNER_PREFIX` | Isolation entre apprenants dans le compte partagé |
 | Ajoute `$HOME/.data2ai/bin` au `PATH` de la session | Rend `terraform` et `snow` appelables |
-| Ouvre une session Azure avec le **Service Principal** | Identité de service, pas votre compte AAD |
+| **Ne touche pas à Azure** | Le backend Azure et Key Vault sont préconfigurés par le formateur et ne deviennent nécessaires qu'au Jour 2 (state distant) — le mode complet sans `-SnowflakeOnly` sera utilisé à ce moment-là |
 
-### Étape B.1.2 — Vérifier l'identité Azure
-
-```powershell
-az account show --query "user.name" -o tsv
-```
-
-✅ **Checkpoint 0a :** la commande retourne **l'appId du Service Principal** (une chaîne du type `ab35eee0-...`), **et non** `apprenantXX@…`.
-
-> 🔒 Si vous voyez un compte AAD, vous êtes connecté avec votre identité personnelle — les droits sur le Storage Account seront refusés au Jour 2. Voir `troubleshooting.md` entrée 34 (Jour 0).
-
-### Étape B.1.3 — Repartir d'un état propre
+### Étape B.1.2 — Repartir d'un état propre
 
 ```powershell
 .\scripts\Reset-Lab.ps1 -LearnerPrefix APP01 -Lab M01
 ```
 
-### Étape B.1.4 — Diagnostic pré-vol
+### Étape B.1.3 — Diagnostic pré-vol
 
 ```powershell
 cd labs\m01-iac-workflow
 ..\..\scripts\Test-TerraformReady.ps1
 ```
 
-✅ **Checkpoint 0b :** `Toolchain: READY`, `Snowflake Connection: READY`, `Workspace: CLEAN`.
+✅ **Checkpoint 0 :** `Toolchain: READY`, `Snowflake Connection: READY`, `Workspace: CLEAN`.
 
-> 💡 **`[WARN] TF_VAR_snowflake_token not set` est normal** : `provider.tf` lit le PAT directement depuis le fichier via `file()`. Ce WARN n'empêche pas `terraform plan` de fonctionner.
+> 💡 **`[WARN] TF_VAR_snowflake_token not set` est normal** : `provider.tf` lit le PAT directement depuis le fichier via `file()`. Ce WARN n'empêche pas `terraform plan` de fonctionner. Les `[WARN] ARM_* not set` sont également **normaux en Jours 1-3** : Azure n'est requis qu'à partir du backend distant (Jour 2).
 >
-> ⛔ En revanche, `[FAIL] LEARNER_PREFIX not set` ou `[FAIL] ARM_SUBSCRIPTION_ID not set` signifie que **`Learner-Login` n'a pas été joué dans CE terminal**. Retournez à la racine et rejouez-le.
+> ⛔ En revanche, `[FAIL] LEARNER_PREFIX not set` signifie que **`Learner-Login -SnowflakeOnly` n'a pas été joué dans CE terminal**. Retournez à la racine et rejouez-le.
 
 ---
 
@@ -1773,7 +1762,7 @@ Pour reprendre plus tard dans un nouveau terminal :
 
 ```powershell
 cd "$HOME\Data2AI-Labs\data-platform"
-.\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 cd labs\m01-iac-workflow
 terraform init
 terraform plan
@@ -2754,9 +2743,9 @@ labs/mXX-nom/
 | `Invalid account identifier` | Organisation/compte mal formés | Vérifiez `snowflake_organization` et `snowflake_account` dans `terraform.tfvars` |
 | `Insufficient privileges` | Le rôle n'a pas les droits de création | Vérifiez `SNOWFLAKE_ROLE=SYSADMIN` dans `.env` |
 | `Private Key authentication requires authenticator set to SNOWFLAKE_JWT` | `SNOWFLAKE_PRIVATE_KEY_FILE` résiduelle dans la session | `Remove-Item Env:\SNOWFLAKE_PRIVATE_KEY_FILE` puis relancez |
-| `[FAIL] LEARNER_PREFIX not set` | `Learner-Login` non joué **dans ce terminal** | Retournez à la racine et rejouez-le |
-| `[FAIL] ARM_SUBSCRIPTION_ID not set` | Idem | Idem |
-| `[FAIL] Terraform found but 'terraform version' failed` | `PATH` de session incomplet | Relancez `Learner-Login.ps1`, ou appelez `& "$HOME\.data2ai\bin\terraform.exe"` |
+| `[FAIL] LEARNER_PREFIX not set` | `Learner-Login -SnowflakeOnly` non joué **dans ce terminal** | Retournez à la racine et rejouez-le |
+| `[WARN] ARM_* not set` | Normal en Jours 1-3 — Azure requis seulement au Jour 2 (backend) | Aucune action |
+| `[FAIL] Terraform found but 'terraform version' failed` | `PATH` de session incomplet | Relancez `Learner-Login.ps1 -SnowflakeOnly`, ou appelez `& "$HOME\.data2ai\bin\terraform.exe"` |
 | `terraform plan` demande interactivement `var.snowflake_token` | Fichier PAT manquant ou vide | Recréez `secrets/snowflake_pat.txt` (Jour 0) |
 | `Too many command line arguments` | Sous PowerShell, `-out=fichier` | Écrivez `-out "fichier"` |
 | Le plan utilise le **mauvais préfixe** | `.env` modifié mais pas `terraform.tfvars` | Alignez les deux fichiers |

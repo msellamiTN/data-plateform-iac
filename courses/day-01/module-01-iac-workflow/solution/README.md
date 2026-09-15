@@ -25,13 +25,13 @@ terraform validate
 terraform plan
 ```
 
-Le provider utilise le profil Snowflake CLI `terraform_svc`; aucun password, PAT ou chemin de clé n’est inclus.
+Le provider lit le PAT depuis `secrets/snowflake_pat.txt` (fallback `TF_VAR_snowflake_token`); aucun password, PAT ou chemin de clé n’est inclus dans le code.
 
 ## Différences avec l’ancien projet
 
 - préfixe apprenant obligatoire;
 - trois ressources seulement pour le premier apprentissage;
-- profil CLI au lieu de credentials Terraform;
+- PAT lu depuis un fichier local gitignored au lieu de credentials dans le code;
 - aucune dépendance Azure;
 - warehouse limité et initialement suspendu;
 - solution séparée du starter.

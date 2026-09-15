@@ -31,19 +31,19 @@
 ```mermaid
 flowchart TD
     D0[Jour 0<br/>Diagnostic optionnel] --> D1[Jour 1<br/>Workflow Terraform]
-    D1 --> D2[Jour 2<br/>Modules et for_each]
-    D2 --> D3[Jour 3<br/>State, import, drift]
+    D1 --> D2[Jour 2<br/>State, import, drift]
+    D2 --> D3[Jour 3<br/>Modules et for_each]
     D3 --> D4[Jour 4<br/>Environnements et pipeline]
-    D4 --> D5[Jour 5<br/>Snowflake avancé et sécurité]
-    D5 --> OPT[Annexes<br/>M13 FinOps · M14 Data Products]
+    D4 --> D5[Jour 5<br/>Snowflake avancé, sécurité, FinOps]
+    D5 --> OPT[Annexe<br/>M14 Data Products]
 ```
 
 | Bloc | Jours | Intention |
 |---|---:|---|
 | Préparation | J0 optionnel | Éliminer les incidents d'outillage avant la formation |
 | Initiation | J1–J3 | Construire les gestes Terraform essentiels sur Snowflake |
-| Avancé | J4–J5 | Industrialiser, connecter et sécuriser sans transformer le cours en formation Azure |
-| Approfondissement | Après J5 | M13/M14 en option, hors critère de réussite du parcours 3+2 |
+| Avancé | J4–J5 | CI/CD Terraform, environnements, RBAC, FinOps et Capstone zero-drift |
+| Approfondissement | Après J5 | M14 Data products en option, hors critère de réussite du parcours 3+2 |
 
 ---
 
@@ -54,18 +54,18 @@ flowchart TD
 | 0 | M00 — Environnement | `SELECT 1`, préfixe, secrets hors Git | [module-00-setup](day-00/module-00-setup/course.md) | `labs/m00-setup/` |
 | 1 | M01 — Workflow IaC | provider Snowflake, database/schema/warehouse, apply, second plan | [module-01-iac-workflow](day-01/module-01-iac-workflow/course.md) | `labs/m01-iac-workflow/` |
 | 1 | M04 — Variables & outputs | contrats typés, `locals`, validations, naming | [module-04-variables-outputs](day-01/module-04-variables-outputs/course.md) | `labs/m04-variables-outputs/` |
-| 2 | M05 — Modules | contrat module, landing-zone Snowflake, `moved` | [module-05-modules](day-02/module-05-modules/course.md) | `labs/m05-modules/` |
-| 2 | M06 — Logique dynamique | maps, `for_each`, `dynamic`, ajout par données | [module-06-dynamic-logic](day-02/module-06-dynamic-logic/course.md) | `labs/m06-dynamic-logic/` |
-| 3 | M02 — State | state local → distant, locking, `state list/show`, `detailed-exitcode` | [module-02-state-management](day-03/module-02-state-management/course.md) | `labs/m02-state-management/` |
-| 3 | M03 — Brownfield | import, drift contrôlé, adoption sans recréation | [module-03-import-brownfield](day-03/module-02-state-management/module-03-import-brownfield/course.md) | `labs/m03-import-brownfield/` |
+| 2 | M02 — State | state local → distant, locking, `state list/show`, `detailed-exitcode` | [module-02-state-management](day-02/module-02-state-management/course.md) | `labs/m02-state-management/` |
+| 2 | M03 — Brownfield | import, drift contrôlé, adoption sans recréation | [module-03-import-brownfield](day-02/module-02-state-management/module-03-import-brownfield/course.md) | `labs/m03-import-brownfield/` |
+| 3 | M05 — Modules | contrat module, landing-zone Snowflake, `moved` | [module-05-modules](day-03/module-05-modules/course.md) | `labs/m05-modules/` |
+| 3 | M06 — Logique dynamique | maps, `for_each`, `dynamic`, ajout par données | [module-06-dynamic-logic](day-03/module-06-dynamic-logic/course.md) | `labs/m06-dynamic-logic/` |
 | 4 | M08 — Environnements | DEV/UAT/PROD par répertoires, isolation du state | [module-08-environments](day-04/module-08-environments/course.md) | `labs/m08-environments/` |
 | 4 | M07 — Pipeline | pipeline Terraform : fmt/validate/plan/artifact/approval/apply/audit | [module-07-cicd-pipeline](day-04/module-07-cicd-pipeline/course.md) | `labs/m07-cicd-pipeline/` |
 | 5 | M09 — Snowflake avancé | stages, file formats, `COPY INTO`, connectivité | [module-09-snowflake-advanced](day-05/module-09-snowflake-advanced/course.md) | `labs/m09-snowflake-advanced/` |
 | 5 | M10 — Auth & secrets | PAT → RSA/JWT, provider aliases, gestion des secrets | [module-10-security-auth](day-05/module-10-security-auth/course.md) | `labs/m10-security-auth/` |
 | 5 | M11 — RBAC | rôles fonctionnels, grants, future grants, action refusée | [module-11-rbac](day-05/module-11-rbac/course.md) | `labs/m11-rbac/` |
-| 5 | M12 — Capstone | assemblage, review, zero-drift, cleanup prouvé | [module-12-capstone](day-05/module-12-capstone/course.md) | `labs/m12-capstone/` |
-| Annexe | M13 — FinOps | monitors, tags, lectures de coûts | [module-13-finops-observability](day-05/module-13-finops-observability/course.md) | `labs/m13-finops-observability/` |
-| Annexe | M14 — Data products | extension facultative, hors parcours obligatoire | [module-14-data-products](day-05/module-14-data-products/course.md) | `labs/m14-data-products/` |
+| 5 | M13 — FinOps | monitors, quotas, auto-suspend, cost tagging, observabilité | [module-13-finops-observability](day-05/module-13-finops-observability/course.md) | `labs/m13-finops-observability/` |
+| 5 | M12 — Capstone | plateforme gouvernée complète, review, zero-drift, cleanup | [module-12-capstone](day-05/module-12-capstone/course.md) | `labs/m12-capstone/` |
+| Annexe | M14 — Data products | extension facultative, packaging data mesh | [module-14-data-products](day-05/module-14-data-products/course.md) | `labs/m14-data-products/` |
 
 > Les dossiers `courses/day-XX` reflètent l'emplacement actuel du dépôt, pas nécessairement le numéro pédagogique affiché. Utilisez la table ci-dessus comme source de vérité.
 

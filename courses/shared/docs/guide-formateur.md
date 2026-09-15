@@ -35,10 +35,10 @@ Ce document contient les notes et procédures pour le formateur de la formation 
 |---|---|
 | J0 | Cloner, installer, configurer `.env`, tester `SELECT 1` |
 | J1 | Écrire HCL, `init`/`fmt`/`validate`/`plan`/`apply`, variables, outputs |
-| J2 | Créer un module, `for_each`, `moved`, `dynamic` |
-| J3 | Migrer le state vers backend préconfiguré, `import`, drift |
+| J2 | Migrer le state vers backend préconfiguré, `import`, drift |
+| J3 | Créer un module, `for_each`, `moved`, `dynamic` |
 | J4 | Isoler DEV/UAT/PROD, pipeline Terraform `validate`→`plan`→`apply` |
-| J5 | Stages, `COPY INTO`, RSA/JWT, RBAC, capstone, cleanup |
+| J5 | Stages, `COPY INTO`, RSA/JWT, RBAC, FinOps, capstone, cleanup |
 
 ---
 
@@ -150,16 +150,53 @@ Exemples :
 
 | Jour | Chaos lab | Objectif |
 |---|---|---|
-| J2 | Casser un module | Comprendre les contrats de module |
-| J3 | State lock (par paires) | Découvrir le locking |
+| J2 | State lock (par paires) | Découvrir le locking |
+| J3 | Casser un module | Comprendre les contrats de module |
 | J4 | Validation cassée | Vérifier que le pipeline bloque |
 
 ### Défis
 
 | Jour | Défi | Temps |
 |---|---|---|
-| J2 | Ajout sans toucher au code | 10 min |
+| J3 | Ajout sans toucher au code | 10 min |
 | J5 | Capstone zero-drift | 1 h |
+
+---
+
+## Pilotage de la flotte (11 apprenants)
+
+### Tableau de bord formateur
+
+```powershell
+# Vue consolidée : bases, warehouses, warehouses STARTED, monitors par préfixe
+.\scripts\Test-FleetReadiness.ps1
+
+# Restreindre à quelques préfixes
+.\scripts\Test-FleetReadiness.ps1 -Prefixes APP01,APP04,APP07
+```
+
+Lecture rapide : un apprenant à **0 database** est bloqué ou n'a pas démarré ;
+des warehouses **STARTED** signalent un gaspillage de crédits à suspendre.
+
+### Nettoyage de fin de session
+
+```powershell
+# Suspendre tous les warehouses apprenants (sûr, non destructif)
+.\scripts\Clean-FleetResources.ps1
+
+# Prévisualiser puis exécuter le drop complet des objets APPxx_*
+.\scripts\Clean-FleetResources.ps1 -Drop -WhatIf
+.\scripts\Clean-FleetResources.ps1 -Drop -Force
+```
+
+> Le cleanup est strictement borné aux noms contenant les préfixes `APPxx`.
+> Les ressources partagées (backend Azure, Key Vault, rôles plateforme) ne
+> sont jamais touchées.
+
+### Équivalents Bash
+
+`./scripts/test-fleet-readiness.sh` et `./scripts/clean-fleet-resources.sh`
+offrent les mêmes fonctions sur Linux/macOS.
 
 ---
 

@@ -13,6 +13,8 @@
 
 **Aujourd'hui :** vous séparez l'exécution du stockage. Le state distant est consommé (backend préconfiguré). La pipeline CI/CD valide, planifie, attend l'approbation, puis applique le **même** artefact de plan. DEV, UAT et PROD sont isolés par répertoires.
 
+> **Votre équipe GlobalBank :** chaque équipe pousse sa propre branche et observe le pipeline sur ses objets. Voir [personas-globalbank.md](../shared/docs/personas-globalbank.md).
+
 > Le projet Azure DevOps, l'agent et la connexion de service sont **préconfigurés par le formateur**. Vous n'administrez ni le projet, ni l'agent, ni les service connections. Le lab se concentre sur le pipeline Terraform.
 
 ---

@@ -1,6 +1,6 @@
 ﻿# Cours M1 — Premier déploiement Terraform Snowflake
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-03/module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 
 **Durée de lecture :** 20 minutes
 
@@ -107,4 +107,4 @@ Le workflow professionnel est `écrire → formater → initialiser → valider 
 
 ## Navigation
 
-[<- Course M00](../../day-00/module-00-setup/course.md) · [<- Jour 1](../README.md) · **Course M1** · [Course M2 ->](../../day-03/module-02-state-management/course.md)
+[<- Course M00](../../day-00/module-00-setup/course.md) · [<- Jour 1](../README.md) · **Course M1** · [Course M2 ->](../../day-02/module-02-state-management/course.md)

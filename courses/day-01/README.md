@@ -13,6 +13,8 @@
 
 **Aujourd'hui :** vous créez votre première ressource Snowflake — d'abord à la main dans Snowsight, puis en Terraform. Vous comprenez pourquoi l'infrastructure en code remplace le clic.
 
+> **Votre équipe GlobalBank :** chaque apprenant applique les mêmes concepts sur les objets de son équipe — 🔵 Platform (warehouses/rôles), 🟢 Data Engineering (zones RAW/Staging), 🟠 Business Data (domaines), 🟣 BI (datamarts). Voir [personas-globalbank.md](../shared/docs/personas-globalbank.md).
+
 ---
 
 ## Tableau de correspondance ClickOps → IaC

@@ -12,15 +12,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +45,8 @@ Une identité partagée avec un PAT empêche l'attribution des actions. Vous all
 > **En tant que :** Security Engineer  
 > **Je veux :** configurer l'authentification key-pair pour un utilisateur technique Snowflake  
 > **Afin de :** éliminer les PAT partagés et permettre la rotation sans interruption
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

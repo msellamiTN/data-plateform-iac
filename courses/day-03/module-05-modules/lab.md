@@ -12,15 +12,15 @@
 | **Cleanup** | `terraform destroy -auto-approve` Ã  la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > RÃ©initialisez le lab pour partir d'un Ã©tat propre :
 >
@@ -45,6 +45,8 @@ Les domaines Data ont besoin d'une plateforme cohÃ©rente sans copier des centa
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** extraire les ressources Snowflake dans un module Terraform rÃ©utilisable  
 > **Afin de :** provisionner plusieurs domaines Data sans duplication de code
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

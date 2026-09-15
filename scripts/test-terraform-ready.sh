@@ -7,10 +7,10 @@
 # 2. secrets/snowflake_pat.txt exists (two levels up)
 # 3. TF_VAR_snowflake_token is set OR the PAT file is readable
 # 4. LEARNER_PREFIX is set
-# 5. ARM_SUBSCRIPTION_ID is set
+# 5. ARM_* variables (warn-only — required only for Day 2 remote backend / Day 4+)
 #
 # Usage: ./scripts/test-terraform-ready.sh
-# Run from environments/dev/ or any terraform root.
+# Run from labs/mXX-*/ or any terraform root.
 # ============================================================
 
 set -euo pipefail
@@ -65,18 +65,18 @@ else
     check_fail "LEARNER_PREFIX is not set. Run: ./scripts/learner-login.sh APPXX"
 fi
 
-# 5. Check ARM_SUBSCRIPTION_ID
+# 5. Check ARM_SUBSCRIPTION_ID (optionnel : requis uniquement pour les labs avancés Day 4+)
 if [ -n "${ARM_SUBSCRIPTION_ID:-}" ]; then
     check_ok "ARM_SUBSCRIPTION_ID is set"
 else
-    check_fail "ARM_SUBSCRIPTION_ID is not set. Run: ./scripts/learner-login.sh APPXX"
+    check_warn "ARM_SUBSCRIPTION_ID is not set — OK for Snowflake-only labs (required for Day 4+ remote backend)"
 fi
 
-# 6. Check ARM_CLIENT_ID
+# 6. Check ARM_CLIENT_ID (optionnel : requis uniquement pour les labs avancés Day 4+)
 if [ -n "${ARM_CLIENT_ID:-}" ]; then
     check_ok "ARM_CLIENT_ID is set"
 else
-    check_fail "ARM_CLIENT_ID is not set. Run: ./scripts/learner-login.sh APPXX"
+    check_warn "ARM_CLIENT_ID is not set — OK for Snowflake-only labs (required for Day 4+ remote backend)"
 fi
 
 # 7. Check terraform is available

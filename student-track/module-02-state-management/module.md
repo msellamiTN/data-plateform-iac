@@ -22,9 +22,9 @@ code "$HOME/Data2AI-Labs/module-02-state-management"
 
 ## Supports Pédagogiques
 
-1. [Cours](../../courses/day-03/module-02-state-management/course.md)
-2. [Lab guidé](../../courses/day-03/module-02-state-management/lab.md)
-3. [Résultats attendus](../../courses/day-03/module-02-state-management/expected-output.md)
-4. [Troubleshooting](../../courses/day-03/module-02-state-management/troubleshooting.md)
+1. [Cours](../../courses/day-02/module-02-state-management/course.md)
+2. [Lab guidé](../../courses/day-02/module-02-state-management/lab.md)
+3. [Résultats attendus](../../courses/day-02/module-02-state-management/expected-output.md)
+4. [Troubleshooting](../../courses/day-02/module-02-state-management/troubleshooting.md)
 
 Exécutez `.\scripts\SelfPacedLab.ps1 -Module 2 -All` pour vérifier votre progression à tout moment.

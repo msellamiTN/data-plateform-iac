@@ -1,12 +1,12 @@
-# 🎓 Atelier Jour 3 — Le State Terraform
+# 🎓 Atelier Jour 3 — Factoriser : modules réutilisables et logique dynamique
 
-## *La mémoire, le backend distant, le verrouillage, l'import brownfield et la dérive*
+## *Du copier-coller au composant versionné — modules, `for_each`, `for`, `dynamic` et `count`*
 
 > **Parcours :** Industrialisation d'une Data Platform · **Jour 3 / 5**
-> **Modules couverts :** M02 (State distant Azure Blob Storage) + M03 (Import brownfield et alignement)
+> **Modules couverts :** M05 (Module Landing Zone) + M06 (Metadata-driven IaC)
 > **Durée :** 6 heures (2 h de concepts guidés · 4 h de pratique)
-> **Prérequis :** Jours 1 et 2 terminés — vous savez écrire, factoriser en modules et appliquer une configuration Terraform
-> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 4, 5, 7, 9
+> **Prérequis :** Jours 1 et 2 terminés — vous maîtrisez le workflow Terraform, le state et l'import
+> **Alignement certification :** HashiCorp *Terraform Associate (003)* — Objectifs 5, 6, 8
 
 ---
 

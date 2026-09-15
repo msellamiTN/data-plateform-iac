@@ -45,6 +45,8 @@ DEV, UAT et PROD ont des risques, coÃ»ts et rythmes diffÃ©rents. Vous allez 
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** dÃ©ployer un module Terraform dans DEV, UAT et PROD avec isolation de state  
 > **Afin de :** garantir qu'aucune modification d'un environnement n'impacte les autres
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

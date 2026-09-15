@@ -574,4 +574,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M3](../module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-02/module-05-modules/lab.md)
+[<- Lab M3](../module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-03/module-05-modules/lab.md)

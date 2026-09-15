@@ -444,18 +444,57 @@ Test-Path config/shared.env
 
 Cette Ã©tape vous connecte Ã  Azure, rÃ©cupÃ¨re **tous les secrets** depuis Key Vault
 (identifiants SP + PAT Snowflake) et les persiste dans `secrets/` pour les sessions futures.
-Il existe **deux modes** â€” choisissez selon votre situation :
+Il existe **trois modes** â€” choisissez selon votre situation :
 
 #### Quel mode utiliser ?
 
 | Situation | Mode | Commande |
 |---|---|---|
-| Vous avez un compte AAD apprenant (fourni par le formateur) | **KV-first** (recommandÃ©) | Ã‰tape A ci-dessous |
+| **Initiation Jours 1-3** : demarrer Terraform/Snowflake sans Azure | **Snowflake-only** (le plus simple) | `.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly` |
+| Vous avez un compte AAD apprenant (fourni par le formateur) — requis pour le Jour 2 (state distant) et les Jours 4-5 | **KV-first** | Ã‰tape A ci-dessous |
 | Le compte AAD n'est pas configurÃ©, ou vous n'avez pas de navigateur | **Fallback** | Ã‰tape B ci-dessous |
 
 ---
 
-#### Ã‰tape A â€” Mode KV-first (recommandÃ©, aucun fichier secret requis)
+#### Ã‰tape 0 â€” Mode Snowflake-only (Jours 1-3, aucun navigateur)
+
+Si le formateur vous a remis un fichier `secrets/snowflake_pat.txt` (ou un PAT Ã  coller dedans), ce mode suffit pour tous les labs en state local (M01, M04, M05, M06, M09, M10, M11, M13, M14) :
+
+<details>
+<summary>ðŸªŸ <b>Windows (PowerShell)</b></summary>
+
+```powershell
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
+```
+</details>
+
+<details>
+<summary>ðŸ§ <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+source ./scripts/learner-login.sh APP01 --snowflake-only
+```
+</details>
+
+**RÃ©sultat attendu :**
+
+```text
+[PASS] Snowflake PAT loaded from secrets/snowflake_pat.txt
+[PASS] TF_VAR_snowflake_token set
+[PASS] Environment variables set:
+       LEARNER_PREFIX = APP01
+       TF_VAR_snowflake_token (hidden)
+============================================================
+ Ready for Snowflake labs (Days 1-3)
+============================================================
+```
+
+> `[IMPORTANT]` Le mode Snowflake-only ne configure **pas** Azure. Vous passerez au mode
+> complet (Ã‰tape A ou B) au Jour 2 lorsque le lab M02 utilisera le backend distant.
+
+---
+
+#### Ã‰tape A â€” Mode KV-first (labs Azure, aucun fichier secret requis)
 
 **1.** Lancez le script **sans** `-ForceFallback` :
 

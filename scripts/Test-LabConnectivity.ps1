@@ -190,7 +190,7 @@ if (Test-Command 'snow') {
 if (Test-Command 'az') {
     Test-Step 'Azure CLI' 'PASS' 'Available'
 } else {
-    Test-Step 'Azure CLI' 'FAIL' 'Not found'
+    Test-Step 'Azure CLI' 'WARN' 'Not found (required only from Day 2 remote backend onward)'
 }
 
 if (Test-Command 'python') {

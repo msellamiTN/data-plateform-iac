@@ -1,6 +1,6 @@
 ﻿# Troubleshooting — M1
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-03/module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 
 | Symptôme | Diagnostic non destructif | Correction minimale | Prévention |
 |---|---|---|---|
@@ -8,7 +8,7 @@
 | Workspace existe déjà | Vérifier le chemin affiché | Choisir un autre `WorkspaceRoot` | Ne jamais supprimer automatiquement |
 | Branche créée au mauvais endroit | `git rev-parse --show-toplevel` | Recréer sous `$HOME/Data2AI-Labs` | Workspace hors dépôt du cours |
 | Provider non trouvé | Lire `versions.tf`, tester accès registry | Corriger source/version puis `terraform init` | Checkpoint 1 |
-| Profil Snowflake absent | `snow connection test -c terraform_svc` | Refaire le checkpoint M0 | Ne pas ajouter un password au provider |
+| Connexion Snowflake absente | `snow connection test -c training` | Refaire le checkpoint M0 (`New-SnowflakeConnection.ps1`) | Ne pas ajouter un password au provider |
 | `Invalid account` | Tester le même profil avec Snow CLI | Corriger la configuration locale | Une seule source de connexion |
 | Permission insuffisante | `SELECT CURRENT_ROLE()` puis erreur exacte | Demander le rôle sandbox prévu | Ne pas basculer génériquement sur ACCOUNTADMIN |
 | Préfixe refusé | Lire le message de validation | Utiliser 2-12 caracteres majuscules/chiffres/underscore | Validation de variable |
@@ -82,11 +82,11 @@ Test-Path secrets\snowflake_pat.txt
 # 2. Si absent, recreer la connexion Snowflake
 .\scripts\New-SnowflakeConnection.ps1
 
-# 3. Relancer Learner-Login (set TF_VAR_snowflake_token)
-.\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+# 3. Relancer Learner-Login en mode Snowflake-only (set TF_VAR_snowflake_token)
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 
 # 4. Pre-flight check
-cd environments\dev
+cd labs\m01-iac-workflow
 ..\..\scripts\Test-TerraformReady.ps1
 
 # 5. Si READY, relancer terraform plan
@@ -101,34 +101,36 @@ terraform plan -out "m01.tfplan"
 
 ---
 
-## `Test-TerraformReady.ps1` affiche `[FAIL] LEARNER_PREFIX not set` ou `[FAIL] ARM_SUBSCRIPTION_ID not set`
+## `Test-TerraformReady.ps1` affiche `[FAIL] LEARNER_PREFIX not set`
 
 **Symptome :**
 
 ```text
 [FAIL] LEARNER_PREFIX not set. Run: .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
-[FAIL] ARM_SUBSCRIPTION_ID not set. Run: .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
 ```
 
 **Cause :**
 
 Les variables d'environnement ne persistent pas entre les sessions PowerShell.
-Si vous ouvrez un nouveau terminal ou redemarrez la VM, les variables `LEARNER_PREFIX`,
-`ARM_SUBSCRIPTION_ID`, `ARM_CLIENT_ID`, etc. ne sont plus definies.
+Si vous ouvrez un nouveau terminal ou redemarrez la VM, `LEARNER_PREFIX` et
+`TF_VAR_snowflake_token` ne sont plus definies.
+
+> `[NOTE]` Les `[WARN] ARM_* not set` sont **normaux** en Jours 1-3 : Azure n'est
+> requis qu'au Jour 4 (backend distant). Ce ne sont pas des erreurs.
 
 **Correction :**
 
-Relancez `Learner-Login.ps1` dans **le meme terminal** que celui ou vous lancez
+Relancez `Learner-Login.ps1 -SnowflakeOnly` dans **le meme terminal** que celui ou vous lancez
 `Test-TerraformReady.ps1` et `terraform plan` :
 
 ```powershell
 cd "$HOME\Data2AI-Labs\data-platform"
-.\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 cd labs\m01-iac-workflow
 ..\..\scripts\Test-TerraformReady.ps1
 ```
 
-> `[IMPORTANT]` Vous devez relancer `Learner-Login.ps1` au debut de **chaque session**
+> `[IMPORTANT]` Vous devez relancer `Learner-Login.ps1 -SnowflakeOnly` au debut de **chaque session**
 > (nouveau terminal, redemarrage VM). Les variables d'environnement ne persistent pas.
 
 ---
@@ -176,12 +178,12 @@ session courante, ou l'executable est corrompu.
 & "$HOME\.data2ai\bin\terraform.exe" version
 ```
 
-2. Si cela fonctionne, le probleme vient du PATH. Relancez `Learner-Login.ps1`
+2. Si cela fonctionne, le probleme vient du PATH. Relancez `Learner-Login.ps1 -SnowflakeOnly`
    qui met a jour le PATH pour la session :
 
 ```powershell
 cd "$HOME\Data2AI-Labs\data-platform"
-.\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 ```
 
 3. Si terraform n'est pas installe, relancez `Install-Tools.ps1` :

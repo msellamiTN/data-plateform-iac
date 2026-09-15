@@ -45,6 +45,8 @@ Le comité d'architecture attend une plateforme gouvernée, exploitable et audit
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** assembler tous les modules dans une configuration Capstone unique  
 > **Afin de :** prouver le zero-drift et la gouvernance de la plateforme complète
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 

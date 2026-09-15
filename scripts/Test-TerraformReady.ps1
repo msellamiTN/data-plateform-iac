@@ -5,13 +5,13 @@
     Verifies that the PAT file exists and TF_VAR_snowflake_token is set.
 
 .DESCRIPTION
-    Run this from environments/dev/ (or any terraform root) before terraform plan.
+    Run this from any terraform root (labs/mXX-*, environments/dev/) before terraform plan.
     It checks:
     1. Current directory is a Terraform root (has .tf files)
     2. secrets/snowflake_pat.txt exists (two levels up)
     3. TF_VAR_snowflake_token is set OR the PAT file is readable
     4. LEARNER_PREFIX is set
-    5. ARM_SUBSCRIPTION_ID is set
+    5. ARM_* variables (warn-only — required only for Day 2 remote backend / Day 4+ labs)
 
     If all checks pass, terraform plan will not prompt for var.snowflake_token.
 
@@ -44,7 +44,7 @@ $tfFiles = Get-ChildItem -Path '.' -Filter '*.tf' -ErrorAction SilentlyContinue
 if ($tfFiles) {
     Check-Ok "Terraform files found in current directory ($($tfFiles.Count) .tf files)"
 } else {
-    Check-Fail "No .tf files in current directory. Run from environments/dev/ or similar."
+    Check-Fail "No .tf files in current directory. Run from a lab root (labs/mXX-*) or environments/dev/."
 }
 
 # 2. Check PAT file exists
@@ -76,14 +76,21 @@ if ($env:TF_VAR_snowflake_token) {
 if ($env:LEARNER_PREFIX) {
     Check-Ok "LEARNER_PREFIX = $env:LEARNER_PREFIX"
 } else {
-    Check-Fail "LEARNER_PREFIX not set. Run: .\scripts\Learner-Login.ps1 -LearnerPrefix APP01"
+    Check-Fail "LEARNER_PREFIX not set. Run: .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly"
 }
 
-# 5. Check ARM_SUBSCRIPTION_ID
+# 5. Check ARM_SUBSCRIPTION_ID (optionnel : requis uniquement pour les labs avancés Day 4+)
 if ($env:ARM_SUBSCRIPTION_ID) {
     Check-Ok "ARM_SUBSCRIPTION_ID is set"
 } else {
-    Check-Fail "ARM_SUBSCRIPTION_ID not set. Run: .\scripts\Learner-Login.ps1 -LearnerPrefix APP01"
+    Check-Warn "ARM_SUBSCRIPTION_ID is not set (OK for Snowflake-only labs — required for Day 4+ remote backend)"
+}
+
+# 6. Check ARM_CLIENT_ID (optionnel : requis uniquement pour les labs avancés Day 4+)
+if ($env:ARM_CLIENT_ID) {
+    Check-Ok "ARM_CLIENT_ID is set"
+} else {
+    Check-Warn "ARM_CLIENT_ID is not set (OK for Snowflake-only labs — required for Day 4+ remote backend)"
 }
 
 # 6. Check terraform is available
@@ -139,8 +146,8 @@ if ($allOk) {
     Write-Host 'Common fixes:' -ForegroundColor Cyan
     Write-Host '  cd "$HOME\Data2AI-Labs\data-platform"' -ForegroundColor DarkGray
     Write-Host '  .\scripts\New-SnowflakeConnection.ps1' -ForegroundColor DarkGray
-    Write-Host '  .\scripts\Learner-Login.ps1 -LearnerPrefix APP01' -ForegroundColor DarkGray
-    Write-Host '  cd environments\dev' -ForegroundColor DarkGray
+    Write-Host '  .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly' -ForegroundColor DarkGray
+    Write-Host '  cd labs\m01-iac-workflow' -ForegroundColor DarkGray
     Write-Host '  terraform init' -ForegroundColor DarkGray
     exit 1
 }

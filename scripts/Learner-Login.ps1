@@ -40,8 +40,13 @@
 .PARAMETER ForceFallback
     Skip KV-first mode and use local secrets/ files directly.
 
+.PARAMETER SnowflakeOnly
+    Initiation mode (Days 1-3): sets LEARNER_PREFIX and TF_VAR_snowflake_token
+    from secrets/snowflake_pat.txt only. No Azure CLI, no browser, no Key Vault.
+
 .EXAMPLE
     .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+    .\scripts\Learner-Login.ps1 -LearnerPrefix APP03 -SnowflakeOnly
     .\scripts\Learner-Login.ps1 -LearnerPrefix APP03 -ForceFallback
 #>
 
@@ -51,7 +56,8 @@ param(
     [ValidatePattern('^APP\d{2}$')]
     [string]$LearnerPrefix,
     [string]$SecretsFile,
-    [switch]$ForceFallback
+    [switch]$ForceFallback,
+    [switch]$SnowflakeOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -127,15 +133,80 @@ if (Test-Path $envFile) {
     Load-EnvFile -Path $envFile -EnvValues $envValues -Label ".env"
 
     # Warn if important Azure variables are still empty.
-    $azureVars = @('ARM_RESOURCE_GROUP', 'ARM_STORAGE_ACCOUNT', 'ARM_CONTAINER', 'ARM_LOCATION')
-    foreach ($var in $azureVars) {
-        if (-not [Environment]::GetEnvironmentVariable($var) -and -not $envValues[$var]) {
-            Write-Host "[WARN] $var is empty or not set. Add it to .env if needed for Azure labs." -ForegroundColor Yellow
+    if (-not $SnowflakeOnly) {
+        $azureVars = @('ARM_RESOURCE_GROUP', 'ARM_STORAGE_ACCOUNT', 'ARM_CONTAINER', 'ARM_LOCATION')
+        foreach ($var in $azureVars) {
+            if (-not [Environment]::GetEnvironmentVariable($var) -and -not $envValues[$var]) {
+                Write-Host "[WARN] $var is empty or not set. Add it to .env if needed for Azure labs." -ForegroundColor Yellow
+            }
         }
     }
 } else {
     Write-Host "[WARN] No .env file found at $envFile" -ForegroundColor Yellow
     Write-Host "       Copy .env.example to .env and fill in learner-specific values." -ForegroundColor DarkGray
+}
+
+# ------------------------------------------------------------------
+# Snowflake-only mode (Days 1-3 initiation)
+# No Azure CLI, no Key Vault, no browser. Just PAT + learner prefix.
+# ------------------------------------------------------------------
+if ($SnowflakeOnly) {
+    Write-Host '============================================================' -ForegroundColor Cyan
+    Write-Host " Learner Login (Snowflake-only): $LearnerPrefix" -ForegroundColor Cyan
+    Write-Host '============================================================' -ForegroundColor Cyan
+    Write-Host ''
+
+    $patValue = $null
+    $patFile = Join-Path $projectRoot 'secrets\snowflake_pat.txt'
+    if (Test-Path $patFile) {
+        $patValue = (Get-Content $patFile -Encoding UTF8 -Raw).Trim()
+        if ($patValue) {
+            Write-Host '[PASS] Snowflake PAT loaded from secrets/snowflake_pat.txt' -ForegroundColor Green
+        }
+    }
+    if (-not $patValue -and $env:TF_VAR_snowflake_token) {
+        $patValue = $env:TF_VAR_snowflake_token
+        Write-Host '[PASS] Snowflake PAT loaded from TF_VAR_snowflake_token' -ForegroundColor Green
+    }
+    if (-not $patValue -and $env:SNOWFLAKE_PAT) {
+        $patValue = $env:SNOWFLAKE_PAT
+        Write-Host '[PASS] Snowflake PAT loaded from SNOWFLAKE_PAT' -ForegroundColor Green
+    }
+
+    $env:LEARNER_PREFIX = $LearnerPrefix
+
+    if ($patValue) {
+        $env:TF_VAR_snowflake_token = $patValue
+        Write-Host '[PASS] TF_VAR_snowflake_token set' -ForegroundColor Green
+    } else {
+        Write-Host '[FAIL] No Snowflake PAT found.' -ForegroundColor Red
+        Write-Host '       Fix: create secrets/snowflake_pat.txt with your PAT' -ForegroundColor DarkGray
+        Write-Host '       Or:  run .\scripts\New-SnowflakeConnection.ps1' -ForegroundColor DarkGray
+        exit 1
+    }
+
+    $patValue = $null
+
+    Write-Host ''
+    Write-Host '[PASS] Environment variables set:' -ForegroundColor Green
+    Write-Host "       LEARNER_PREFIX = $LearnerPrefix" -ForegroundColor DarkGray
+    Write-Host '       TF_VAR_snowflake_token (hidden)' -ForegroundColor DarkGray
+    if ($envValues['SNOWFLAKE_ORGANIZATION']) {
+        Write-Host "       SNOWFLAKE_ORGANIZATION = $($envValues['SNOWFLAKE_ORGANIZATION'])" -ForegroundColor DarkGray
+    }
+    if ($envValues['SNOWFLAKE_ACCOUNT']) {
+        Write-Host "       SNOWFLAKE_ACCOUNT = $($envValues['SNOWFLAKE_ACCOUNT'])" -ForegroundColor DarkGray
+    }
+    Write-Host ''
+    Write-Host '============================================================' -ForegroundColor Cyan
+    Write-Host ' Ready for Snowflake labs (Days 1-3)' -ForegroundColor Green
+    Write-Host '============================================================' -ForegroundColor Cyan
+    Write-Host ''
+    Write-Host 'Next steps:' -ForegroundColor DarkGray
+    Write-Host '  .\scripts\Test-TerraformReady.ps1' -ForegroundColor DarkGray
+    Write-Host '  cd labs\m01-iac-workflow ; terraform init ; terraform plan' -ForegroundColor DarkGray
+    Write-Host ''
+    exit 0
 }
 
 # ------------------------------------------------------------------
