@@ -8,7 +8,15 @@ The `.gitignore` excludes all files in `secrets/` except this README, so the dir
 > Learners authenticate with their AAD account and fetch all secrets
 > from Azure Key Vault. The files below are **fallback/recovery only**.
 
-## Secret distribution architecture (KV-first)
+## Secret distribution architecture
+
+Three authentication modes exist, chosen by `Learner-Login.ps1` / `learner-login.sh` flags:
+
+| Mode | When | Azure required | What it does |
+|---|---|---|---|
+| **`-SnowflakeOnly`** | **Days 1–3 (initiation)** | No | Reads `secrets/snowflake_pat.txt`, sets `TF_VAR_snowflake_token` + `LEARNER_PREFIX`. No `az login`, no browser popup. |
+| **KV-first** (default) | Days 4–5 + Day 0 setup | Yes | AAD browser login → fetch SP creds + PAT from Key Vault → set `ARM_*` + `TF_VAR_snowflake_token`. |
+| **`-ForceFallback`** | Recovery only | Yes | Same as KV-first but reads `secrets/shared-sp.txt` + `secrets/snowflake_pat.txt` locally instead of Key Vault. |
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -40,6 +48,11 @@ The `.gitignore` excludes all files in `secrets/` except this README, so the dir
 │  5. SP login (for Terraform provider)                       │
 │  6. Fetch SnowflakePAT from Key Vault                       │
 │  7. Set TF_VAR_snowflake_token + ARM_* env vars             │
+│                                                             │
+│  Snowflake-only (-SnowflakeOnly) — Days 1-3:                │
+│  1. Read secrets/snowflake_pat.txt (local)                  │
+│  2. Set TF_VAR_snowflake_token + LEARNER_PREFIX             │
+│  3. Done — no Azure interaction at all                      │
 │                                                             │
 │  Fallback (-ForceFallback):                                 │
 │  1. Read secrets/shared-sp.txt (local)                      │
@@ -82,6 +95,7 @@ The `.gitignore` excludes all files in `secrets/` except this README, so the dir
 4. **Rotate** the PAT when the training module is complete.
 5. **Delete** the contents of this directory at the end of the training.
 6. **Prefer KV-first mode** — no local secrets needed.
+7. **Rotate immediately** any credential that was ever committed to Git, even if the push was blocked — GitHub Push Protection caught a historical commit containing a PAT and SP secrets; the history was rewritten (2026-09), but rotation is still required for the Snowflake PAT, `learner-sp`/`shared-sp` secrets, and the `TERRAFORM_USER` password.
 
 ## Verify Git ignores secrets
 
