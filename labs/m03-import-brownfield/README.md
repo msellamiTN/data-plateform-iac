@@ -1,4 +1,4 @@
-﻿# Code de départ — M3 : Import & Brownfield
+# Code de départ — M3 : Import & Brownfield
 
 ## Point de départ
 

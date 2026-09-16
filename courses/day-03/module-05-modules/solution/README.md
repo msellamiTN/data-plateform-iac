@@ -1,4 +1,4 @@
-﻿# Solution de référence — M5 : Modules & Git Registry
+# Solution de référence — M5 : Modules & Git Registry
 
 ## Source
 

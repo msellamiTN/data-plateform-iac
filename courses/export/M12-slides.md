@@ -1,4 +1,4 @@
-﻿# Module 12 — Slides : Projet Fil Rouge
+# Module 12 — Slides : Projet Fil Rouge
 
 ---
 

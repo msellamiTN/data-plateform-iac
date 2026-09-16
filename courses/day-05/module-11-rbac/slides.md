@@ -1,4 +1,4 @@
-﻿# Module 11 — Slides : RBAC Scalable
+# Module 11 — Slides : RBAC Scalable
 
 ---
 

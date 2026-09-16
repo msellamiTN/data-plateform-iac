@@ -1,4 +1,4 @@
-﻿# Jour 1 — Workflow Terraform et contrats typés
+# Jour 1 — Workflow Terraform et contrats typés
 
 **Objectif :** Maîtriser le cycle de vie Terraform sur Snowflake et les contrats typés.
 **Durée :** 6 heures (2 h concepts · 4 h pratique)

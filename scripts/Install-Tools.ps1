@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Installs and verifies the Terraform and Snowflake training toolchain on Windows.

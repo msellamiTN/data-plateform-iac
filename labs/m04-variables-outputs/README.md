@@ -1,4 +1,4 @@
-﻿# Code de départ — M4 : Variables, Outputs & Lifecycle
+# Code de départ — M4 : Variables, Outputs & Lifecycle
 
 ## Ce qu'il faut copier
 

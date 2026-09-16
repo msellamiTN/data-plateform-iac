@@ -1,4 +1,4 @@
-﻿# 🏦 Atelier GlobalBank — Jour 3
+# 🏦 Atelier GlobalBank — Jour 3
 
 ## *La plateforme : `moved`, `import`, `modules`, `data` sources, remote state*
 

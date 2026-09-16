@@ -1,4 +1,4 @@
-﻿# Solution de référence — M2 : Gestion du State
+# Solution de référence — M2 : Gestion du State
 
 ## Source
 

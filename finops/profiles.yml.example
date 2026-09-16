@@ -1,4 +1,4 @@
-﻿# Copy to ~/.dbt/profiles.yml and replace placeholders
+# Copy to ~/.dbt/profiles.yml and replace placeholders
 # Authentication: key-pair (JWT) is recommended for production.
 # For training, password auth can be used as fallback.
 

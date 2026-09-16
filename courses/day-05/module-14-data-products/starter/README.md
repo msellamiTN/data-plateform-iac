@@ -1,4 +1,4 @@
-﻿# Starter M14
+# Starter M14
 
 Utilisez `project/06-data-products/environments/dev` comme root de départ.
 

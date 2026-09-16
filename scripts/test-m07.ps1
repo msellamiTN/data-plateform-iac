@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Continue'
+﻿$ErrorActionPreference = 'Continue'
 Set-Location C:\Data2AI-Labs\data-platform
 
 Write-Output "=== M07: Reset Lab ==="

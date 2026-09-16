@@ -1,4 +1,4 @@
-﻿# Code de départ — M10 : Sécurité & Authentification
+# Code de départ — M10 : Sécurité & Authentification
 
 ## Ce qu'il faut copier
 

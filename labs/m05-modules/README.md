@@ -1,4 +1,4 @@
-﻿# Code de départ — M5 : Modules & Git Registry
+# Code de départ — M5 : Modules & Git Registry
 
 ## Ce qu'il faut copier
 

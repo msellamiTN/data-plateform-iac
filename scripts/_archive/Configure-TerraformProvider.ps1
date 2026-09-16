@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Génère le fichier terraform.tfvars pour le projet M1 à partir de .env.

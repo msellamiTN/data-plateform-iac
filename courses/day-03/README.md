@@ -1,4 +1,4 @@
-﻿# Jour 3 — Modules réutilisables et logique dynamique
+# Jour 3 — Modules réutilisables et logique dynamique
 
 **Objectif :** Factoriser le code en modules réutilisables et piloter par métadonnées.
 **Durée :** 6 heures (2 h concepts · 4 h pratique)

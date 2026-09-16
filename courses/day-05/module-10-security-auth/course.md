@@ -1,4 +1,4 @@
-﻿# Module 10 ? Cours : Sécurité et Authentification
+# Module 10 ? Cours : Sécurité et Authentification
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Module suivant ->](../module-11-rbac/lab.md)
 

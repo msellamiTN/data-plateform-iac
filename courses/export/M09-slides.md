@@ -1,4 +1,4 @@
-﻿# Module 9 ? Slides : Ressources Snowflake avancées
+# Module 9 ? Slides : Ressources Snowflake avancées
 
 ---
 

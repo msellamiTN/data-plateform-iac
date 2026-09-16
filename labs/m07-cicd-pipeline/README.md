@@ -1,4 +1,4 @@
-﻿# Code de départ — M7 : Pipeline CI/CD
+# Code de départ — M7 : Pipeline CI/CD
 
 ## Ce qu'il faut copier
 

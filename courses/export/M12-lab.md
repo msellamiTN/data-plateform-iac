@@ -1,4 +1,4 @@
-﻿# 🧪 Lab M12 — Capstone : Plateforme de données complète
+# 🧪 Lab M12 — Capstone : Plateforme de données complète
 
 > [<- Jour 4](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
 

@@ -1,4 +1,4 @@
-﻿# Code de départ — M11 : RBAC & Future Grants
+# Code de départ — M11 : RBAC & Future Grants
 
 ## Ce qu'il faut copier
 

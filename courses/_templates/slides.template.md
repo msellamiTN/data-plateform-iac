@@ -1,4 +1,4 @@
-﻿# Slides Mx — <Capacité professionnelle>
+# Slides Mx — <Capacité professionnelle>
 
 > Durée cible de présentation : 10 à 15 minutes avant le lab.
 

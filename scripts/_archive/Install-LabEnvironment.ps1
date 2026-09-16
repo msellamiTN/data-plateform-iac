@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Installe et vérifie tous les outils requis pour la formation Terraform & Snowflake.

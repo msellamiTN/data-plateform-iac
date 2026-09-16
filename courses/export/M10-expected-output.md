@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M10 : Sécurité & Authentification
+# Résultat attendu — M10 : Sécurité & Authentification
 
 > [<- Jour 3](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Jour 4 ->](../../day-04/README.md)
 

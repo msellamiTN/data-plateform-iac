@@ -1,4 +1,4 @@
-﻿# 🧪 Lab M10 — Sécurité et authentification : Key Pair, rotation, moindre privilège
+# 🧪 Lab M10 — Sécurité et authentification : Key Pair, rotation, moindre privilège
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Module suivant ->](../module-11-rbac/lab.md)
 

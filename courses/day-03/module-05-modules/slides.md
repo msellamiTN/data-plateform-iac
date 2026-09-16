@@ -1,4 +1,4 @@
-﻿# Module 5 ? Slides : Création de Modules
+# Module 5 ? Slides : Création de Modules
 
 **Durée : 2h** ? Module Snowflake Landing Zone
 

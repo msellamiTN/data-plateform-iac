@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Generates Snowflake PATs for each learner and stores them in Azure Key Vault.

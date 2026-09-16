@@ -1,4 +1,4 @@
-﻿# Dépannage — M2 : Gestion du State
+# Dépannage — M2 : Gestion du State
 
 > [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
 

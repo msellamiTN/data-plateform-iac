@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M11 : RBAC & Future Grants
+# Résultat attendu — M11 : RBAC & Future Grants
 
 > [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 11** · [Module suivant ->](../module-12-capstone/lab.md)
 

@@ -1,4 +1,4 @@
-﻿# Module 8 ? Slides : Gestion des environnements
+# Module 8 ? Slides : Gestion des environnements
 
 ---
 

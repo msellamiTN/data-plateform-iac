@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     [DEPRECATED] Creates individual Snowflake users for each learner.

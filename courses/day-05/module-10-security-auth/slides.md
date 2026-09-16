@@ -1,4 +1,4 @@
-﻿# Module 10 ? Slides : Sécurité et Authentification
+# Module 10 ? Slides : Sécurité et Authentification
 
 ---
 

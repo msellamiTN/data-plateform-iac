@@ -1,4 +1,4 @@
-﻿# Runbook — M13 FinOps
+# Runbook — M13 FinOps
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
 

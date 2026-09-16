@@ -1,4 +1,4 @@
-﻿# 🧪 Lab M13 — Observabilité et FinOps as Code avec dbt
+# 🧪 Lab M13 — Observabilité et FinOps as Code avec dbt
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
 

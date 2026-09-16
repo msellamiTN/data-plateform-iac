@@ -1,4 +1,4 @@
-﻿# Dépannage — M8 : Stratégies d'environnements
+# Dépannage — M8 : Stratégies d'environnements
 
 > [<- Jour 2](../README.md) · [<- Module precedent](../module-07-cicd-pipeline/lab.md) · **Module 08** · [Jour 3 ->](../../day-03/README.md)
 

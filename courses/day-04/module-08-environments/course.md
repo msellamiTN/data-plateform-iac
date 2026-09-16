@@ -1,4 +1,4 @@
-﻿# Module 8 : Cours : Gestion des environnements
+# Module 8 : Cours : Gestion des environnements
 
 > [<- Jour 4](../README.md) · [<- Module precedent](../module-07-cicd-pipeline/lab.md) · **Module 08** · [Jour 5 ->](../../day-05/README.md)
 

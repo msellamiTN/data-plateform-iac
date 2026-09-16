@@ -1,4 +1,4 @@
-﻿# Solution de référence — M10 : Sécurité & Authentification
+# Solution de référence — M10 : Sécurité & Authentification
 
 ## Source
 

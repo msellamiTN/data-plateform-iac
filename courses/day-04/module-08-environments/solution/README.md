@@ -1,4 +1,4 @@
-﻿# Solution de référence — M8 : Stratégies d'environnements
+# Solution de référence — M8 : Stratégies d'environnements
 
 ## Source
 

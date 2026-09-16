@@ -1,4 +1,4 @@
-﻿# Code de départ — M9 : Snowflake avancé (Intégration Azure)
+# Code de départ — M9 : Snowflake avancé (Intégration Azure)
 
 ## Ce qu'il faut copier
 

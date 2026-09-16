@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M8 : Stratégies d'environnements
+# Résultat attendu — M8 : Stratégies d'environnements
 
 > [<- Jour 4](../README.md) · [<- Module precedent](../module-07-cicd-pipeline/lab.md) · **Module 08** · [Jour 5 ->](../../day-05/README.md)
 

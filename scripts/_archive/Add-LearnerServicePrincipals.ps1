@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     [DEPRECATED] Creates service principals for each learner with secret-based authentication.

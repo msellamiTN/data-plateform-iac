@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Local validation script for the data-platform-starter project (Windows).
 

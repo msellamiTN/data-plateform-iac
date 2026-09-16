@@ -1,4 +1,4 @@
-﻿# Solution M13
+# Solution M13
 
 La solution de référence est `finops/` :
 

@@ -1,4 +1,4 @@
-﻿# Code de départ — M12 : Capstone
+# Code de départ — M12 : Capstone
 
 ## Ce qu'il faut copier
 

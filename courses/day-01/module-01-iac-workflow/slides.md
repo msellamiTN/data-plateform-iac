@@ -1,4 +1,4 @@
-﻿# Module 1 ? Slides : IaC et Workflow Terraform
+# Module 1 ? Slides : IaC et Workflow Terraform
 
 ---
 

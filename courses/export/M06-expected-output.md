@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M6 : Logique dynamique & for_each
+# Résultat attendu — M6 : Logique dynamique & for_each
 
 > [<- Jour 2](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../module-07-cicd-pipeline/lab.md)
 

@@ -1,4 +1,4 @@
-﻿# Solution de référence — M6 : Logique dynamique & for_each
+# Solution de référence — M6 : Logique dynamique & for_each
 
 ## Source
 

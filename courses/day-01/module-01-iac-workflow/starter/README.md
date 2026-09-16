@@ -1,4 +1,4 @@
-﻿# Code de départ — M1 : Workflow IaC
+# Code de départ — M1 : Workflow IaC
 
 ## Ce qu'il faut copier
 

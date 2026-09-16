@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M9 : Snowflake avancé (Intégration Azure)
+# Résultat attendu — M9 : Snowflake avancé (Intégration Azure)
 
 > [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
 

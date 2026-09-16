@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M5 : Modules & Git Registry
+# Résultat attendu — M5 : Modules & Git Registry
 
 > [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 

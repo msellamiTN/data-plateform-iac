@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Execute a Data2AI training lab like a student would, record every step and produce a report.
 

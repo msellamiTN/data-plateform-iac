@@ -1,4 +1,4 @@
-﻿# Formation Terraform & Snowflake — Parcours officiel
+# Formation Terraform & Snowflake — Parcours officiel
 
 **Format :** 5 jours × 6 heures = **30 heures**
 **Public :** 11 participants hétérogènes — data analysts, data engineers, business developers, BI engineers

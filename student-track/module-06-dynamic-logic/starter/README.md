@@ -1,4 +1,4 @@
-﻿# Code de départ — M6 : Logique dynamique & for_each
+# Code de départ — M6 : Logique dynamique & for_each
 
 ## Ce qu'il faut copier
 

@@ -1,4 +1,4 @@
-﻿# Starter M13
+# Starter M13
 
 Le code de départ est le projet exécutable `finops/`.
 

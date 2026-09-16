@@ -1,4 +1,4 @@
-﻿# 🧪 Lab M4 — Variables, locals, outputs et lifecycle
+# 🧪 Lab M4 — Variables, locals, outputs et lifecycle
 
 > [<- Jour 1](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
 

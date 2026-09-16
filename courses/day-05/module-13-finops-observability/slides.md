@@ -1,4 +1,4 @@
-﻿# Slides M13 — Observabilité et FinOps as Code
+# Slides M13 — Observabilité et FinOps as Code
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# Solution de référence — M9 : Snowflake avancé
+# Solution de référence — M9 : Snowflake avancé
 
 ## Source
 

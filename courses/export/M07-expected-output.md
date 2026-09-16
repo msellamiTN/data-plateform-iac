@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M7 : Pipeline CI/CD (Azure DevOps)
+# Résultat attendu — M7 : Pipeline CI/CD (Azure DevOps)
 
 > [<- Jour 2](../README.md) · [<- Module precedent](../module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
 

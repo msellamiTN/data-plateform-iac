@@ -1,4 +1,4 @@
-﻿# Solution de référence — M7 : Pipeline CI/CD
+# Solution de référence — M7 : Pipeline CI/CD
 
 ## Source
 

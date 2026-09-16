@@ -1,4 +1,4 @@
-﻿# Cours M1 — Premier déploiement Terraform Snowflake
+# Cours M1 — Premier déploiement Terraform Snowflake
 
 > [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 

@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 Set-Location C:\Data2AI-Labs\data-platform
 
 Write-Output "=== STEP 1: Learner-Login ==="

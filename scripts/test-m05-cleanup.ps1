@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Continue'
+﻿$ErrorActionPreference = 'Continue'
 Set-Location C:\Data2AI-Labs\data-platform\labs\m05-modules
 
 Write-Output "=== M05 Cleanup: terraform destroy ==="

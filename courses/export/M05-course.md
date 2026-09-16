@@ -1,4 +1,4 @@
-﻿# Module 5 ? Cours : Création de Modules
+# Module 5 ? Cours : Création de Modules
 
 > [<- Jour 2](../README.md) · [<- Jour 1](../../day-01/README.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 

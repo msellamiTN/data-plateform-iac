@@ -1,4 +1,4 @@
-﻿# Dépannage — M9 : Snowflake avancé
+# Dépannage — M9 : Snowflake avancé
 
 > [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
 

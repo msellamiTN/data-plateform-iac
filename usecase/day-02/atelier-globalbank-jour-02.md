@@ -1,4 +1,4 @@
-﻿# 🏦 Atelier GlobalBank — Jour 2
+# 🏦 Atelier GlobalBank — Jour 2
 
 ## *Ma collection : `locals`, `validation`, `for_each`, `output`*
 

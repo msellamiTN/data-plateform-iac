@@ -1,4 +1,4 @@
-﻿# Module 3 — Slides : Import Brownfield
+# Module 3 — Slides : Import Brownfield
 
 ---
 

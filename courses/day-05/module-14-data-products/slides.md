@@ -1,4 +1,4 @@
-﻿# Slides M14 — Data Products as Code
+# Slides M14 — Data Products as Code
 
 ---
 

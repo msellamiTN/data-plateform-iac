@@ -1,4 +1,4 @@
-﻿# Dépannage — M3 : Import & Brownfield
+# Dépannage — M3 : Import & Brownfield
 
 > [<- Jour 1](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../module-04-variables-outputs/lab.md)
 

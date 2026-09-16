@@ -1,15 +1,15 @@
-﻿# ðŸ§ª Lab M14 â€” Data Products as Code avec Terraform et Snow CLI
+# 🧪 Lab M14 — Data Products as Code avec Terraform et Snow CLI
 
-> [<- Jour 5](../README.md) Â· [<- Module precedent](../module-13-finops-observability/lab.md) Â· **Module 14** Â· [Fin ->](../../README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
 
-|| Ã‰lÃ©ment | Valeur |
+|| Élément | Valeur |
 ||---|---|
-|| **DurÃ©e** | 30 min (Option C fusionnÃ©e M13+M14) |
+|| **Durée** | 30 min (Option C fusionnée M13+M14) |
 || **Piste** | `[EXTENSION]` |
 || **Workspace** | `$HOME/Data2AI-Labs/data-platform` (le clone) |
 || **Dossier de travail** | `labs/m14-data-products/` |
-|| **CoÃ»t** | Warehouses X-SMALL |
-|| **Cleanup** | `terraform destroy -auto-approve` Ã  la fin |
+|| **Coût** | Warehouses X-SMALL |
+|| **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
 > et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
@@ -22,13 +22,13 @@
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
 > et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
-> Ensuite, rÃ©initialisez le lab pour partir d'un Ã©tat propre :
+> Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
 > ```powershell
 > .\scripts\Reset-Lab.ps1 -LearnerPrefix APP01 -Lab M14
 > ```
 >
-> Puis placez-vous dans le dossier du lab et vÃ©rifiez que tout est pret :
+> Puis placez-vous dans le dossier du lab et vérifiez que tout est pret :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform\labs\m14-data-products"
@@ -38,19 +38,19 @@
 > Si le pre-flight affiche `READY`, lancez `terraform plan -out "m14.tfplan"`.
 > Sinon, suivez les corrections indiquees.
 
-## ðŸŽ¯ 1. Mission MÃ©tier & User Story
+## 🎯 1. Mission Métier & User Story
 
-Les domaines SALES et FINANCE doivent livrer des donnÃ©es avec autonomie sans contourner sÃ©curitÃ©, coÃ»ts et standards. Vous allez crÃ©er un module `data-product` qui dÃ©ploie la structure (database, schemas RAW/SILVER/GOLD, rÃ´les, stage) et publier le contenu SQL avec Snow CLI.
+Les domaines SALES et FINANCE doivent livrer des données avec autonomie sans contourner sécurité, coûts et standards. Vous allez créer un module `data-product` qui déploie la structure (database, schemas RAW/SILVER/GOLD, rôles, stage) et publier le contenu SQL avec Snow CLI.
 
 > **En tant que :** Data Product Owner  
-> **Je veux :** dÃ©ployer des data products avec un module Terraform rÃ©utilisable et Snow CLI  
-> **Afin de :** livrer des donnÃ©es en autonomie tout en respectant sÃ©curitÃ©, coÃ»ts et standards
+> **Je veux :** déployer des data products avec un module Terraform réutilisable et Snow CLI  
+> **Afin de :** livrer des données en autonomie tout en respectant sécurité, coûts et standards
 > **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
 
 
 ---
 
-## ðŸ—ï¸ 2. Architecture & ModÃ¨le Mental
+## 🏗️ 2. Architecture & Modèle Mental
 
 ```mermaid
 flowchart LR
@@ -59,34 +59,34 @@ flowchart LR
     STRUCT --> SQL
 ```
 
-## ðŸŽ¯ 3. Objectifs PÃ©dagogiques VÃ©rifiables
+## 🎯 3. Objectifs Pédagogiques Vérifiables
 
-- crÃ©er un module `data-product` rÃ©utilisable;
-- dÃ©ployer deux domaines (SALES et FINANCE) avec `for_each`;
-- implÃ©menter l'architecture Medallion (RAW, SILVER, GOLD);
+- créer un module `data-product` réutilisable;
+- déployer deux domaines (SALES et FINANCE) avec `for_each`;
+- implémenter l'architecture Medallion (RAW, SILVER, GOLD);
 - publier le contenu SQL avec Snow CLI, pas avec `local-exec`;
-- vÃ©rifier ownership, rÃ´les, Future Grants et zero-drift.
+- vérifier ownership, rôles, Future Grants et zero-drift.
 
-## ï¿½ 4. Pre-Flight Diagnostic (VÃ©rification Initiale)
+## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
-### PrÃ©requis
+### Prérequis
 
 - [ ] `snow sql -c training` fonctionne.
 - [ ] Le dossier `labs/m14-data-products/` contient `provider.tf`, `versions.tf`, `variables.tf` et `terraform.tfvars.example` (fournis).
 - [ ] Le sous-dossier `labs/m14-data-products/modules/data-product/` existe (avec `versions.tf` fourni).
 
-## ðŸ“ 5. Ã‰tapes d'ImplÃ©mentation Pas-Ã -Pas (80% Hands-On)
+## 📝 5. Étapes d'Implémentation Pas-à-Pas (80% Hands-On)
 
-### ðŸ“ Ã‰tape 5.1 â€” CrÃ©er le module data-product
+### 📝 Étape 5.1 — Créer le module data-product
 
-#### CrÃ©er la structure
+#### Créer la structure
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m14-data-products
 New-Item -ItemType Directory -Force -Path "modules/data-product" | Out-Null
 ```
 
-#### CrÃ©er `modules/data-product/variables.tf`
+#### Créer `modules/data-product/variables.tf`
 
 ```hcl
 variable "learner_prefix" {
@@ -116,7 +116,7 @@ variable "warehouse_size" {
 }
 ```
 
-#### CrÃ©er `modules/data-product/main.tf`
+#### Créer `modules/data-product/main.tf`
 
 ```hcl
 locals {
@@ -218,7 +218,7 @@ resource "snowflake_stage" "raw" {
 }
 ```
 
-#### CrÃ©er `modules/data-product/outputs.tf`
+#### Créer `modules/data-product/outputs.tf`
 
 ```hcl
 output "database_name" {
@@ -250,9 +250,9 @@ terraform fmt
 terraform validate
 ```
 
-### ðŸ“ Ã‰tape 5.2 â€” DÃ©ployer deux domaines avec for_each
+### 📝 Étape 5.2 — Déployer deux domaines avec for_each
 
-#### Ã‰crire `labs/m14-data-products/main.tf`
+#### Écrire `labs/m14-data-products/main.tf`
 
 ```hcl
 locals {
@@ -305,9 +305,9 @@ terraform plan -out "m14.tfplan"
 terraform apply "m14.tfplan"
 ```
 
-âœ… **Checkpoint** : 2 databases, 6 schemas, 2 warehouses, 4 rÃ´les, 2 stages, grants.
+✅ **Checkpoint** : 2 databases, 6 schemas, 2 warehouses, 4 rôles, 2 stages, grants.
 
-#### VÃ©rifier
+#### Vérifier
 
 ```bash
 snow sql -c training -q "SHOW DATABASES LIKE 'APP01_M14_SALES_DEV'"
@@ -315,9 +315,9 @@ snow sql -c training -q "SHOW DATABASES LIKE 'APP01_M14_FINANCE_DEV'"
 snow sql -c training -q "SHOW SCHEMAS IN DATABASE APP01_M14_SALES_DEV"
 ```
 
-### ðŸ“ Ã‰tape 5.3 â€” Publier le contenu SQL avec Snow CLI
+### 📝 Étape 5.3 — Publier le contenu SQL avec Snow CLI
 
-#### CrÃ©er les fichiers SQL
+#### Créer les fichiers SQL
 
 ```bash
 cd labs/m14-data-products
@@ -354,14 +354,14 @@ SELECT
   300.00 AS AMOUNT;
 ```
 
-#### ExÃ©cuter le SQL avec Snow CLI
+#### Exécuter le SQL avec Snow CLI
 
 ```bash
 snow sql -c training -f sql/sales/orders.sql
 snow sql -c training -f sql/finance/ledger.sql
 ```
 
-#### VÃ©rifier
+#### Vérifier
 
 ```bash
 snow sql -c training -q "SELECT * FROM APP01_M14_SALES_DEV.GOLD.DAILY_REVENUE"
@@ -374,11 +374,11 @@ snow sql -c training -q "SELECT * FROM APP01_M14_FINANCE_DEV.SILVER.LEDGER"
 terraform plan -detailed-exitcode
 ```
 
-âœ… **Checkpoint** : code 0 â€” le SQL publiÃ© ne modifie pas la structure gÃ©rÃ©e par Terraform.
+✅ **Checkpoint** : code 0 — le SQL publié ne modifie pas la structure gérée par Terraform.
 
-> C'est la sÃ©paration des responsabilitÃ©s : Terraform gÃ¨re la structure, Snow CLI gÃ¨re le contenu.
+> C'est la séparation des responsabilités : Terraform gère la structure, Snow CLI gère le contenu.
 
-### ðŸ“ Ã‰tape 5.4 â€” VÃ©rifier les Future Grants
+### 📝 Étape 5.4 — Vérifier les Future Grants
 
 #### Lister les Future Grants
 
@@ -386,18 +386,18 @@ terraform plan -detailed-exitcode
 snow sql -c training -q "SHOW FUTURE GRANTS IN SCHEMA APP01_M14_SALES_DEV.GOLD"
 ```
 
-âœ… **Checkpoint** : `GRANT SELECT ON FUTURE TABLES TO ROLE ROLE_APP01_M14_SALES_RDR_DEV`.
+✅ **Checkpoint** : `GRANT SELECT ON FUTURE TABLES TO ROLE ROLE_APP01_M14_SALES_RDR_DEV`.
 
 #### Tester le Future Grant
 
-CrÃ©ez une table manuellement dans GOLD :
+Créez une table manuellement dans GOLD :
 
 ```bash
 snow sql -c training -q "CREATE TABLE APP01_M14_SALES_DEV.GOLD.TEST_FUTURE (ID INT)"
 snow sql -c training -q "SHOW GRANTS ON TABLE APP01_M14_SALES_DEV.GOLD.TEST_FUTURE"
 ```
 
-âœ… **Checkpoint** : le rÃ´le reader a dÃ©jÃ  SELECT grÃ¢ce au Future Grant.
+✅ **Checkpoint** : le rôle reader a déjà SELECT grâce au Future Grant.
 
 #### Nettoyer
 
@@ -405,59 +405,59 @@ snow sql -c training -q "SHOW GRANTS ON TABLE APP01_M14_SALES_DEV.GOLD.TEST_FUTU
 snow sql -c training -q "DROP TABLE APP01_M14_SALES_DEV.GOLD.TEST_FUTURE"
 ```
 
-#### VÃ©rification Graphique du Data Mesh & Masquage dans Snowsight
+#### Vérification Graphique du Data Mesh & Masquage dans Snowsight
 
 1. Ouvrez **Snowflake Snowsight (`https://app.snowflake.com`)**.
 2. Naviguez vers **Data > Databases > APP01_M14_SALES_DEV > GOLD**.
 3. Cliquez sur la table `DAILY_REVENUE` :
-   - Observez les mÃ©tadonnÃ©es et l'onglet **Tags** : vÃ©rifiez la prÃ©sence des tags de gouvernance (`Domain = SALES`, `Confidentiality = HIGH`).
-4. Ouvrez une **SQL Worksheet** et exÃ©cutez la requÃªte avec le rÃ´le `SYSADMIN` :
+   - Observez les métadonnées et l'onglet **Tags** : vérifiez la présence des tags de gouvernance (`Domain = SALES`, `Confidentiality = HIGH`).
+4. Ouvrez une **SQL Worksheet** et exécutez la requête avec le rôle `SYSADMIN` :
    ```sql
    SELECT * FROM APP01_M14_SALES_DEV.GOLD.DAILY_REVENUE LIMIT 5;
    ```
-   Les donnÃ©es sensibles apparaissent en clair pour l'administrateur.
-5. Basculez sur le rÃ´le reader `ROLE_APP01_M14_SALES_RDR_DEV` et rÃ©-exÃ©cutez la requÃªte :
-   Les colonnes protÃ©gÃ©es par la politique de masquage dynamique sont automatiquement masquÃ©es (`***`).
+   Les données sensibles apparaissent en clair pour l'administrateur.
+5. Basculez sur le rôle reader `ROLE_APP01_M14_SALES_RDR_DEV` et ré-exécutez la requête :
+   Les colonnes protégées par la politique de masquage dynamique sont automatiquement masquées (`***`).
 
 ---
 
-## ðŸ› 6. Incident ContrÃ´lÃ© (*Chaos Engineering Lab*)
+## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
 
-*Pour garantir l'intÃ©gritÃ© de votre catalogue de donnÃ©es d'entreprise :*
+*Pour garantir l'intégrité de votre catalogue de données d'entreprise :*
 
-### SymptÃ´me & Injection
+### Symptôme & Injection
 
-Dans Snowsight, modifiez manuellement la valeur d'un tag sur la table `DAILY_REVENUE` (ex: passez `Confidentiality` de `HIGH` Ã  `PUBLIC`).
+Dans Snowsight, modifiez manuellement la valeur d'un tag sur la table `DAILY_REVENUE` (ex: passez `Confidentiality` de `HIGH` à `PUBLIC`).
 
 ### Diagnostic & Observation
 
-DÃ©tection au terminal :
+Détection au terminal :
 
 ```powershell
 terraform plan
 ```
 
-Observez le diff dÃ©tectÃ© par Terraform sur l'association de tags :
+Observez le diff détecté par Terraform sur l'association de tags :
 
 ```text
 ~ tag_value = "PUBLIC" -> "HIGH"
 ```
 
-### RemÃ©diation
+### Remédiation
 
-Lancez `terraform apply -auto-approve` pour rÃ©aligner immÃ©diatement la gouvernance sur la politique officielle as-code.
+Lancez `terraform apply -auto-approve` pour réaligner immédiatement la gouvernance sur la politique officielle as-code.
 
 ---
 
-## ðŸ¤– 7. Validation AutomatisÃ©e (*Check My Progress*)
+## 🤖 7. Validation Automatisée (*Check My Progress*)
 
-ExÃ©cutez le script d'auto-Ã©valuation pour valider le module Data Products :
+Exécutez le script d'auto-évaluation pour valider le module Data Products :
 
 ```powershell
 .\scripts\SelfPacedLab.ps1 -Module 14 -All -Report
 ```
 
-âœ… **RÃ©sultat attendu :**
+✅ **Résultat attendu :**
 ```text
 [PASS] T1 Domain databases created
 [PASS] T2 Governance tags assigned
@@ -469,26 +469,26 @@ Result: 5/5 Tasks Passed.
 
 ---
 
-## ðŸ† 8. DÃ©fi Autonome (*Unguided Challenge*)
+## 🏆 8. Défi Autonome (*Unguided Challenge*)
 
-> **ScÃ©nario :** Ajoutez un troisiÃ¨me domaine `MARKETING` avec un owner et un warehouse dÃ©diÃ©. Publiez une vue `CAMPAIGN_PERFORMANCE` dans le schema GOLD.
+> **Scénario :** Ajoutez un troisième domaine `MARKETING` avec un owner et un warehouse dédié. Publiez une vue `CAMPAIGN_PERFORMANCE` dans le schema GOLD.
 > **Contraintes :**
-> - `terraform plan` crÃ©e les ressources MARKETING;
+> - `terraform plan` crée les ressources MARKETING;
 > - `snow sql -f` publie la vue;
 > - `terraform plan -detailed-exitcode` retourne 0;
-> - le Future Grant est configurÃ© pour le reader.
+> - le Future Grant est configuré pour le reader.
 
-| CritÃ¨re d'Ã‰valuation | Points |
+| Critère d'Évaluation | Points |
 |---|---:|
 | Syntaxe HCL et respect des standards | 30 pts |
-| Preuve d'exÃ©cution fonctionnelle | 30 pts |
+| Preuve d'exécution fonctionnelle | 30 pts |
 | Idempotence (`0 to add, 0 to change, 0 to destroy`) | 20 pts |
-| Respect des budgets FinOps & SÃ©curitÃ© | 20 pts |
+| Respect des budgets FinOps & Sécurité | 20 pts |
 | **Total** | **100 pts** |
 
-## ðŸ§¹ 9. Nettoyage ContrÃ´lÃ© (*FinOps Teardown*)
+## 🧹 9. Nettoyage Contrôlé (*FinOps Teardown*)
 
-DÃ©truisez toutes les ressources crÃ©Ã©es dans ce lab :
+Détruisez toutes les ressources créées dans ce lab :
 
 ```bash
 cd labs/m14-data-products
@@ -501,4 +501,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M13](../module-13-finops-observability/lab.md) Â· [<- Jour 5](../README.md) Â· **Lab M14** Â· [Fin de formation ->](../../README.md)
+[<- Lab M13](../module-13-finops-observability/lab.md) · [<- Jour 5](../README.md) · **Lab M14** · [Fin de formation ->](../../README.md)

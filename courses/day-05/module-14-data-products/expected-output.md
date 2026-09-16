@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M14
+# Résultat attendu — M14
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
 

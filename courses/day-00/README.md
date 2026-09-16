@@ -1,4 +1,4 @@
-﻿# Jour 0 — Diagnostiquer votre environnement
+# Jour 0 — Diagnostiquer votre environnement
 
 **Durée estimée :** 30–90 minutes (hors temps de cours)
 **Résultat attendu :** `Toolchain status: READY` + `SELECT 1` Snowflake réussi

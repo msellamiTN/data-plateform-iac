@@ -1,4 +1,4 @@
-﻿# Code de départ — M8 : Stratégies d'environnements
+# Code de départ — M8 : Stratégies d'environnements
 
 ## Ce qu'il faut copier
 

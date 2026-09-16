@@ -1,4 +1,4 @@
-﻿# Solution de référence — M11 : RBAC & Future Grants
+# Solution de référence — M11 : RBAC & Future Grants
 
 ## Source
 

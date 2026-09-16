@@ -1,4 +1,4 @@
-﻿# Module 11 – Cours : RBAC Scalable
+# Module 11 – Cours : RBAC Scalable
 
 > [<- Jour 4](../README.md) · [<- Jour 3](../../day-03/README.md) · **Module 11** · [Module suivant ->](../module-12-capstone/lab.md)
 

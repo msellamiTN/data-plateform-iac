@@ -1,4 +1,4 @@
-﻿# Module 7 – Slides : Pipeline CI/CD
+# Module 7 – Slides : Pipeline CI/CD
 
 ---
 

@@ -1,4 +1,4 @@
-$projectRoot = 'C:\Data2AI-Labs\data-platform'
+﻿$projectRoot = 'C:\Data2AI-Labs\data-platform'
 $localSpFile = Join-Path $projectRoot 'secrets\shared-sp.txt'
 $localPatFile = Join-Path $projectRoot 'secrets\snowflake_pat.txt'
 

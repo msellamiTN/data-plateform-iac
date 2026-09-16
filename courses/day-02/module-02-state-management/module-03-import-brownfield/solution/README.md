@@ -1,4 +1,4 @@
-﻿# Solution de référence — M3 : Import & Brownfield
+# Solution de référence — M3 : Import & Brownfield
 
 ## Source
 

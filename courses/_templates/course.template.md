@@ -1,4 +1,4 @@
-﻿# Cours Mx — <Capacité professionnelle>
+# Cours Mx — <Capacité professionnelle>
 
 **Durée de lecture :** <durée>  
 **Piste :** `[CORE]`  

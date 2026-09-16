@@ -1,4 +1,4 @@
-﻿# Solution de référence — M1
+# Solution de référence — M1
 
 La solution autonome et sans credential se trouve dans :
 

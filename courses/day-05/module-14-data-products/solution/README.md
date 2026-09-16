@@ -1,4 +1,4 @@
-﻿# Solution M14
+# Solution M14
 
 La solution exécutable est `project/06-data-products/` :
 

@@ -1,4 +1,4 @@
-﻿# Module 6 ? Slides : Logique Dynamique
+# Module 6 ? Slides : Logique Dynamique
 
 **for_each ? count ? dynamic blocks**
 

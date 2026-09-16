@@ -81,7 +81,7 @@ flowchart LR
 ![Architecture Atelier](assets/lab-architecture.png)
 
 ## 🎯 3. Objectifs Pédagogiques Vérifiables
-
+![Architecture Atelier](assets/ClickOps-vs-IacOps.png)
 - ✅ créer une configuration Terraform depuis le clone du projet type;
 - ✅ authentifier le provider Snowflake avec un PAT sans placer de secret dans le code;
 - ✅ expliquer les blocs `terraform`, `required_providers`, `provider` et `resource`;

@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Automatise la création de l'utilisateur Snowflake service et de son PAT/JWT.

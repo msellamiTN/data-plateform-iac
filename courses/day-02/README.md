@@ -1,4 +1,4 @@
-﻿# Jour 2 — State, import et brownfield
+# Jour 2 — State, import et brownfield
 
 **Objectif :** Sécuriser le state, intégrer l'existant sans recréation, détecter la dérive.
 **Durée :** 6 heures (2 h concepts · 4 h pratique)

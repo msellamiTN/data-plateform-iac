@@ -1,4 +1,4 @@
-﻿# Résultat attendu — M12 : Capstone
+# Résultat attendu — M12 : Capstone
 
 > [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
 

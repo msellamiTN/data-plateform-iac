@@ -1,4 +1,4 @@
-﻿# Module 3 : Cours : Import Brownfield
+# Module 3 : Cours : Import Brownfield
 
 > [<- Jour 2](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../../day-01/module-04-variables-outputs/lab.md)
 

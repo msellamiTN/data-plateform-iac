@@ -1,4 +1,4 @@
-﻿# Module 7 – Cours : Pipeline CI/CD
+# Module 7 – Cours : Pipeline CI/CD
 
 > [<- Jour 4](../README.md) · [<- Module precedent](../../day-03/module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
 

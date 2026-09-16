@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 <#
 .SYNOPSIS
     Instructor dashboard — probes Snowflake for all learner-prefixed objects.

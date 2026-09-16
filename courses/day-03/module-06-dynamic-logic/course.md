@@ -1,4 +1,4 @@
-﻿# Module 6 : Cours : Logique Dynamique
+# Module 6 : Cours : Logique Dynamique
 
 > [<- Jour 3](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../../day-04/module-07-cicd-pipeline/lab.md)
 

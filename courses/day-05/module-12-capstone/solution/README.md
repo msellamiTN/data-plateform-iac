@@ -1,4 +1,4 @@
-﻿# Solution de référence — M12 : Capstone
+# Solution de référence — M12 : Capstone
 
 ## Source
 

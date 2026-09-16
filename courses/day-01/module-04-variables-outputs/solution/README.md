@@ -1,4 +1,4 @@
-﻿# Solution de référence — M4 : Variables, Outputs & Lifecycle
+# Solution de référence — M4 : Variables, Outputs & Lifecycle
 
 ## Source
 

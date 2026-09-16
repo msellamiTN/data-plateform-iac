@@ -1,4 +1,4 @@
-﻿# Module 2 — Slides : Gestion du State
+# Module 2 — Slides : Gestion du State
 
 ---
 
