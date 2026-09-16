@@ -154,6 +154,16 @@ SHOW GRANTS LIKE 'APP01_M%';       # Preuve RBAC côté Snowflake
 
 > Le cleanup ne détruit que les objets Snowflake associés au préfixe et au lab sélectionnés. Les ressources des autres apprenants et les ressources Azure préconfigurées ne sont pas affectées.
 
+## Concepts officiels touchés
+
+- Provider aliases (`providers = {}`), architecture plugin, `TF_LOG`, `terraform console` (D5)
+- Auth PAT → RSA/JWT, rotation sans interruption, sensitive/state (D2/D5)
+- RBAC as Code, FinOps as Code (resource monitors)
+- `terraform test` (`.tftest.hcl`) + `check` block (D2) ; capstone zero-drift
+- Voir la matrice complète : [certification-coverage.md](../shared/docs/certification-coverage.md)
+
+---
+
 ## Navigation
 
 [<- Catalogue](../README.md) · [Jour 4](../day-04/README.md) · **Jour 5** · [Fin de formation ->](../README.md)

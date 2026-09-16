@@ -72,6 +72,7 @@ flowchart TD
 - créer les ressources directement, puis les extraire dans un module;
 - appeler le module depuis `labs/m05-modules/`;
 - versionner le module avec un `README.md` et des `outputs`;
+- appeler un module par source Git versionnée (`git::...?ref=tag`) et connaître la règle provider-in-module;
 - réutiliser le module pour un second domaine.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
@@ -620,6 +621,65 @@ terraform apply
 1. Ouvrez **[app.snowflake.com](https://app.snowflake.com)** avec vos identifiants apprenant.
 2. Naviguez dans **Data > Databases** et vérifiez que vos bases originales (créées au M01/M04) existent toujours intactes à côté de la nouvelle base `SALES`.
 3. Le refactoring en module n'a provoqué aucune recréation : la migration de code ne détruit rien si les adresses de ressources sont correctement gérées.
+
+### 📝 Étape 5.5 — Versionner un module (sources & tags Git)
+
+Jusqu'ici le module est appelé par chemin local (`./modules/landing-zone`). En équipe, un module se **versionne** comme une librairie.
+
+#### Les trois sources de modules
+
+| Source | Exemple | Usage |
+|---|---|---|
+| Locale | `source = "./modules/landing-zone"` | Monorepo, développement |
+| Registry | `source = "Snowflake-Labs/snowflake/snowflake"` + `version = "~> 1.0"` | Modules publics/entreprise publiés |
+| Git | `source = "git::https://github.com/org/modules.git//landing-zone?ref=v1.2.0"` | Modules privés versionnés |
+
+> 📌 `?ref=` accepte un **tag** (`v1.2.0` — recommandé), une branche ou un SHA. Le `//` sépare la racine du repo du sous-dossier du module.
+
+#### Hands-on : versionner le module en Git local (sans remote)
+
+Un repo Git local suffit à démontrer le mécanisme :
+
+```powershell
+# 1. Transformer le dossier du module en repo Git indépendant
+cd labs\m05-modules\modules\landing-zone
+git init
+git add .
+git commit -m "v1.0.0 landing-zone module"
+git tag v1.0.0
+
+# 2. Appeler le module par source Git versionnee (chemin file://)
+#    dans main.tf d'un dossier de test :
+```
+
+```hcl
+module "landing_zone_v1" {
+  source = "git::file:///C:/Data2AI-Labs/data-platform/labs/m05-modules/modules/landing-zone?ref=v1.0.0"
+  # ... mêmes inputs
+}
+```
+
+```powershell
+# 3. Simuler une évolution : bump majeur
+git commit -am "v2: breaking change" ; git tag v2.0.0
+# Changer ?ref=v2.0.0 → terraform init re-télécharge la version épinglée
+```
+
+✅ **Checkpoint** : `terraform init` affiche `Downloading git::file:///... for landing_zone_v1` puis `- landing_zone_v1 in .terraform\modules`. Changez `?ref=` → `init -upgrade` récupère l'autre version : **le consommateur choisit sa version, le producteur publie des tags**.
+
+#### Règle d'or : les providers dans les modules
+
+Un module réutilisable ne déclare **jamais** de bloc `provider {}` — il hérite celui de la configuration racine. Pour cibler un provider **aliasé** (ex. rôle sécurité vs rôle sysadmin, cf. M10), l'appelant passe la map `providers` :
+
+```hcl
+module "landing_zone" {
+  source    = "./modules/landing-zone"
+  providers = { snowflake = snowflake.security_admin }
+  # ...
+}
+```
+
+✅ Vous l'appliquerez concrètement au Jour 5 (M10) avec les provider aliases.
 
 ---
 

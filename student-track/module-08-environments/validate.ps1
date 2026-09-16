@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -46,6 +46,11 @@ if ($All -or -not $Task -or $Task -eq 4) {
 # Task 5: Promotion artifact or plan
 $planJson = Join-Path $workspace 'm08.tfplan.json'
 Add-Check 5 'Plan evidence' ((Test-Path $planJson) -or (Test-Path (Join-Path $devDir 'terraform.tfstate'))) 'Generate plan and save m08.tfplan.json.'
+
+# Task 6: Cross-stack data sharing
+$consumerTf = Get-Text 'consumer/main.tf'
+$anyRemoteState = $consumerTf -match 'terraform_remote_state' -or (Get-Text 'main.tf') -match 'terraform_remote_state'
+Add-Check 6 'terraform_remote_state consumer' $anyRemoteState 'Add a consumer stack reading DEV outputs via data "terraform_remote_state" (step 5.6).'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

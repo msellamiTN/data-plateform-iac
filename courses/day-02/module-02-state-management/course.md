@@ -110,6 +110,21 @@ Lors d'un `plan`, Terraform :
 | `gcs` | GCS native | GCP |
 | `remote` (HCP Terraform) | Natif | équipes HashiCorp |
 
+### 3.1.bis Et avec HCP Terraform ? (cadrage)
+
+HCP Terraform (ex-Terraform Cloud) est le backend « tout-en-un » de HashiCorp : il stocke le state **et** exécute les runs. Concepts à retenir — ils seront démontrés via Azure DevOps au Jour 4 :
+
+| Concept HCP Terraform | Équivalent dans ce cours |
+|---|---|
+| `cloud {}` block / backend `remote` | `backend "azurerm"` + Azure DevOps |
+| **Run** (plan puis apply gérés, UI web) | Pipeline ADO : `plan` → artefact `tfplan` → `apply` |
+| **Run modes** : CLI-driven vs VCS-driven vs API | Pipeline déclenchée par push/PR (VCS-driven) |
+| **Workspace HCP** = state + variables + credentials | Répertoire env + `.tfvars` + backend key (M08) |
+| **Run tasks / gouvernance** (policy checks) | Stage de validation + approbation humaine (M07) |
+| Variable sets, team access | Variables de pipeline + RBAC Azure DevOps |
+
+> 🎓 En initiation nous utilisons Azure Blob + Azure DevOps (déjà provisionnés). HCP Terraform offre la même boucle *plan → review → apply* hébergée, avec gouvernance intégrée.
+
 ### 3.2 Configuration Azure Blob Storage (azurerm)
 
 ```hcl

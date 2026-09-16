@@ -137,6 +137,7 @@ Chaque participant doit pouvoir montrer :
 - [Reprise après incident](shared/docs/guide-reprise.md)
 - [Architecture de référence](shared/docs/architecture-reference.md)
 - [Conventions de nommage](shared/docs/naming-conventions.md)
+- [Couverture du référentiel officiel Terraform](shared/docs/certification-coverage.md) — matrice domaine → module → statut
 
 ## Jours
 

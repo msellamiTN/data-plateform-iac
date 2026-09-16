@@ -137,6 +137,16 @@ terraform {
 - Trois observations de la journée
 - Justification du Jour 3
 
+## Concepts officiels touchés
+
+- Backend distant Azure Blob, locking, migration de state (D3)
+- `terraform state` subcommands, workspaces CLI, lock file & `init -upgrade` (D1/D3)
+- Import brownfield, `moved`, drift (`plan -refresh-only`), `-target` (D1)
+- `terraform_remote_state` — partage d'outputs entre stacks (D3)
+- Voir la matrice complète : [certification-coverage.md](../shared/docs/certification-coverage.md)
+
+---
+
 ## Navigation
 
 [<- Catalogue](../README.md) · [Jour 1](../day-01/README.md) · **Jour 2** · [Jour 3 ->](../day-03/README.md)

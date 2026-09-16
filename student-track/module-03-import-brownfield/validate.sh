@@ -49,6 +49,10 @@ fi
 # Task 5: Import plan or generated config
 check 5 'Import plan or generated config' '[[ -f "$workspace/m03.tfplan.json" ]] || [[ -f "$workspace/generated.tf" ]]' 'Run terraform plan with import or generate-config-out, and save m03.tfplan.json.'
 
+# Task 6: Import evidence in state & refactoring
+check 6 'Imported resource tracked in state' 'grep -qiE "BROWNFIELD" "$workspace/terraform.tfstate" 2>/dev/null || contains main.tf "import[[:space:]]*\{"' 'The imported brownfield resource should appear in terraform.tfstate or an import block.'
+check 6 'moved block refactoring documented' 'contains main.tf "moved[[:space:]]*\{" || [[ -f "$workspace/moved-blocks.txt" ]]' 'Use a moved {} block to refactor without destroy (step 5.5).'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"

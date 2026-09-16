@@ -57,6 +57,8 @@ terraform workspace select prod
 
 State séparé automatiquement (`env:/prod/`). Utile pour prototypes ; en entreprise, répertoires + CI explicite est plus lisible.
 
+> 🎓 **Vocabulaire HCP Terraform** (référentiel officiel, domaine collaboration) : dans HCP Terraform, un *workspace* = state + variables + credentials + historique des runs — autrement dit l'équivalent géré de notre trio « répertoire env + `.tfvars` + clé de backend ». Le *run workflow* HCP (plan → review → apply hébergé) correspond à notre pipeline Azure DevOps de M07 ; les *run tasks* et l'*access management* correspondent aux stages de validation et aux approvals. Même boucle, outil managé vs assemblé.
+
 ## 3. Matrice de paramètres
 
 | Paramètre | DEV | TEST | PROD |

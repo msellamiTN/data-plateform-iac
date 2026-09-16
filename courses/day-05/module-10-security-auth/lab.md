@@ -76,7 +76,9 @@ flowchart TD
 - créer un module `landing-zone` avec une base de données et un warehouse;
 - configurer un utilisateur Snowflake avec authentification key-pair;
 - marquer les secrets comme `sensitive`;
-- comprendre la rotation sans interruption.
+- comprendre la rotation sans interruption;
+- séparer les rôles avec les provider aliases (`providers = {}` map);
+- déboguer avec `TF_LOG` et évaluer des expressions dans `terraform console`.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -547,6 +549,88 @@ module "security" {
 ```
 
 > Pendant la transition, les deux clés sont valides. Une fois la nouvelle clé testée, vous inversez les rôles et retirez l'ancienne.
+
+### 📝 Étape 5.6 — Provider aliases : séparer les rôles dans le code
+
+Un provider = une identité. Les **aliases** permettent plusieurs configurations du même provider dans une exécution — le moindre privilège devient visible dans le code.
+
+#### Déclarer deux providers aliasés
+
+Dans `labs/m10-security-auth/provider.tf`, ajoutez sous le provider existant :
+
+```hcl
+provider "snowflake" {
+  alias = "sysadmin"
+  role  = "SYSADMIN"
+  # même authentification que le provider par défaut (PAT / JWT)
+}
+
+provider "snowflake" {
+  alias = "security"
+  role  = "SECURITYADMIN"
+}
+```
+
+#### Router les ressources par rôle
+
+```hcl
+module "landing_zone" {
+  source    = "./modules/landing-zone"
+  providers = { snowflake = snowflake.sysadmin }
+  # ...inputs
+}
+
+module "security" {
+  source    = "./modules/security"
+  providers = { snowflake = snowflake.security }
+  # ...inputs
+}
+```
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint** : Terraform route chaque module vers son rôle. L'intention « qui crée quoi » est lisible dans le code — c'est la séparation des duties *as code*.
+
+> 📌 **Rappel M05** : un module réutilisable ne déclare jamais `provider {}` — il reçoit le provider via la map `providers = {}` de l'appelant.
+
+### 📝 Étape 5.7 — Déboguer Terraform : `TF_LOG` et `terraform console`
+
+#### Provoquer une erreur volontaire
+
+Dans `modules/security/main.tf`, remplacez temporairement `default_role = "SYSADMIN"` par `default_role = "ROLE_INEXISTANT"` puis :
+
+```powershell
+$env:TF_LOG = "DEBUG"
+terraform apply 2>&1 | Select-String -Pattern "error|role" -Context 0,2
+$env:TF_LOG = $null   # toujours desactiver apres debug
+```
+
+✅ **Observer** : les logs DEBUG montrent la requête exacte envoyée à l'API Snowflake et la réponse — indispensable quand le message d'erreur est opaque.
+
+Niveaux disponibles : `TRACE` (tout, très verbeux) → `DEBUG` → `INFO` → `WARN` → `ERROR`. Pour écrire dans un fichier : `$env:TF_LOG_PATH = "terraform.log"`.
+
+> ⚠️ `TF_LOG=DEBUG` peut afficher des valeurs sensibles — ne jamais coller ces logs dans un ticket ou un screenshot.
+
+#### `terraform console` — évaluer des expressions
+
+```powershell
+terraform console
+```
+
+```hcl
+var.learner_prefix
+merge({a=1}, {b=2})
+try(var.rsa_public_key_new, "absent")
+length(module.landing_zone)
+```
+
+Tapez `exit` pour quitter. La console évalue les expressions **dans le contexte du state** — le REPL indispensable pour tester une fonction avant de l'écrire en code.
+
+#### Restaurer
+
+Remettez `default_role = "SYSADMIN"` et vérifiez `terraform plan` → `No changes`.
 
 ---
 

@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -51,6 +51,11 @@ if ($All -or -not $Task -or $Task -eq 4) {
 # Task 5: Plan output
 $planJson = Join-Path $workspace 'm10.tfplan.json'
 Add-Check 5 'Plan evidence' (Test-Path $planJson) 'Generate plan and save m10.tfplan.json.'
+
+# Task 6: Provider aliases
+$providerTf = Get-Text 'provider.tf'
+Add-Check 6 'Provider alias declared' ($providerTf -match 'alias\s*=') 'Declare an aliased provider for role separation in provider.tf (step 5.6).'
+Add-Check 6 'providers map in module call' ((Get-Text 'main.tf') -match 'providers\s*=') 'Pass providers = { snowflake = snowflake.alias } to modules.'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

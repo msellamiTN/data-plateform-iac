@@ -79,6 +79,28 @@ Pour être conforme aux réglementations sur la protection des données (RGPD), 
 
 ## 6. Provider Aliases (Multi-Rôle Snowflake)
 
+### 6.0 Architecture plugin : comment Terraform parle à Snowflake
+
+Terraform est découpé en deux processus qui communiquent par RPC :
+
+```mermaid
+flowchart LR
+    CORE["Terraform Core<br/>(binaire terraform)<br/>• parse HCL, construit le graphe<br/>• plan/apply, gère le state"]
+    PROV["Provider Snowflake<br/>(terraform-provider-snowflake)<br/>• traduit les ressources en appels API<br/>• CRUD + read (refresh)"]
+    REG["Registry<br/>registry.terraform.io<br/>• distribution versionnée<br/>• signatures + checksums"]
+    SF[("Snowflake API")]
+
+    CORE -->|"init: télécharge et épingle<br/>(.terraform.lock.hcl)"| REG
+    CORE -->|"plan/apply: RPC"| PROV
+    PROV -->|"HTTPS"| SF
+```
+
+Points clés :
+- **`terraform init`** résout `required_providers`, télécharge le binaire provider dans `.terraform/providers/` et fige version + checksums dans `.terraform.lock.hcl`.
+- **Un provider = un processus plugin** : plusieurs configs (aliases) = plusieurs instances du même binaire.
+- **Debug** : `TF_LOG=DEBUG` montre les échanges core↔provider ; `terraform providers` liste les providers requis.
+- En environnement fermé : `terraform providers mirror` permet un registry local.
+
 Le provider Snowflake supporte les **aliases** pour opérer avec différents rôles dans la même exécution Terraform. Cela permet de séparer les préoccupations (SYSADMIN pour infrastructure, SECURITYADMIN pour rôles, USERADMIN pour utilisateurs).
 
 ```hcl

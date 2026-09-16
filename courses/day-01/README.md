@@ -112,6 +112,15 @@ terraform output        # Afficher les sorties
 
 ---
 
+## Concepts officiels touchés
+
+- Cycle de vie complet : `init` / `plan` / `apply` / `destroy` (D1)
+- Variables typées, `validation {}`, `locals`, outputs `sensitive` (D2)
+- `lifecycle`/`prevent_destroy`, `precondition`, `depends_on` (D2)
+- Voir la matrice complète : [certification-coverage.md](../shared/docs/certification-coverage.md)
+
+---
+
 ## Navigation
 
 [<- Catalogue](../README.md) · [Jour 0](../day-00/README.md) · **Jour 1** · [Jour 2 ->](../day-02/README.md)

@@ -64,7 +64,10 @@ flowchart LR
 - utiliser `for_each` pour créer plusieurs ressources à partir d'une map;
 - utiliser `for` pour transformer des collections;
 - utiliser `dynamic` pour générer des blocs répétitifs;
-- comprendre la différence entre `count` et `for_each`.
+- comprendre la différence entre `count` et `for_each`;
+- lire des objets existants avec les `data` sources;
+- combiner les fonctions de transformation (`merge`, `coalesce`, `flatten`, `try`, `format`);
+- écrire un `check` block d'assertion post-apply.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -578,6 +581,100 @@ terraform apply
 2. Naviguez dans **Data > Databases** > Votre database M06.
 3. Vérifiez la présence des schemas créés dynamiquement (`RAW`, `CLEAN`, `CURATED`, et le conditionnel `MONITORING`).
 4. Cliquez sur chaque schema pour vérifier ses commentaires et la cohérence des attributs (retention, etc.).
+
+### 📝 Étape 5.5 — Data sources : lire l'existant
+
+Jusqu'ici Terraform **crée** tout. Les `data` blocks font l'inverse : **lire** des objets existants (créés manuellement, par une autre stack, ou par l'organisation) pour s'y référencer.
+
+#### Lire le compte courant
+
+Ajoutez dans `labs/m06-dynamic-logic/main.tf` :
+
+```hcl
+data "snowflake_current_account" "this" {}
+```
+
+Et dans `outputs.tf` :
+
+```hcl
+output "account_info" {
+  value = {
+    account = data.snowflake_current_account.this.account
+    region  = data.snowflake_current_account.this.region
+    url     = data.snowflake_current_account.this.url
+  }
+}
+```
+
+```powershell
+terraform plan
+terraform apply
+```
+
+✅ **Checkpoint** : l'output affiche votre compte — Terraform a **lu** Snowflake sans rien créer.
+
+#### Lire des objets existants (pattern métier)
+
+Cas réel GlobalBank : la base `SHARED` de l'équipe Platform existe déjà — l'équipe Data Engineering veut y référencer un schema sans la recréer :
+
+```hcl
+data "snowflake_databases" "shared" {
+  like = "${var.learner_prefix}_%"
+}
+```
+
+> 📌 **Règle** : `resource` = je possède et je gère ; `data` = je lis pour m'adapter. Tout objet créé hors Terraform (importé ou géré par une autre équipe) se consomme via `data`.
+
+### 📝 Étape 5.6 — Boîte à outils fonctions
+
+Au-delà de `lookup`/`toset`/`try`, les fonctions qui transforment les collections dans les modules :
+
+| Fonction | Rôle | Exemple |
+|---|---|---|
+| `merge(a, b)` | Fusionne des maps (b écrase a) | `merge(var.defaults, var.overrides)` |
+| `coalesce(a, b)` | 1re valeur non-null/vide | `coalesce(var.custom_name, local.default)` |
+| `flatten(list)` | Aplati listes imbriquées | `flatten([for w in var.wh : w.tags])` |
+| `distinct(list)` | Dédoublonne | `distinct(var.environments)` |
+| `format(fmt, ...)` | `printf` | `format("WH_%s_%s", var.prefix, var.env)` |
+| `try(expr, fallback)` | Anti-erreur | `try(var.cfg.size, "X-SMALL")` |
+| `can(expr)` | Teste sans échouer | `can(regex(...))` (déjà vu en M04) |
+| `jsonencode(v)` | Sérialise | policies, commentaires structurés |
+
+#### Exercice : defaults + overrides
+
+Dans `locals.tf` :
+
+```hcl
+locals {
+  defaults   = { size = "X-SMALL", auto_suspend = 60 }
+  warehouses = { for k, w in var.warehouses : k => merge(local.defaults, w) }
+}
+```
+
+✅ **Checkpoint** : chaque warehouse hérite des defaults sauf si la map le surcharge — c'est le pattern « config par défaut + exceptions » des plateformes.
+
+### 📝 Étape 5.7 — `check` block : assertion post-apply
+
+Un `check` vérifie une **invariante** après chaque plan/apply — un filet de sécurité déclaré en code :
+
+```hcl
+check "warehouse_deployed" {
+  data "snowflake_warehouses" "m06" {
+    like = "WH_${var.learner_prefix}_M06_%"
+  }
+
+  assert {
+    condition     = length(data.snowflake_warehouses.m06.warehouses) > 0
+    error_message = "Aucun warehouse M06 trouve : le deploiement dynamique a echoue."
+  }
+}
+```
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint** : le check apparaît dans le plan ; une assertion fausse produit un **warning** (pas un blocage) — à distinguer de `precondition` (bloquant, M04).
 
 ---
 

@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -52,6 +52,11 @@ if ($All -or -not $Task -or $Task -eq 4) {
 $planJson = Join-Path $workspace 'm03.tfplan.json'
 $hasImportEvidence = (Test-Path $planJson) -or (Test-Path (Join-Path $workspace 'generated.tf'))
 Add-Check 5 'Import plan or generated config' $hasImportEvidence 'Run terraform plan with import or generate-config-out, and save m03.tfplan.json.'
+
+$state = Get-Text 'terraform.tfstate'
+# Task 6: Import evidence in state & targeting
+Add-Check 6 'Imported resource tracked in state' ($state -match 'BROWNFIELD' -or $main -match 'import\s*\{') 'The imported brownfield resource should appear in terraform.tfstate or an import block.'
+Add-Check 6 'moved block refactoring documented' ($main -match 'moved\s*\{' -or (Test-Path (Join-Path $workspace 'moved-blocks.txt'))) 'Use a moved {} block to refactor without destroy (step 5.5).'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

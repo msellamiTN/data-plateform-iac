@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -50,6 +50,10 @@ if ($All -or -not $Task -or $Task -eq 4) {
 # Task 5: Plan output
 $planJson = Join-Path $workspace 'm06.tfplan.json'
 Add-Check 5 'Plan evidence' (Test-Path $planJson) 'Generate plan and save m06.tfplan.json.'
+
+# Task 6: Data sources & check block
+Add-Check 6 'Data source used' ((Get-Text 'main.tf') -match 'data\s+"') 'Read existing objects with a data block (e.g. snowflake_current_account).'
+Add-Check 6 'check block present' ((Get-Text 'main.tf') -match 'check\s+"') 'Add a check {} post-apply assertion (step 5.7).'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

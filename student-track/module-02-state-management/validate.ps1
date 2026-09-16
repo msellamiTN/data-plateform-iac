@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -55,6 +55,10 @@ if ($All -or -not $Task -or $Task -eq 4) {
 $planJson = Join-Path $workspace 'm02.tfplan.json'
 $hasStateOrPlan = (Test-Path $planJson) -or (Test-Path (Join-Path $workspace '.terraform/terraform.tfstate'))
 Add-Check 5 'Remote state initialized or plan saved' $hasStateOrPlan 'Initialize the remote backend with terraform init or export m02.tfplan.json.'
+
+# Task 6: Lock file & workspaces
+Add-Check 6 'Provider lock file present' (Test-Path (Join-Path $workspace '.terraform.lock.hcl')) 'Run terraform init to generate .terraform.lock.hcl and keep it versioned.'
+Add-Check 6 'Workspace CLI practiced' (Test-Path (Join-Path $workspace '.terraform/environment')) 'Exercise terraform workspace new/select/delete (step 5.7).'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

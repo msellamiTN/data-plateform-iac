@@ -48,6 +48,10 @@ fi
 # Task 5: Plan output
 check 5 'Plan evidence' 'test -f "$workspace/m10.tfplan.json"' 'Generate plan and save m10.tfplan.json.'
 
+# Task 6: Provider aliases
+check 6 'Provider alias declared' 'contains provider.tf "alias[[:space:]]*="' 'Declare an aliased provider for role separation in provider.tf (step 5.6).'
+check 6 'providers map in module call' 'contains main.tf "providers[[:space:]]*="' 'Pass providers = { snowflake = snowflake.alias } to modules.'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"

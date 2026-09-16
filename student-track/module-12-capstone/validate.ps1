@@ -1,6 +1,6 @@
-﻿#requires -version 5.1
+﻿﻿#requires -version 5.1
 [CmdletBinding()]
-param([ValidateRange(1, 5)][int]$Task, [switch]$All, [switch]$Report)
+param([ValidateRange(1, 6)][int]$Task, [switch]$All, [switch]$Report)
 
 $workspace = if ($env:STUDENT_WORKSPACE) { $env:STUDENT_WORKSPACE } else { (Get-Location).Path }
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -51,6 +51,10 @@ if ($All -or -not $Task -or $Task -eq 4) {
 # Task 5: Capstone plan evidence
 $planJson = Join-Path $workspace 'm12.tfplan.json'
 Add-Check 5 'Capstone plan evidence' (Test-Path $planJson) 'Generate final capstone plan and export m12.tfplan.json.'
+
+# Task 6: terraform test & check block
+Add-Check 6 'Terraform test file exists' (Test-Path (Join-Path $workspace 'tests/platform.tftest.hcl')) 'Create tests/platform.tftest.hcl with run + assert blocks (step 5.5).'
+Add-Check 6 'check block health-check' ((Get-Text 'main.tf') -match 'check\s+"') 'Add a check {} block with a data-source assertion.'
 
 foreach ($result in $results) {
     $status = if ($result.Passed) { 'PASS' } else { 'FAIL' }

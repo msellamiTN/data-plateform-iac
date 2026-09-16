@@ -48,6 +48,10 @@ fi
 # Task 5: Plan output
 check 5 'Plan evidence' 'test -f "$workspace/m06.tfplan.json"' 'Generate plan and save m06.tfplan.json.'
 
+# Task 6: Data sources & check block
+check 6 'Data source used' 'contains main.tf "data[[:space:]]+\""' 'Read existing objects with a data block (e.g. snowflake_current_account).'
+check 6 'check block present' 'contains main.tf "check[[:space:]]+\""' 'Add a check {} post-apply assertion (step 5.7).'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"

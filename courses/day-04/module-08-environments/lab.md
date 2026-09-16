@@ -74,7 +74,8 @@ flowchart TD
 - déployer le module dans DEV, UAT et PROD;
 - isoler le state par environnement avec des clés distinctes;
 - définir une matrice de paramètres par environnement;
-- comprendre la différence entre workspaces et directories.
+- comprendre la différence entre workspaces et directories;
+- partager des outputs entre stacks via `terraform_remote_state`.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -584,6 +585,79 @@ Résultat attendu : `No changes. Your infrastructure matches the configuration.`
 ### Remédiation & Enseignement
 
 L'approche par répertoires dédiés garantit une isolation de production qui serait impossible avec les workspaces Terraform.
+
+### 📝 Étape 5.6 — Partager des données entre stacks (`terraform_remote_state`)
+
+Les environnements sont isolés, mais doivent parfois **se lire** : l'équipe BI (PROD) veut référencer le warehouse créé en DEV. `terraform_remote_state` expose les *outputs* d'une stack à une autre — sans recréer ni dupliquer.
+
+#### Créer une stack consommatrice
+
+```powershell
+cd labs\m08-environments
+New-Item -ItemType Directory -Path consumer -Force | Out-Null
+cd consumer
+```
+
+Créez `main.tf` :
+
+```hcl
+terraform {
+  required_version = "= 1.14.5"
+
+  required_providers {
+    snowflake = {
+      source  = "snowflakedb/snowflake"
+      version = "= 2.14.0"
+    }
+  }
+
+  backend "azurerm" {
+    resource_group_name  = "rg-data2ai-tf-state"
+    storage_account_name = "sadata2aitfstatemsn"
+    container_name       = "tfstate"
+    key                  = "training/APP01/m08-consumer/terraform.tfstate"
+    use_azuread_auth     = true
+  }
+}
+
+# Lit les outputs de la stack DEV (etat distant)
+data "terraform_remote_state" "dev" {
+  backend = "azurerm"
+  config = {
+    resource_group_name  = "rg-data2ai-tf-state"
+    storage_account_name = "sadata2aitfstatemsn"
+    container_name       = "tfstate"
+    key                  = "training/APP01/m08-dev/terraform.tfstate"
+    use_azuread_auth     = true
+  }
+}
+
+output "dev_database" {
+  value = data.terraform_remote_state.dev.outputs.database_name
+}
+
+output "dev_warehouse" {
+  value = data.terraform_remote_state.dev.outputs.warehouse_name
+}
+```
+
+```powershell
+terraform init
+terraform apply
+```
+
+✅ **Checkpoint** : les outputs affichent les noms créés par la stack DEV — lus depuis le blob Azure, sans aucun appel Snowflake.
+
+> 📌 **Pattern plateforme** : la stack « socle » (Platform) publie ses outputs ; les stacks consommatrices (DE, BI) les lisent. Le contrat entre équipes = les `outputs`, versionnés comme une API.
+>
+> ⚠️ `terraform_remote_state` exige que la stack source soit déjà appliquée **et** que ses outputs existent — un output ajouté après coup n'apparaît qu'au prochain `apply` de la source.
+
+#### Nettoyer
+
+```powershell
+terraform destroy -auto-approve
+cd .. ; Remove-Item -Recurse -Force consumer
+```
 
 ---
 

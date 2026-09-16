@@ -68,7 +68,9 @@ flowchart LR
 - ✅ migrer un state local vers un backend distant;
 - ✅ tester le verrouillage concurrent;
 - ✅ analyser la structure du fichier `terraform.tfstate`;
-- ✅ utiliser `terraform_remote_state` pour lire les outputs d'un autre projet.
+- ✅ utiliser `terraform_remote_state` pour lire les outputs d'un autre projet;
+- ✅ isoler des states avec les workspaces Terraform (`workspace new/select/delete`);
+- ✅ interpréter `.terraform.lock.hcl` et upgrader un provider en sécurité (`init -upgrade`).
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -922,6 +924,69 @@ cd "$HOME/Data2AI-Labs/data-platform"
 rm -rf labs/m02-state-management/reader
 ```
 </details>
+
+---
+
+### 📝 Étape 5.7 — Workspaces Terraform (isolation dans un même backend)
+
+Jusqu'ici, un backend = un state. Terraform permet d'héberger **plusieurs states nommés** dans le même backend via les *workspaces* — utile pour isoler rapidement un brouillon (`dev`) d'une version stable (`prod`).
+
+#### Observer le workspace courant
+
+```powershell
+terraform workspace list
+terraform workspace show
+```
+
+✅ **Résultat attendu :** `* default` — le workspace par défaut existe toujours et contient votre state migré.
+
+#### Créer un workspace `sandbox` et constater l'isolation
+
+```powershell
+terraform workspace new sandbox
+terraform state list
+```
+
+✅ **Checkpoint** : `state list` est **vide** — le nouveau workspace a son propre state (clé `env:/sandbox/...` dans le blob), indépendant de `default`.
+
+> ⚠️ **Piège classique** : un `terraform apply` dans le workspace `sandbox` recréerait des doublons des ressources avec les mêmes noms → collision Snowflake. Les workspaces isolent le **state**, pas le **nommage** — c'est pourquoi notre convention `APPxx_MXX_*` reste indispensable.
+
+#### Revenir et supprimer
+
+```powershell
+terraform workspace select default
+terraform workspace delete sandbox
+terraform workspace list
+```
+
+✅ **Checkpoint** : seul `default` subsiste.
+
+> 🎓 **Jour 4 aperçu** : en entreprise on préfère souvent des **répertoires + fichiers tfvars** (M08) aux workspaces CLI — plus explicites et revus en PR. Les workspaces restent parfaits pour des tests éphémères.
+
+---
+
+### 📝 Étape 5.8 — Lock file & montée de version du provider
+
+#### Inspecter le fichier de verrouillage des providers
+
+```powershell
+Get-Content .terraform.lock.hcl
+```
+
+✅ **Observer** : ce fichier **versionné dans Git** fige les versions exactes et les **empreintes (`h1:` hashes)** du provider — garantissant que chaque membre de l'équipe (et la CI) exécute le **même binaire provider**.
+
+#### La procédure d'upgrade en sécurité
+
+```powershell
+# 1. Le pin actuel bloque toute montée de version
+#    versions.tf : version = "= 2.14.0"
+# 2. Pour upgrader : assouplir la contrainte (ex. "~> 2.14"), puis :
+terraform init -upgrade
+# 3. Vérifier que le plan reste vide AVANT de committer le lock file
+terraform plan
+```
+
+> 📌 **Règle d'équipe** : on ne commit `.terraform.lock.hcl` qu'après un `terraform plan` sans surprise. Le lock file + le pin `required_providers` = la reproductibilité du cours.
 
 ---
 

@@ -145,6 +145,15 @@ modules/landing-zone/
 - Trois observations de la journée
 - Justification du Jour 4
 
+## Concepts officiels touchés
+
+- Modules : création, appel, versioning `git::?ref=`, provider-in-module (D4)
+- `for_each`, `dynamic`, fonctions de transformation, data sources (D2)
+- `check` block d'assertion post-apply (D2)
+- Voir la matrice complète : [certification-coverage.md](../shared/docs/certification-coverage.md)
+
+---
+
 ## Navigation
 
 [<- Catalogue](../README.md) · [Jour 2](../day-02/README.md) · **Jour 3** · [Jour 4 ->](../day-04/README.md)

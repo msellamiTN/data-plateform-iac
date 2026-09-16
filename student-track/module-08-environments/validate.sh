@@ -55,6 +55,9 @@ fi
 # Task 5: Promotion artifact or plan
 check 5 'Plan evidence' '[[ -f "$workspace/m08.tfplan.json" ]] || ([[ -n "$dev_dir" ]] && [[ -f "$dev_dir/terraform.tfstate" ]])' 'Generate plan and save m08.tfplan.json.'
 
+# Task 6: Cross-stack data sharing
+check 6 'terraform_remote_state consumer' 'grep -rlE "terraform_remote_state" "$workspace" --include="*.tf" >/dev/null 2>&1' 'Add a consumer stack reading DEV outputs via data "terraform_remote_state" (step 5.6).'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"

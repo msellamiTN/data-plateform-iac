@@ -135,6 +135,15 @@ flowchart LR
 - Trois observations de la journée
 - Justification du Jour 5
 
+## Concepts officiels touchés
+
+- Terraform en automatisation : `-input=false`, `-detailed-exitcode`, artefacts `tfplan` (D3)
+- Isolation multi-envs : répertoires + tfvars vs workspaces vs HCP workspaces (D3/D6)
+- `terraform_remote_state` hands-on entre stacks (D3)
+- Voir la matrice complète : [certification-coverage.md](../shared/docs/certification-coverage.md)
+
+---
+
 ## Navigation
 
 [<- Catalogue](../README.md) · [Jour 3](../day-03/README.md) · **Jour 4** · [Jour 5 ->](../day-05/README.md)

@@ -43,6 +43,18 @@ Les Resource Monitors constituent le contrôle immédiat. Les marts dbt explique
 | Fréquence | À la demande | Build planifié et supervisé |
 | Restitution | `dbt show` | Dashboard, alertes, ownership |
 
+## Secrets et state en production (cadrage)
+
+Le FinOps inclut la protection des actifs. Trois niveaux à retenir :
+
+| Couche | Mécanisme | Limite |
+|---|---|---|
+| `sensitive = true` | Masque la valeur dans plans/logs | Le **state reste en clair** (JSON) |
+| State protégé | Backend distant chiffré + RBAC (Azure Blob, Jour 2) | Quiconque lit le state lit les secrets |
+| Coffre de secrets | **Azure Key Vault** (utilisé Jour 0/5) ; HashiCorp Vault en équivalent | Intégration explicite requise |
+
+> 📌 **« Intégration Vault » du référentiel officiel** : le concept est *externaliser les secrets hors du code et du state* — dans ce cours il est incarné par Azure Key Vault (PAT, clés SP, clés RSA récupérés au login). HashiCorp Vault joue le même rôle dans un contexte multi-cloud/HashiCorp ; Terraform ≥ 1.10 ajoute aussi les ressources **éphémères** et arguments **write-only** qui ne matérialisent jamais le secret dans le state.
+
 ## Synthèse
 
 Une plateforme observable produit des métriques versionnées, testées, attribuées et reliées à des actions ; elle ne se limite pas à collecter des logs.

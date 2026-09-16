@@ -50,6 +50,10 @@ fi
 # Task 5: Remote state or plan evidence
 check 5 'Remote state initialized or plan saved' '[[ -f "$workspace/m02.tfplan.json" ]] || [[ -f "$workspace/.terraform/terraform.tfstate" ]]' 'Initialize the remote backend with terraform init or export m02.tfplan.json.'
 
+# Task 6: Lock file & workspaces
+check 6 'Provider lock file present' '[[ -f "$workspace/.terraform.lock.hcl" ]]' 'Run terraform init to generate .terraform.lock.hcl and keep it versioned.'
+check 6 'Workspace CLI practiced' '[[ -f "$workspace/.terraform/environment" ]]' 'Exercise terraform workspace new/select/delete (step 5.7).'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"

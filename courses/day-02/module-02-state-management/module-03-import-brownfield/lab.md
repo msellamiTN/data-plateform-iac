@@ -67,8 +67,9 @@ flowchart LR
 - ✅ créer des ressources Snowflake avec Terraform (state local);
 - ✅ importer une ressource Snowflake existante dans Terraform;
 - ✅ générer la configuration à partir de l'import;
-- ✅ détecter et corriger une dérive intentionnelle;
-- ✅ utiliser un bloc `moved` pour refactorer sans destruction.
+- ✅ détecter et corriger une dérive intentionnelle (`plan` vs `plan -refresh-only`);
+- ✅ utiliser un bloc `moved` pour refactorer sans destruction;
+- ✅ cibler une ressource avec `-target` et comprendre ses limites.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -488,6 +489,28 @@ terraform plan
 
 ✅ **Checkpoint** : Terraform détecte que le `comment` a changé et propose de le remettre à la valeur de la configuration.
 
+#### Observer la dérive sans la corriger (`-refresh-only`)
+
+Le `plan` standard *propose déjà la correction*. Pour un **audit pur** — lister la dérive sans rien suggérer de modifier — utilisez le mode refresh-only :
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform plan -refresh-only
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform plan -refresh-only
+```
+</details>
+
+✅ **Checkpoint** : Terraform affiche `Objects have changed outside of Terraform` et met à jour **le state** pour refléter le réel — sans proposer d'action sur l'infrastructure. C'est l'outil d'audit de dérive par excellence.
+
 #### Corriger la dérive
 
 <details>
@@ -616,6 +639,60 @@ terraform plan
 </details>
 
 ✅ **Checkpoint 6** : `No changes.`
+
+### 📝 Étape 5.6 — Cibler une ressource (`-target`)
+
+Parfois on veut appliquer **une seule ressource** — par exemple réimporter ou recréer uniquement le warehouse, sans toucher à la base importée.
+
+#### Planifier une seule ressource
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform plan -target=snowflake_warehouse.etl
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform plan -target=snowflake_warehouse.etl
+```
+</details>
+
+✅ **Checkpoint** : le plan ne concerne que `snowflake_warehouse.etl` — les autres ressources (database, schema) sont ignorées.
+
+#### Appliquer une seule ressource
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform apply -target=snowflake_warehouse.etl
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform apply -target=snowflake_warehouse.etl
+```
+</details>
+
+✅ **Checkpoint** : seul le warehouse est touché.
+
+> ⚠️ **Danger** : `-target` contourne le graphe de dépendances — il est prévu pour des cas exceptionnels (debug, réparation ciblée), **jamais** comme usage courant. Un apply ciblé suivi d'un apply normal peut produire des surprises si des dépendances ont été ignorées. En équipe : toujours un `terraform plan` complet ensuite pour vérifier la cohérence.
+
+#### Vérifier la cohérence après ciblage
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint 7** : `No changes.` — le state global reste cohérent.
 
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
 

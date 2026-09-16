@@ -74,7 +74,9 @@ flowchart TD
 - composer tous les modules dans une configuration unique;
 - déployer la plateforme complète en une seule commande;
 - prouver le zero-drift avec `terraform plan -detailed-exitcode`;
-- documenter l'architecture avec les outputs.
+- documenter l'architecture avec les outputs;
+- valider les règles de la plateforme avec `terraform test` (`.tftest.hcl`);
+- surveiller une invariante FinOps avec un `check` block.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -632,6 +634,85 @@ terraform output -json > docs/m12-outputs.json
 ```
 
 > 🔒 **SECURITY** Vérifiez qu'aucun secret n'apparaît dans le JSON avant de commiter.
+
+### 📝 Étape 5.5 — Tester la plateforme (`terraform test` + `check`)
+
+Le zero-drift prouve que le réel = le code. Les **tests Terraform** prouvent en plus que le code respecte vos **règles** (nommage, tailles FinOps) — et le `check` block surveille l'invariante à chaque run.
+
+#### Ouvrir `tests/platform.tftest.hcl` (fourni)
+
+Le starter contient déjà un fichier de test :
+
+```hcl
+mock_provider "snowflake" {}
+
+run "configuration_is_valid" {
+  command = plan
+
+  variables {
+    snowflake_organization = "TESTORG"
+    snowflake_account      = "TESTACCOUNT"
+    snowflake_user         = "TEST_USER"
+    snowflake_token        = "mock-token"
+    learner_prefix         = "APP01"
+    environment            = "DEV"
+  }
+
+  assert {
+    condition     = can(regex("^[A-Z][A-Z0-9]{2,4}$", var.learner_prefix))
+    error_message = "learner_prefix doit respecter la convention APPxx."
+  }
+}
+```
+
+`mock_provider "snowflake"` simule le provider : les tests tournent **sans credential réel ni connexion** — idéal pour vérifier la logique en CI.
+
+#### Exécuter les tests
+
+```powershell
+terraform init
+terraform test
+```
+
+✅ **Résultat attendu :**
+
+```text
+tests\platform.tftest.hcl... pass
+  run "configuration_is_valid"... pass
+
+Success! 1 passed, 0 failed.
+```
+
+> 💡 `command = plan` teste la logique **sans rien déployer** — rapide et sans coût. `command = apply` déploierait un environnement de test éphémère (puis destroy automatique).
+
+#### 🏆 Défi — tester vos propres ressources
+
+Décommentez le run `naming_convention` dans le fichier fourni et adaptez les assertions à vos objets capstone (ex. `module.landing_zone.database_name == "APP01_M12_RAW_DEV"`). Relancez `terraform test`.
+
+#### Ajouter un `check` block de health-check
+
+Dans `main.tf`, ajoutez en fin de fichier :
+
+```hcl
+check "warehouse_size_finops" {
+  data "snowflake_warehouses" "m12" {
+    like = "WH_${var.learner_prefix}_M12_%"
+  }
+
+  assert {
+    condition = alltrue([
+      for w in data.snowflake_warehouses.m12.warehouses : w.size == "XSMALL"
+    ])
+    error_message = "Un warehouse M12 n'est pas X-SMALL : politique FinOps violee."
+  }
+}
+```
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint** : le check s'évalue après le refresh ; un warehouse non conforme produit un warning visible dans chaque plan — la conformité FinOps devient continue.
 
 ---
 

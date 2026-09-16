@@ -48,6 +48,10 @@ fi
 # Task 5: Capstone plan evidence
 check 5 'Capstone plan evidence' 'test -f "$workspace/m12.tfplan.json"' 'Generate final capstone plan and export m12.tfplan.json.'
 
+# Task 6: terraform test & check block
+check 6 'Terraform test file exists' 'test -f "$workspace/tests/platform.tftest.hcl"' 'Create tests/platform.tftest.hcl with run + assert blocks (step 5.5).'
+check 6 'check block health-check' 'contains main.tf "check[[:space:]]+\""' 'Add a check {} block with a data-source assertion.'
+
 printf 'Result: %d/%d\n' "$passed" "$total"
 if $report; then
   report_dir="$repo_root/student-track/_reports"; mkdir -p "$report_dir"
