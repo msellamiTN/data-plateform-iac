@@ -91,7 +91,7 @@ flowchart LR
 - ✅ prouver la création des trois ressources;
 - ✅ vérifier l'idempotence avec un second plan.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

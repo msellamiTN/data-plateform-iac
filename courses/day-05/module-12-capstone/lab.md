@@ -78,7 +78,7 @@ flowchart TD
 - valider les règles de la plateforme avec `terraform test` (`.tftest.hcl`);
 - surveiller une invariante FinOps avec un `check` block.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

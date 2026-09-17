@@ -77,7 +77,7 @@ flowchart TD
 - appeler un module par source Git versionnée (`git::...?ref=tag`) et connaître la règle provider-in-module;
 - réutiliser le module pour un second domaine.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

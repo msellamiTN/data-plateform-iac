@@ -1,0 +1,16 @@
+# terraform.tfvars.example — copiez ce fichier en terraform.tfvars et complétez.
+# terraform.tfvars est ignoré par Git (voir .gitignore). Ne commitez jamais vos valeurs.
+
+# --- Snowflake (voir la fiche apprenant remise par le formateur) ---
+snowflake_organization = "<VOTRE_ORG>"   # ex: ABCDEFG
+snowflake_account      = "<VOTRE_COMPTE>" # ex: XY12345
+snowflake_user         = "APP01"          # votre utilisateur
+snowflake_role         = "SYSADMIN"      # rôle de création (fourni par le formateur)
+
+# --- Identité de l'apprenant ---
+learner_prefix = "APP01"   # votre préfixe unique (APP01 à APP11)
+environment     = "DEV"     # DEV en J1-J3 ; DEV ou PROD à partir du M13
+
+# snowflake_token est volontairement absent ici :
+# - En J1-J3, le PAT est lu depuis C:\terraform-labs\secrets\snowflake-pat.txt.
+# - En J5 (M16), la pipeline fournit le PAT via TF_VAR_snowflake_token.

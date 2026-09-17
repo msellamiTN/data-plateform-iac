@@ -79,7 +79,7 @@ flowchart TD
 - comprendre la différence entre workspaces et directories;
 - partager des outputs entre stacks via `terraform_remote_state`.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

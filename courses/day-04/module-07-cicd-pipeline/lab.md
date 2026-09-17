@@ -71,7 +71,7 @@ flowchart TD
 - appliquer après approbation;
 - comprendre les gates d'environnement.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 
@@ -345,7 +345,7 @@ Dans Azure DevOps, créez une Pull Request vers `main`.
 
 ---
 
-### � Étape 5.4 — Comprendre les gates d'environnement
+### 📝 Étape 5.4 — Comprendre les gates d'environnement
 
 #### Gates par environnement
 

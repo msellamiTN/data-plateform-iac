@@ -79,7 +79,7 @@ flowchart TD
 - charger un fichier de test via `snow sql`;
 - vérifier les données chargées.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 
@@ -427,7 +427,7 @@ module "ingestion" {
 }
 ```
 
-> � **Note** : Les modules sont référencés avec `./modules/...` car ils se trouvent dans le même dossier de lab (`labs/m09-snowflake-advanced/modules/`).
+> 💡 **Note** : Les modules sont référencés avec `./modules/...` car ils se trouvent dans le même dossier de lab (`labs/m09-snowflake-advanced/modules/`).
 
 #### Écrire `outputs.tf`
 

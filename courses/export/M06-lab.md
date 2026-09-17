@@ -71,7 +71,7 @@ flowchart LR
 - combiner les fonctions de transformation (`merge`, `coalesce`, `flatten`, `try`, `format`);
 - écrire un `check` block d'assertion post-apply.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

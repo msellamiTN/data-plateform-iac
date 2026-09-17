@@ -74,7 +74,7 @@ flowchart LR
 - ✅ écrire une `precondition` croisée et comprendre `depends_on`;
 - ✅ expliquer pourquoi le state reste sensible malgré `sensitive = true`.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

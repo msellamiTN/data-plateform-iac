@@ -1,0 +1,25 @@
+# Fichiers à ne jamais committer dans un lab Terraform.
+# Copiez ce .gitignore à la racine de chaque dossier de lab (C:\terraform-labs\mXX-...\).
+
+# --- State et plan Terraform ---
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform/
+# NB : .terraform.lock.hcl est volontairement NON ignoré —
+# il fige la version du provider et doit être commité (M14+).
+
+# --- Secrets ---
+secrets/
+*.pat
+*.key
+*.pem
+
+# --- Variables locales (peuvent contenir des identifiants) ---
+terraform.tfvars
+*.auto.tfvars
+
+# --- OS / éditeurs ---
+.DS_Store
+Thumbs.db
+*.swp

@@ -72,7 +72,7 @@ flowchart LR
 - ✅ isoler des states avec les workspaces Terraform (`workspace new/select/delete`);
 - ✅ interpréter `.terraform.lock.hcl` et upgrader un provider en sécurité (`init -upgrade`).
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

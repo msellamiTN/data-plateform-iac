@@ -80,7 +80,7 @@ flowchart TD
 - séparer les rôles avec les provider aliases (`providers = {}` map);
 - déboguer avec `TF_LOG` et évaluer des expressions dans `terraform console`.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 
@@ -428,7 +428,7 @@ module "security" {
 }
 ```
 
-> � **Note** : L'utilisateur technique s'appelle `TF_APP01_M10_SVC` — le `lab_id` garantit l'unicité entre les labs. Les modules sont référencés avec `./modules/...` car ils se trouvent dans le même dossier de lab.
+> 💡 **Note** : L'utilisateur technique s'appelle `TF_APP01_M10_SVC` — le `lab_id` garantit l'unicité entre les labs. Les modules sont référencés avec `./modules/...` car ils se trouvent dans le même dossier de lab.
 
 #### Écrire `outputs.tf`
 

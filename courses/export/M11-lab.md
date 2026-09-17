@@ -76,7 +76,7 @@ flowchart TD
 - configurer des Future Grants pour les nouvelles tables;
 - auditer les grants avec une requête SQL.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

@@ -69,7 +69,7 @@ flowchart LR
 - publier le contenu SQL avec Snow CLI, pas avec `local-exec`;
 - vérifier ownership, rôles, Future Grants et zero-drift.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 

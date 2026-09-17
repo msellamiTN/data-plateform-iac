@@ -73,7 +73,7 @@ flowchart LR
 - ✅ utiliser un bloc `moved` pour refactorer sans destruction;
 - ✅ cibler une ressource avec `-target` et comprendre ses limites.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 
@@ -154,7 +154,7 @@ code terraform.tfvars
 </details>
 
 <details>
-<summary>� <b>Linux/macOS (Bash)</b></summary>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars

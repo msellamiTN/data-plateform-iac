@@ -70,7 +70,7 @@ flowchart LR
 - construire et tester les modèles FinOps;
 - interpréter crédits, requêtes coûteuses et warehouses inactifs.
 
-## � 4. Pre-Flight Diagnostic (Vérification Initiale)
+## 🚀 4. Pre-Flight Diagnostic (Vérification Initiale)
 
 ### Prérequis
 
