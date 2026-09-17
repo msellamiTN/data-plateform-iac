@@ -45,7 +45,7 @@ flowchart LR
 | Module | Durée | Dossier de travail | Lab | Cours | Troubleshooting | Output attendu |
 |---|---:|---|---|---|---|---|
 | [M2 — State Management](module-02-state-management/lab.md) | 2 h 30 | `labs/m02-state-management/` | [lab](module-02-state-management/lab.md) | [cours](module-02-state-management/course.md) | [guide](module-02-state-management/troubleshooting.md) | [output](module-02-state-management/expected-output.md) |
-| [M3 — Import Brownfield](module-02-state-management/module-03-import-brownfield/lab.md) | 1 h 30 | `labs/m03-import-brownfield/` | [lab](module-02-state-management/module-03-import-brownfield/lab.md) | [cours](module-02-state-management/module-03-import-brownfield/course.md) | [guide](module-02-state-management/module-03-import-brownfield/troubleshooting.md) | [output](module-02-state-management/module-03-import-brownfield/expected-output.md) |
+| [M3 — Import Brownfield](module-03-import-brownfield/lab.md) | 1 h 30 | `labs/m03-import-brownfield/` | [lab](module-03-import-brownfield/lab.md) | [cours](module-03-import-brownfield/course.md) | [guide](module-03-import-brownfield/troubleshooting.md) | [output](module-03-import-brownfield/expected-output.md) |
 
 ## Workflow du jour
 

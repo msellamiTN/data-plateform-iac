@@ -1,6 +1,6 @@
 # Dépannage — M3 : Import & Brownfield
 
-> [<- Jour 2](../../README.md) · [<- Module precedent](../lab.md) · **Module 3** · [Module suivant ->](../../../day-03/module-05-modules/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../../day-03/module-05-modules/lab.md)
 
 | Symptôme | Cause | Solution |
 |----------|-------|----------|

@@ -2,7 +2,7 @@
 
 # Résultat attendu — M2 : Gestion du State
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
 
 ## État local (avant migration)
 

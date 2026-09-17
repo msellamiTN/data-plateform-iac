@@ -2,7 +2,7 @@
 
 # Module 3 : Cours : Import Brownfield
 
-> [<- Jour 2](../../README.md) · [<- Module precedent](../lab.md) · **Module 3** · [Module suivant ->](../../../day-03/module-05-modules/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../../day-03/module-05-modules/lab.md)
 
 ## Contexte métier
 
@@ -231,6 +231,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M2](../course.md) · [<- Jour 2](../../README.md) · **Course M3** · [Course M5 ->](../../../day-03/module-05-modules/course.md)
+[<- Course M2](../module-02-state-management/course.md) · [<- Jour 2](../README.md) · **Course M3** · [Course M5 ->](../../day-03/module-05-modules/course.md)
 
 

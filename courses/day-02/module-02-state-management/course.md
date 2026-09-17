@@ -1,6 +1,6 @@
 # Module 2 : Cours : Gestion du State
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
 
 ## Contexte métier
 
@@ -276,6 +276,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M4](../../day-01/module-04-variables-outputs/course.md) · [<- Jour 2](../README.md) · **Course M2** · [Course M3 ->](module-03-import-brownfield/course.md)
+[<- Course M4](../../day-01/module-04-variables-outputs/course.md) · [<- Jour 2](../README.md) · **Course M2** · [Course M3 ->](../module-03-import-brownfield/course.md)
 
 

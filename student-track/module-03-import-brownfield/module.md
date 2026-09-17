@@ -22,9 +22,9 @@ code "$HOME/Data2AI-Labs/module-03-import-brownfield"
 
 ## Supports Pédagogiques
 
-1. [Cours](../../courses/day-02/module-02-state-management/module-03-import-brownfield/course.md)
-2. [Lab guidé](../../courses/day-02/module-02-state-management/module-03-import-brownfield/lab.md)
-3. [Résultats attendus](../../courses/day-02/module-02-state-management/module-03-import-brownfield/expected-output.md)
-4. [Troubleshooting](../../courses/day-02/module-02-state-management/module-03-import-brownfield/troubleshooting.md)
+1. [Cours](../../courses/day-02/module-03-import-brownfield/course.md)
+2. [Lab guidé](../../courses/day-02/module-03-import-brownfield/lab.md)
+3. [Résultats attendus](../../courses/day-02/module-03-import-brownfield/expected-output.md)
+4. [Troubleshooting](../../courses/day-02/module-03-import-brownfield/troubleshooting.md)
 
 Exécutez `.\scripts\SelfPacedLab.ps1 -Module 3 -All` pour vérifier votre progression à tout moment.

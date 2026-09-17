@@ -1,6 +1,6 @@
 # 🧪 Lab M5 — Module Landing Zone réutilisable
 
-> [<- Jour 3](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../../day-02/module-03-import-brownfield/lab.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -765,4 +765,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M3](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 3](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)
+[<- Lab M3](../../day-02/module-03-import-brownfield/lab.md) · [<- Jour 3](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)

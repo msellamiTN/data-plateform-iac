@@ -1,6 +1,6 @@
 # Lab M2 — State distant Azure Blob Storage
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -1057,4 +1057,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 2](../README.md) · **Lab M2** · [Lab M3 ->](module-03-import-brownfield/lab.md)
+[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 2](../README.md) · **Lab M2** · [Lab M3 ->](../module-03-import-brownfield/lab.md)

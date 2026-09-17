@@ -55,7 +55,7 @@ flowchart TD
 | 1 | M01 — Workflow IaC | provider Snowflake, database/schema/warehouse, apply, second plan | [module-01-iac-workflow](day-01/module-01-iac-workflow/course.md) | `labs/m01-iac-workflow/` |
 | 1 | M04 — Variables & outputs | contrats typés, `locals`, validations, naming | [module-04-variables-outputs](day-01/module-04-variables-outputs/course.md) | `labs/m04-variables-outputs/` |
 | 2 | M02 — State | state local → distant, locking, `state list/show`, `detailed-exitcode` | [module-02-state-management](day-02/module-02-state-management/course.md) | `labs/m02-state-management/` |
-| 2 | M03 — Brownfield | import, drift contrôlé, adoption sans recréation | [module-03-import-brownfield](day-02/module-02-state-management/module-03-import-brownfield/course.md) | `labs/m03-import-brownfield/` |
+| 2 | M03 — Brownfield | import, drift contrôlé, adoption sans recréation | [module-03-import-brownfield](day-02/module-03-import-brownfield/course.md) | `labs/m03-import-brownfield/` |
 | 3 | M05 — Modules | contrat module, landing-zone Snowflake, `moved` | [module-05-modules](day-03/module-05-modules/course.md) | `labs/m05-modules/` |
 | 3 | M06 — Logique dynamique | maps, `for_each`, `dynamic`, ajout par données | [module-06-dynamic-logic](day-03/module-06-dynamic-logic/course.md) | `labs/m06-dynamic-logic/` |
 | 4 | M08 — Environnements | DEV/UAT/PROD par répertoires, isolation du state | [module-08-environments](day-04/module-08-environments/course.md) | `labs/m08-environments/` |

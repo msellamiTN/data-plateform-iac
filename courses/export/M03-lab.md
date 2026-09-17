@@ -2,7 +2,7 @@
 
 # 🧪 Lab M3 — Import brownfield et alignement Terraform
 
-> [<- Jour 2](../../README.md) · [<- Module precedent](../lab.md) · **Module 3** · [Module suivant ->](../../../day-03/module-05-modules/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../../day-03/module-05-modules/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -47,7 +47,7 @@ Une entreprise ne remplace pas une plateforme Snowflake existante pour adopter T
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** importer une ressource Snowflake existante (brownfield) dans Terraform  
 > **Afin de :** aligner l'infrastructure réelle avec le code versionné sans interruption de service
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -792,4 +792,4 @@ Destroy complete! Resources: 4 destroyed.
 
 ## Navigation
 
-[<- Lab M2](../lab.md) · [<- Jour 2](../../README.md) · **Lab M3** · [Lab M5 ->](../../../day-03/module-05-modules/lab.md)
+[<- Lab M2](../module-02-state-management/lab.md) · [<- Jour 2](../README.md) · **Lab M3** · [Lab M5 ->](../../day-03/module-05-modules/lab.md)
