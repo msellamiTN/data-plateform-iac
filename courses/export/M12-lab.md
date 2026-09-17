@@ -1,10 +1,12 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M12 — Capstone : Plateforme de données complète
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 12** · [Annexe M14 (optionnel) ->](../module-14-data-products/lab.md)
 
 || Élément | Valeur |
 ||---|---|
-|| **Durée** | 120 min |
+|| **Durée** | 60 min (Option C condensée) |
 || **Piste** | `[CORE]` |
 || **Workspace** | `$HOME/Data2AI-Labs/data-platform` (le clone) |
 || **Dossier de travail** | `labs/m12-capstone/` |
@@ -45,6 +47,8 @@ Le comité d'architecture attend une plateforme gouvernée, exploitable et audit
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** assembler tous les modules dans une configuration Capstone unique  
 > **Afin de :** prouver le zero-drift et la gouvernance de la plateforme complète
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -72,7 +76,9 @@ flowchart TD
 - composer tous les modules dans une configuration unique;
 - déployer la plateforme complète en une seule commande;
 - prouver le zero-drift avec `terraform plan -detailed-exitcode`;
-- documenter l'architecture avec les outputs.
+- documenter l'architecture avec les outputs;
+- valider les règles de la plateforme avec `terraform test` (`.tftest.hcl`);
+- surveiller une invariante FinOps avec un `check` block.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -426,16 +432,20 @@ output "role_reader" {
 
 ```bash
 cd labs/m12-capstone/modules/landing-zone
-terraform fmt && terraform validate
+terraform fmt
+terraform validate
 
 cd ../ingestion
-terraform fmt && terraform validate
+terraform fmt
+terraform validate
 
 cd ../security
-terraform fmt && terraform validate
+terraform fmt
+terraform validate
 
 cd ../rbac
-terraform fmt && terraform validate
+terraform fmt
+terraform validate
 ```
 
 ### 📝 Étape 5.2 — Composez la configuration finale
@@ -627,6 +637,85 @@ terraform output -json > docs/m12-outputs.json
 
 > 🔒 **SECURITY** Vérifiez qu'aucun secret n'apparaît dans le JSON avant de commiter.
 
+### 📝 Étape 5.5 — Tester la plateforme (`terraform test` + `check`)
+
+Le zero-drift prouve que le réel = le code. Les **tests Terraform** prouvent en plus que le code respecte vos **règles** (nommage, tailles FinOps) — et le `check` block surveille l'invariante à chaque run.
+
+#### Ouvrir `tests/platform.tftest.hcl` (fourni)
+
+Le starter contient déjà un fichier de test :
+
+```hcl
+mock_provider "snowflake" {}
+
+run "configuration_is_valid" {
+  command = plan
+
+  variables {
+    snowflake_organization = "TESTORG"
+    snowflake_account      = "TESTACCOUNT"
+    snowflake_user         = "TEST_USER"
+    snowflake_token        = "mock-token"
+    learner_prefix         = "APP01"
+    environment            = "DEV"
+  }
+
+  assert {
+    condition     = can(regex("^[A-Z][A-Z0-9]{2,4}$", var.learner_prefix))
+    error_message = "learner_prefix doit respecter la convention APPxx."
+  }
+}
+```
+
+`mock_provider "snowflake"` simule le provider : les tests tournent **sans credential réel ni connexion** — idéal pour vérifier la logique en CI.
+
+#### Exécuter les tests
+
+```powershell
+terraform init
+terraform test
+```
+
+✅ **Résultat attendu :**
+
+```text
+tests\platform.tftest.hcl... pass
+  run "configuration_is_valid"... pass
+
+Success! 1 passed, 0 failed.
+```
+
+> 💡 `command = plan` teste la logique **sans rien déployer** — rapide et sans coût. `command = apply` déploierait un environnement de test éphémère (puis destroy automatique).
+
+#### 🏆 Défi — tester vos propres ressources
+
+Décommentez le run `naming_convention` dans le fichier fourni et adaptez les assertions à vos objets capstone (ex. `module.landing_zone.database_name == "APP01_M12_RAW_DEV"`). Relancez `terraform test`.
+
+#### Ajouter un `check` block de health-check
+
+Dans `main.tf`, ajoutez en fin de fichier :
+
+```hcl
+check "warehouse_size_finops" {
+  data "snowflake_warehouses" "m12" {
+    like = "WH_${var.learner_prefix}_M12_%"
+  }
+
+  assert {
+    condition = alltrue([
+      for w in data.snowflake_warehouses.m12.warehouses : w.size == "XSMALL"
+    ])
+    error_message = "Un warehouse M12 n'est pas X-SMALL : politique FinOps violee."
+  }
+}
+```
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint** : le check s'évalue après le refresh ; un warehouse non conforme produit un warning visible dans chaque plan — la conformité FinOps devient continue.
+
 ---
 
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
@@ -752,4 +841,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M11](../module-11-rbac/lab.md) · [<- Jour 4](../README.md) · **Lab M12** · [Lab M13 ->](../module-13-finops-observability/lab.md)
+[<- Lab M13](../module-13-finops-observability/lab.md) · [<- Jour 5](../README.md) · **Lab M12** · [Annexe Lab M14 ->](../module-14-data-products/lab.md)

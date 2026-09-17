@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M7 — Pipeline CI/CD Terraform avec Azure DevOps
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
+> [<- Jour 4](../README.md) · [<- Module precedent](../../day-03/module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -41,6 +43,8 @@ Les changements manuels ne fournissent ni séparation des responsabilités ni pr
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** configurer un pipeline CI/CD Azure DevOps pour Terraform  
 > **Afin de :** garantir la séparation des responsabilités et l'approbation avant déploiement
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -467,4 +471,4 @@ Ce lab ne crée **aucune ressource Snowflake**. Il n'y a pas de `terraform destr
 
 ## Navigation
 
-[<- Lab M6](../module-06-dynamic-logic/lab.md) · [<- Jour 2](../README.md) · **Lab M7** · [Lab M8 ->](../module-08-environments/lab.md)
+[<- Lab M6](../../day-03/module-06-dynamic-logic/lab.md) · [<- Jour 4](../README.md) · **Lab M7** · [Lab M8 ->](../module-08-environments/lab.md)

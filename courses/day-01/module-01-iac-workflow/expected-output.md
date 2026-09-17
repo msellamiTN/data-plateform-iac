@@ -1,6 +1,6 @@
 # Résultats attendus — M1
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-04-variables-outputs/lab.md)
 
 ## Structure finale
 

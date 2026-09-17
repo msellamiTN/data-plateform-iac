@@ -1,6 +1,6 @@
 # 🧪 Lab M4 — Variables, locals, outputs et lifecycle
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
+> [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 4** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -45,7 +45,7 @@ Des valeurs dispersées et non validées rendent les environnements incohérents
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** structurer les variables Terraform avec validations, locals et outputs exploitables  
 > **Afin de :** garantir des environnements cohérents et reproductibles
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -641,4 +641,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M3](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-03/module-05-modules/lab.md)
+[<- Lab M1](../module-01-iac-workflow/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M2 ->](../../day-02/module-02-state-management/lab.md)

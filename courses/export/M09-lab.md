@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M9 — Ressources Snowflake avancées : Stages, File Formats, Pipes
 
-> [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -12,15 +14,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ La valeur Data commence quand les fichiers arrivent de façon fiable dans Snowfl
 > **En tant que :** Data Engineer  
 > **Je veux :** créer un module d'ingestion Snowflake avec stage, file format et table  
 > **Afin de :** charger des fichiers CSV de façon fiable et auditable
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -94,7 +98,7 @@ Ce lab est auto-contenu : il crée sa propre base de données avec un nom spéci
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m09-snowflake-advanced
-mkdir -p modules/landing-zone
+New-Item -ItemType Directory -Force -Path "modules/landing-zone" | Out-Null
 ```
 
 #### Créer `modules/landing-zone/variables.tf`
@@ -235,7 +239,7 @@ terraform validate
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m09-snowflake-advanced
-mkdir -p modules/ingestion
+New-Item -ItemType Directory -Force -Path "modules/ingestion" | Out-Null
 ```
 
 #### Créer `modules/ingestion/variables.tf`
@@ -478,19 +482,20 @@ Remplacez `APP01` par votre préfixe.
 
 #### Créer un fichier CSV de test
 
-```bash
-cat > /tmp/customers.csv << 'EOF'
+```powershell
+@'
 ID,FIRST_NAME,LAST_NAME,EMAIL
 1,Alice,Smith,alice@example.com
 2,Bob,Jones,bob@example.com
 3,Charlie,Brown,charlie@example.com
-EOF
+'@ | Set-Content "$env:TEMP\customers.csv"
 ```
 
 #### Uploader le fichier vers le stage
 
-```bash
-snow sql -c training -q "PUT file:///tmp/customers.csv @APP01_M09_RAW_DEV.INGESTION.STG_RAW_CUSTOMERS AUTO_COMPRESS=TRUE"
+```powershell
+$csvPath = (Resolve-Path "$env:TEMP\customers.csv").Path -replace '\\','/'
+snow sql -c training -q "PUT file:///$csvPath @APP01_M09_RAW_DEV.INGESTION.STG_RAW_CUSTOMERS AUTO_COMPRESS=TRUE"
 ```
 
 Remplacez `APP01` par votre préfixe.
@@ -555,17 +560,18 @@ resource "snowflake_storage_integration" "azure" {
 
 Créez un fichier contenant un champ texte au lieu d'un ID numérique :
 
-```bash
-cat > /tmp/bad_customers.csv << 'EOF'
+```powershell
+@'
 ID,FIRST_NAME,LAST_NAME,EMAIL
 NON_NUMERIQUE,Daniel,Faussaire,daniel@bad.com
-EOF
+'@ | Set-Content "$env:TEMP\bad_customers.csv"
 ```
 
 Upload vers le stage :
 
-```bash
-snow sql -c training -q "PUT file:///tmp/bad_customers.csv @APP01_M09_RAW_DEV.INGESTION.STG_RAW_CUSTOMERS"
+```powershell
+$badCsvPath = (Resolve-Path "$env:TEMP\bad_customers.csv").Path -replace '\\','/'
+snow sql -c training -q "PUT file:///$badCsvPath @APP01_M09_RAW_DEV.INGESTION.STG_RAW_CUSTOMERS"
 ```
 
 ### Diagnostic & Observation
@@ -639,4 +645,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M8](../../day-02/module-08-environments/lab.md) · [<- Jour 3](../README.md) · **Lab M9** · [Lab M10 ->](../module-10-security-auth/lab.md)
+[<- Lab M8](../../day-04/module-08-environments/lab.md) · [<- Jour 5](../README.md) · **Lab M9** · [Lab M10 ->](../module-10-security-auth/lab.md)

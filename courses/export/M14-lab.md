@@ -1,10 +1,12 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M14 — Data Products as Code avec Terraform et Snow CLI
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 14** · [Fin ->](../../README.md)
 
 || Élément | Valeur |
 ||---|---|
-|| **Durée** | 120 min |
+|| **Durée** | 30 min (Option C fusionnée M13+M14) |
 || **Piste** | `[EXTENSION]` |
 || **Workspace** | `$HOME/Data2AI-Labs/data-platform` (le clone) |
 || **Dossier de travail** | `labs/m14-data-products/` |
@@ -12,15 +14,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ Les domaines SALES et FINANCE doivent livrer des données avec autonomie sans co
 > **En tant que :** Data Product Owner  
 > **Je veux :** déployer des data products avec un module Terraform réutilisable et Snow CLI  
 > **Afin de :** livrer des données en autonomie tout en respectant sécurité, coûts et standards
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -81,7 +85,7 @@ flowchart LR
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m14-data-products
-mkdir -p modules/data-product
+New-Item -ItemType Directory -Force -Path "modules/data-product" | Out-Null
 ```
 
 #### Créer `modules/data-product/variables.tf`
@@ -319,7 +323,7 @@ snow sql -c training -q "SHOW SCHEMAS IN DATABASE APP01_M14_SALES_DEV"
 
 ```bash
 cd labs/m14-data-products
-mkdir -p sql/sales sql/finance
+New-Item -ItemType Directory -Force -Path "sql/sales", "sql/finance" | Out-Null
 ```
 
 `sql/sales/orders.sql` :
@@ -499,4 +503,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M13](../module-13-finops-observability/lab.md) · [<- Jour 4](../README.md) · **Lab M14** · [Fin de formation ->](../../README.md)
+[<- Lab M12](../module-12-capstone/lab.md) · [<- Jour 5](../README.md) · **Lab M14** · [Fin de formation ->](../../README.md)

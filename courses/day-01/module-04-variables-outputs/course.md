@@ -1,6 +1,6 @@
 # Module 4 : Cours : Variables et Outputs
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
+> [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 4** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 
 ## Contexte métier
 
@@ -230,6 +230,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M3](../../day-02/module-02-state-management/module-03-import-brownfield/course.md) · [<- Jour 1](../README.md) · **Course M4** · [Course M5 ->](../../day-03/module-05-modules/course.md)
+[<- Course M1](../module-01-iac-workflow/course.md) · [<- Jour 1](../README.md) · **Course M4** · [Course M2 ->](../../day-02/module-02-state-management/course.md)
 
 

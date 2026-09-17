@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 9 – Cours : Ressources Snowflake avancées
 
-> [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
 
 ## Contexte métier
 
@@ -68,10 +70,12 @@ sequenceDiagram
 Ordre de création :
 
 1. `snowflake_storage_integration`
-2. Azure AD application / Managed Identity (trust Snowflake)
+2. Azure AD application / Managed Identity (trust Snowflake) — **préconfiguré par le formateur**
 3. `snowflake_stage` referencing integration
 4. `snowflake_file_format`
 5. `snowflake_pipe`
+
+> L'apprenant consomme les paramètres de la storage integration fournis par le formateur. Il ne crée ni le storage account, ni l'application Entra ID, ni la Managed Identity.
 
 ## 3. Exemple stage (concept)
 
@@ -113,7 +117,7 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M8](../../day-02/module-08-environments/course.md) · [<- Jour 3](../README.md) · **Course M9** · [Course M10 ->](../module-10-security-auth/course.md)
+[<- Course M8](../../day-04/module-08-environments/course.md) · [<- Jour 5](../README.md) · **Course M9** · [Course M10 ->](../module-10-security-auth/course.md)
 
 
 

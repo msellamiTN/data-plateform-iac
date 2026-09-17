@@ -1,6 +1,6 @@
 # 🧪 Lab M14 — Data Products as Code avec Terraform et Snow CLI
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 14** · [Fin ->](../../README.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -45,7 +45,7 @@ Les domaines SALES et FINANCE doivent livrer des données avec autonomie sans co
 > **En tant que :** Data Product Owner  
 > **Je veux :** déployer des data products avec un module Terraform réutilisable et Snow CLI  
 > **Afin de :** livrer des données en autonomie tout en respectant sécurité, coûts et standards
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -501,4 +501,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M13](../module-13-finops-observability/lab.md) · [<- Jour 5](../README.md) · **Lab M14** · [Fin de formation ->](../../README.md)
+[<- Lab M12](../module-12-capstone/lab.md) · [<- Jour 5](../README.md) · **Lab M14** · [Fin de formation ->](../../README.md)

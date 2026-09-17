@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Lab M2 — State distant Azure Blob Storage
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -45,6 +47,8 @@ Votre state est actuellement local. En équipe, cela pose trois problèmes : pas
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** migrer le state Terraform local vers Azure Blob Storage avec verrouillage natif  
 > **Afin de :** permettre le travail en équipe avec verrou, historique et partage du state
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -61,12 +65,14 @@ flowchart LR
 ## 🎯 3. Objectifs Pédagogiques Vérifiables
 
 - ✅ créer des ressources Snowflake avec un state local;
-- ✅ créer un backend Azure Blob Storage pour le state Terraform;
+- ✅ configurer le backend Azure Blob Storage préconfiguré pour le state Terraform;
 - ✅ comprendre le paradoxe du bootstrapping;
 - ✅ migrer un state local vers un backend distant;
 - ✅ tester le verrouillage concurrent;
 - ✅ analyser la structure du fichier `terraform.tfstate`;
-- ✅ utiliser `terraform_remote_state` pour lire les outputs d'un autre projet.
+- ✅ utiliser `terraform_remote_state` pour lire les outputs d'un autre projet;
+- ✅ isoler des states avec les workspaces Terraform (`workspace new/select/delete`);
+- ✅ interpréter `.terraform.lock.hcl` et upgrader un provider en sécurité (`init -upgrade`).
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -248,9 +254,9 @@ terraform state list
 
 > 🔒 **Security** : n'affichez jamais `ARM_CLIENT_SECRET`, `SNOWFLAKE_PASSWORD` ou `TF_VAR_snowflake_token`.
 
-### 📝 Étape 5.2 — Créer le backend Azure (bootstrap)
+### 📝 Étape 5.2 — Vérifier le backend Azure préconfiguré
 
-Le backend Azure est créé manuellement avec Azure CLI, pas avec Terraform. C'est le paradoxe du bootstrapping : Terraform a besoin d'un backend pour stocker son state, mais ce backend ne peut pas être créé par Terraform lui-même.
+Le backend Azure (Resource Group, Storage Account, conteneur `tfstate`) a été **créé par le formateur avant la session** — c'est le paradoxe du bootstrapping : Terraform a besoin d'un backend pour stocker son state, mais ce backend ne peut pas être créé par Terraform lui-même. Dans ce cours, vous **consommez** le backend; vous ne l'administrez pas.
 
 #### Définir les variables
 
@@ -287,110 +293,7 @@ echo "Location: $ARM_LOCATION"
 ```
 </details>
 
-#### Créer le Resource Group
-
-<details>
-<summary>🪟 <b>Windows (PowerShell)</b></summary>
-
-```powershell
-az group create `
-    --name $env:ARM_RESOURCE_GROUP `
-    --location $env:ARM_LOCATION `
-    --output table
-```
-</details>
-
-<details>
-<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
-
-```bash
-az group create \
-    --name "$ARM_RESOURCE_GROUP" \
-    --location "$ARM_LOCATION" \
-    --output table
-```
-</details>
-
-> 💡 **Note** : Si `ARM_LOCATION` n'est pas définie, utilisez une région disponible pour votre abonnement, par exemple `northeurope` ou `francecentral`.
-> Certaines régions comme `westeurope` peuvent refuser de nouveaux clients.
-> Pour lister les régions disponibles :
->
-> ```powershell
-> az account list-locations --query "[].name" -o table
-> ```
-
-✅ **Checkpoint** : une table avec `provisioningState : Succeeded`.
-
-#### Créer le Storage Account
-
-<details>
-<summary>🪟 <b>Windows (PowerShell)</b></summary>
-
-```powershell
-az storage account create `
-    --name $env:ARM_STORAGE_ACCOUNT `
-    --resource-group $env:ARM_RESOURCE_GROUP `
-    --location $env:ARM_LOCATION `
-    --sku "Standard_LRS" `
-    --encryption-services blob `
-    --output table
-```
-</details>
-
-<details>
-<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
-
-```bash
-az storage account create \
-    --name "$ARM_STORAGE_ACCOUNT" \
-    --resource-group "$ARM_RESOURCE_GROUP" \
-    --location "$ARM_LOCATION" \
-    --sku "Standard_LRS" \
-    --encryption-services blob \
-    --output table
-```
-</details>
-
-✅ **Checkpoint** : `provisioningState : Succeeded`.
-
-> 💡 **Note** : Si le Storage Account existe déjà, Azure affiche `A storage account with the provided name is found. Will continue to update the existing account.` C'est normal : la commande est idempotente et conserve le compte existant.
-
-> 💰 **COST** : `Standard_LRS` est le SKU le moins coûteux. Le state est petit; ce n'est pas une charge significative.
-
-#### Créer le conteneur
-
-<details>
-<summary>🪟 <b>Windows (PowerShell)</b></summary>
-
-```powershell
-az storage container create `
-    --name $env:ARM_CONTAINER `
-    --account-name $env:ARM_STORAGE_ACCOUNT `
-    --auth-mode login `
-    --output table
-```
-</details>
-
-<details>
-<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
-
-```bash
-az storage container create \
-    --name "$ARM_CONTAINER" \
-    --account-name "$ARM_STORAGE_ACCOUNT" \
-    --auth-mode login \
-    --output table
-```
-</details>
-
-✅ **Checkpoint** :
-
-- `Created: True` : le conteneur vient d'être créé;
-- `Created: False` : le conteneur existait déjà. C'est également un résultat valide.
-
-> 💡 **Note** : La commande est idempotente. La relancer ne supprime ni le conteneur ni le state existant.
-
-#### Vérifier
+#### Vérifier l'accès au Storage Account (lecture seule)
 
 <details>
 <summary>🪟 <b>Windows (PowerShell)</b></summary>
@@ -399,7 +302,8 @@ az storage container create \
 az storage account show `
     --name $env:ARM_STORAGE_ACCOUNT `
     --resource-group $env:ARM_RESOURCE_GROUP `
-    --query "name" -o tsv
+    --query "{name:name, location:location, sku:sku.name}" `
+    --output table
 ```
 </details>
 
@@ -410,11 +314,42 @@ az storage account show `
 az storage account show \
     --name "$ARM_STORAGE_ACCOUNT" \
     --resource-group "$ARM_RESOURCE_GROUP" \
+    --query "{name:name, location:location, sku:sku.name}" \
+    --output table
+```
+</details>
+
+✅ **Checkpoint** : le nom du storage account s'affiche. Si la commande échoue, le backend n'est pas provisionné — contactez le formateur.
+
+#### Vérifier le conteneur `tfstate`
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+az storage container show `
+    --name $env:ARM_CONTAINER `
+    --account-name $env:ARM_STORAGE_ACCOUNT `
+    --auth-mode login `
     --query "name" -o tsv
 ```
 </details>
 
-✅ **Checkpoint** : le nom du storage account.
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+az storage container show \
+    --name "$ARM_CONTAINER" \
+    --account-name "$ARM_STORAGE_ACCOUNT" \
+    --auth-mode login \
+    --query "name" -o tsv
+```
+</details>
+
+✅ **Checkpoint** : `tfstate` s'affiche. Votre identité (le SP partagé) a le rôle `Storage Blob Data Contributor` — suffisant pour lire/écrire le state, sans droits d'administration.
+
+> 🔒 **Security** : le backend utilise `use_azuread_auth = true` — authentification par identité Azure AD (RBAC), pas par clé de compte partagée. Chaque accès au state est journalisé.
 
 ### 📝 Étape 5.3 — Configurer le backend Terraform
 
@@ -994,6 +929,69 @@ rm -rf labs/m02-state-management/reader
 
 ---
 
+### 📝 Étape 5.7 — Workspaces Terraform (isolation dans un même backend)
+
+Jusqu'ici, un backend = un state. Terraform permet d'héberger **plusieurs states nommés** dans le même backend via les *workspaces* — utile pour isoler rapidement un brouillon (`dev`) d'une version stable (`prod`).
+
+#### Observer le workspace courant
+
+```powershell
+terraform workspace list
+terraform workspace show
+```
+
+✅ **Résultat attendu :** `* default` — le workspace par défaut existe toujours et contient votre state migré.
+
+#### Créer un workspace `sandbox` et constater l'isolation
+
+```powershell
+terraform workspace new sandbox
+terraform state list
+```
+
+✅ **Checkpoint** : `state list` est **vide** — le nouveau workspace a son propre state (clé `env:/sandbox/...` dans le blob), indépendant de `default`.
+
+> ⚠️ **Piège classique** : un `terraform apply` dans le workspace `sandbox` recréerait des doublons des ressources avec les mêmes noms → collision Snowflake. Les workspaces isolent le **state**, pas le **nommage** — c'est pourquoi notre convention `APPxx_MXX_*` reste indispensable.
+
+#### Revenir et supprimer
+
+```powershell
+terraform workspace select default
+terraform workspace delete sandbox
+terraform workspace list
+```
+
+✅ **Checkpoint** : seul `default` subsiste.
+
+> 🎓 **Jour 4 aperçu** : en entreprise on préfère souvent des **répertoires + fichiers tfvars** (M08) aux workspaces CLI — plus explicites et revus en PR. Les workspaces restent parfaits pour des tests éphémères.
+
+---
+
+### 📝 Étape 5.8 — Lock file & montée de version du provider
+
+#### Inspecter le fichier de verrouillage des providers
+
+```powershell
+Get-Content .terraform.lock.hcl
+```
+
+✅ **Observer** : ce fichier **versionné dans Git** fige les versions exactes et les **empreintes (`h1:` hashes)** du provider — garantissant que chaque membre de l'équipe (et la CI) exécute le **même binaire provider**.
+
+#### La procédure d'upgrade en sécurité
+
+```powershell
+# 1. Le pin actuel bloque toute montée de version
+#    versions.tf : version = "= 2.14.0"
+# 2. Pour upgrader : assouplir la contrainte (ex. "~> 2.14"), puis :
+terraform init -upgrade
+# 3. Vérifier que le plan reste vide AVANT de committer le lock file
+terraform plan
+```
+
+> 📌 **Règle d'équipe** : on ne commit `.terraform.lock.hcl` qu'après un `terraform plan` sans surprise. Le lock file + le pin `required_providers` = la reproductibilité du cours.
+
+---
+
 ## 🤖 7. Validation Automatisée (*Check My Progress*)
 
 Exécutez le script d'évaluation pour valider la configuration du state distant Azure :
@@ -1061,4 +1059,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M1](../module-01-iac-workflow/lab.md) · [<- Jour 1](../README.md) · **Lab M2** · [Lab M3 ->](../module-03-import-brownfield/lab.md)
+[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 2](../README.md) · **Lab M2** · [Lab M3 ->](module-03-import-brownfield/lab.md)

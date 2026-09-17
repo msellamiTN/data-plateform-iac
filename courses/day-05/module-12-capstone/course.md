@@ -1,6 +1,6 @@
 # Module 12 – Cours : Projet Fil Rouge
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 12** · [Annexe M14 (optionnel) ->](../module-14-data-products/lab.md)
 
 ## Contexte métier
 
@@ -130,7 +130,7 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète. La grille d'évaluat
 
 ## Navigation
 
-[<- Course M11](../module-11-rbac/course.md) · [<- Jour 5](../README.md) · **Course M12** · [Course M13 ->](../module-13-finops-observability/course.md)
+[<- Course M13](../module-13-finops-observability/course.md) · [<- Jour 5](../README.md) · **Course M12** · [Annexe Course M14 ->](../module-14-data-products/course.md)
 
 
 

@@ -1,6 +1,6 @@
 # 🧪 Lab M11 — Modèle RBAC scalable avec Future Grants
 
-> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 11** · [Module suivant ->](../module-12-capstone/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 11** · [Module suivant ->](../module-13-finops-observability/lab.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -45,7 +45,7 @@ L'accès aux données doit suivre les fonctions métier sans tickets manuels. Vo
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** créer une hiérarchie de rôles Snowflake avec Future Grants  
 > **Afin de :** automatiser l'accès aux nouvelles tables selon le principe du moindre privilège
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -492,4 +492,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M10](../module-10-security-auth/lab.md) · [<- Jour 5](../README.md) · **Lab M11** · [Lab M12 ->](../module-12-capstone/lab.md)
+[<- Lab M10](../module-10-security-auth/lab.md) · [<- Jour 5](../README.md) · **Lab M11** · [Lab M13 ->](../module-13-finops-observability/lab.md)

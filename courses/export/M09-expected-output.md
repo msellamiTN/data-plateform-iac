@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Résultat attendu — M9 : Snowflake avancé (Intégration Azure)
 
-> [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 09** · [Module suivant ->](../module-10-security-auth/lab.md)
 
 ## Storage Integration
 ```sql

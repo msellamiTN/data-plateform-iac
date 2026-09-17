@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M3 — Import brownfield et alignement Terraform
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../module-04-variables-outputs/lab.md)
+> [<- Jour 2](../../README.md) · [<- Module precedent](../lab.md) · **Module 3** · [Module suivant ->](../../../day-03/module-05-modules/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -45,6 +47,8 @@ Une entreprise ne remplace pas une plateforme Snowflake existante pour adopter T
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** importer une ressource Snowflake existante (brownfield) dans Terraform  
 > **Afin de :** aligner l'infrastructure réelle avec le code versionné sans interruption de service
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -65,8 +69,9 @@ flowchart LR
 - ✅ créer des ressources Snowflake avec Terraform (state local);
 - ✅ importer une ressource Snowflake existante dans Terraform;
 - ✅ générer la configuration à partir de l'import;
-- ✅ détecter et corriger une dérive intentionnelle;
-- ✅ utiliser un bloc `moved` pour refactorer sans destruction.
+- ✅ détecter et corriger une dérive intentionnelle (`plan` vs `plan -refresh-only`);
+- ✅ utiliser un bloc `moved` pour refactorer sans destruction;
+- ✅ cibler une ressource avec `-target` et comprendre ses limites.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -486,6 +491,28 @@ terraform plan
 
 ✅ **Checkpoint** : Terraform détecte que le `comment` a changé et propose de le remettre à la valeur de la configuration.
 
+#### Observer la dérive sans la corriger (`-refresh-only`)
+
+Le `plan` standard *propose déjà la correction*. Pour un **audit pur** — lister la dérive sans rien suggérer de modifier — utilisez le mode refresh-only :
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform plan -refresh-only
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform plan -refresh-only
+```
+</details>
+
+✅ **Checkpoint** : Terraform affiche `Objects have changed outside of Terraform` et met à jour **le state** pour refléter le réel — sans proposer d'action sur l'infrastructure. C'est l'outil d'audit de dérive par excellence.
+
 #### Corriger la dérive
 
 <details>
@@ -615,6 +642,60 @@ terraform plan
 
 ✅ **Checkpoint 6** : `No changes.`
 
+### 📝 Étape 5.6 — Cibler une ressource (`-target`)
+
+Parfois on veut appliquer **une seule ressource** — par exemple réimporter ou recréer uniquement le warehouse, sans toucher à la base importée.
+
+#### Planifier une seule ressource
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform plan -target=snowflake_warehouse.etl
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform plan -target=snowflake_warehouse.etl
+```
+</details>
+
+✅ **Checkpoint** : le plan ne concerne que `snowflake_warehouse.etl` — les autres ressources (database, schema) sont ignorées.
+
+#### Appliquer une seule ressource
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+terraform apply -target=snowflake_warehouse.etl
+```
+</details>
+
+<details>
+<summary>🐧 <b>Linux/macOS (Bash)</b></summary>
+
+```bash
+terraform apply -target=snowflake_warehouse.etl
+```
+</details>
+
+✅ **Checkpoint** : seul le warehouse est touché.
+
+> ⚠️ **Danger** : `-target` contourne le graphe de dépendances — il est prévu pour des cas exceptionnels (debug, réparation ciblée), **jamais** comme usage courant. Un apply ciblé suivi d'un apply normal peut produire des surprises si des dépendances ont été ignorées. En équipe : toujours un `terraform plan` complet ensuite pour vérifier la cohérence.
+
+#### Vérifier la cohérence après ciblage
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint 7** : `No changes.` — le state global reste cohérent.
+
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
 
 *Snowflake est sensible à la casse uniquement pour les identifiants quotés. Vous allez le constater en conditions réelles.*
@@ -711,4 +792,4 @@ Destroy complete! Resources: 4 destroyed.
 
 ## Navigation
 
-[<- Lab M2](../module-02-state-management/lab.md) · [<- Jour 1](../README.md) · **Lab M3** · [Lab M4 ->](../module-04-variables-outputs/lab.md)
+[<- Lab M2](../lab.md) · [<- Jour 2](../../README.md) · **Lab M3** · [Lab M5 ->](../../../day-03/module-05-modules/lab.md)

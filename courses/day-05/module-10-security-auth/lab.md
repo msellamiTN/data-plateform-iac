@@ -45,7 +45,7 @@ Une identité partagée avec un PAT empêche l'attribution des actions. Vous all
 > **En tant que :** Security Engineer  
 > **Je veux :** configurer l'authentification key-pair pour un utilisateur technique Snowflake  
 > **Afin de :** éliminer les PAT partagés et permettre la rotation sans interruption
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---

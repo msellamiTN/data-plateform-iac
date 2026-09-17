@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Dépannage — M10 : Sécurité & Authentification
 
-> [<- Jour 3](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Jour 4 ->](../../day-04/README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Module suivant ->](../module-11-rbac/lab.md)
 
 | Symptôme | Cause | Solution |
 |----------|-------|----------|

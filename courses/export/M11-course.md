@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 11 – Cours : RBAC Scalable
 
-> [<- Jour 4](../README.md) · [<- Jour 3](../../day-03/README.md) · **Module 11** · [Module suivant ->](../module-12-capstone/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 11** · [Module suivant ->](../module-13-finops-observability/lab.md)
 
 ## Contexte métier
 
@@ -121,6 +123,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M10](../../day-03/module-10-security-auth/course.md) · [<- Jour 4](../README.md) · **Course M11** · [Course M12 ->](../module-12-capstone/course.md)
+[<- Course M10](../module-10-security-auth/course.md) · [<- Jour 5](../README.md) · **Course M11** · [Course M13 ->](../module-13-finops-observability/course.md)
 
 

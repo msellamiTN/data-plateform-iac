@@ -1,6 +1,6 @@
 # Cours M13 — Observabilité et FinOps as Code
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 13** · [Module suivant ->](../module-12-capstone/lab.md)
 
 ## Pourquoi cette capacité existe
 
@@ -63,5 +63,5 @@ Une plateforme observable produit des métriques versionnées, testées, attribu
 
 ## Navigation
 
-[<- Course M12](../module-12-capstone/course.md) · [<- Jour 5](../README.md) · **Course M13** · [Course M14 ->](../module-14-data-products/course.md)
+[<- Course M11](../module-11-rbac/course.md) · [<- Jour 5](../README.md) · **Course M13** · [Course M12 ->](../module-12-capstone/course.md)
 

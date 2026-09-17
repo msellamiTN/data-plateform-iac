@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Runbook — M13 FinOps
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 13** · [Module suivant ->](../module-12-capstone/lab.md)
 
 ## `dbt debug` échoue
 

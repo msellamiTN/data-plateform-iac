@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Résultat attendu — M12 : Capstone
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 12** · [Annexe M14 (optionnel) ->](../module-14-data-products/lab.md)
 
 ## Plan de la plateforme complète
 ```bash

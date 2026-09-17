@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Dépannage — M3 : Import & Brownfield
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../module-02-state-management/lab.md) · **Module 3** · [Module suivant ->](../module-04-variables-outputs/lab.md)
+> [<- Jour 2](../../README.md) · [<- Module precedent](../lab.md) · **Module 3** · [Module suivant ->](../../../day-03/module-05-modules/lab.md)
 
 | Symptôme | Cause | Solution |
 |----------|-------|----------|

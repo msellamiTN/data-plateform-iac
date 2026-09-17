@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 2 : Cours : Gestion du State
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
 
 ## Contexte métier
 
@@ -109,6 +111,21 @@ Lors d'un `plan`, Terraform :
 | `s3` | DynamoDB | AWS |
 | `gcs` | GCS native | GCP |
 | `remote` (HCP Terraform) | Natif | équipes HashiCorp |
+
+### 3.1.bis Et avec HCP Terraform ? (cadrage)
+
+HCP Terraform (ex-Terraform Cloud) est le backend « tout-en-un » de HashiCorp : il stocke le state **et** exécute les runs. Concepts à retenir — ils seront démontrés via Azure DevOps au Jour 4 :
+
+| Concept HCP Terraform | Équivalent dans ce cours |
+|---|---|
+| `cloud {}` block / backend `remote` | `backend "azurerm"` + Azure DevOps |
+| **Run** (plan puis apply gérés, UI web) | Pipeline ADO : `plan` → artefact `tfplan` → `apply` |
+| **Run modes** : CLI-driven vs VCS-driven vs API | Pipeline déclenchée par push/PR (VCS-driven) |
+| **Workspace HCP** = state + variables + credentials | Répertoire env + `.tfvars` + backend key (M08) |
+| **Run tasks / gouvernance** (policy checks) | Stage de validation + approbation humaine (M07) |
+| Variable sets, team access | Variables de pipeline + RBAC Azure DevOps |
+
+> 🎓 En initiation nous utilisons Azure Blob + Azure DevOps (déjà provisionnés). HCP Terraform offre la même boucle *plan → review → apply* hébergée, avec gouvernance intégrée.
 
 ### 3.2 Configuration Azure Blob Storage (azurerm)
 
@@ -261,6 +278,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M1](../module-01-iac-workflow/course.md) · [<- Jour 1](../README.md) · **Course M2** · [Course M3 ->](../module-03-import-brownfield/course.md)
+[<- Course M4](../../day-01/module-04-variables-outputs/course.md) · [<- Jour 2](../README.md) · **Course M2** · [Course M3 ->](module-03-import-brownfield/course.md)
 
 

@@ -1,3 +1,5 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 1 ? Slides : IaC et Workflow Terraform
 
 ---
@@ -103,7 +105,7 @@ terraform {
   required_providers {
     snowflake = {
       source  = "snowflakedb/snowflake"
-      version = "~> 1.0"
+      version = "= 2.14.0"
     }
   }
 }

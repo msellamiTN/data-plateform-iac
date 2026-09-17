@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 5 ? Cours : Création de Modules
 
-> [<- Jour 2](../README.md) · [<- Jour 1](../../day-01/README.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 
 ## Contexte métier
 
@@ -115,6 +117,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M4](../../day-01/module-04-variables-outputs/course.md) · [<- Jour 2](../README.md) · **Course M5** · [Course M6 ->](../module-06-dynamic-logic/course.md)
+[<- Course M3](../../day-02/module-02-state-management/module-03-import-brownfield/course.md) · [<- Jour 3](../README.md) · **Course M5** · [Course M6 ->](../module-06-dynamic-logic/course.md)
 
 

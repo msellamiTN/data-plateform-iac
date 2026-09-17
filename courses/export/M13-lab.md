@@ -1,10 +1,12 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M13 — Observabilité et FinOps as Code avec dbt
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 13** · [Module suivant ->](../module-12-capstone/lab.md)
 
 || Élément | Valeur |
 ||---|---|
-|| **Durée** | 90 min |
+|| **Durée** | 30 min (Option C fusionnée M13+M14) |
 || **Piste** | `[EXTENSION]` |
 || **Workspace** | `$HOME/Data2AI-Labs/data-platform` (le clone) |
 || **Dossier de travail** | `labs/m13-finops-observability/` |
@@ -12,15 +14,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ Le propriétaire de la plateforme doit attribuer les crédits consommés, détec
 > **En tant que :** FinOps Engineer  
 > **Je veux :** configurer dbt avec `dbt_snowflake_monitoring` pour suivre les crédits et détecter les warehouses inactifs  
 > **Afin de :** prévenir les dépassements budgétaires avant la facture
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -140,7 +144,7 @@ terraform apply "m13.tfplan"
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m13-finops-observability
-mkdir -p finops/models/staging finops/models/marts
+New-Item -ItemType Directory -Force -Path "finops/models/staging", "finops/models/marts" | Out-Null
 ```
 
 #### Créer `finops/dbt_project.yml`
@@ -192,11 +196,12 @@ finops:
 
 #### Créer le profil local
 
-```bash
-cp finops/profiles.yml.example ~/.dbt/profiles.yml
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.dbt" | Out-Null
+Copy-Item finops/profiles.yml.example "$HOME\.dbt\profiles.yml"
 ```
 
-Éditez `~/.dbt/profiles.yml` avec vos valeurs réelles.
+Éditez `$HOME\.dbt\profiles.yml` avec vos valeurs réelles.
 
 #### Installer les dépendances
 
@@ -388,4 +393,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M12](../module-12-capstone/lab.md) · [<- Jour 4](../README.md) · **Lab M13** · [Lab M14 ->](../module-14-data-products/lab.md)
+[<- Lab M11](../module-11-rbac/lab.md) · [<- Jour 5](../README.md) · **Lab M13** · [Lab M12 ->](../module-12-capstone/lab.md)

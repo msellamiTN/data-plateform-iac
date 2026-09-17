@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Résultat attendu — M6 : Logique dynamique & for_each
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../module-07-cicd-pipeline/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../../day-04/module-07-cicd-pipeline/lab.md)
 
 ## Landing Zone avec schémas dynamiques
 ```bash

@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M11 — Modèle RBAC scalable avec Future Grants
 
-> [<- Jour 4](../README.md) · [<- Jour 3](../../day-03/README.md) · **Module 11** · [Module suivant ->](../module-12-capstone/lab.md)
+> [<- Jour 5](../README.md) · [<- Jour 4](../../day-04/README.md) · **Module 11** · [Module suivant ->](../module-13-finops-observability/lab.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -12,15 +14,15 @@
 || **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ L'accès aux données doit suivre les fonctions métier sans tickets manuels. Vo
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** créer une hiérarchie de rôles Snowflake avec Future Grants  
 > **Afin de :** automatiser l'accès aux nouvelles tables selon le principe du moindre privilège
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -87,7 +91,7 @@ flowchart TD
 
 ```bash
 cd $HOME/Data2AI-Labs/data-platform/labs/m11-rbac
-mkdir -p modules/rbac
+New-Item -ItemType Directory -Force -Path "modules/rbac" | Out-Null
 ```
 
 #### Créer `modules/rbac/variables.tf`
@@ -490,4 +494,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M10](../../day-03/module-10-security-auth/lab.md) · [<- Jour 4](../README.md) · **Lab M11** · [Lab M12 ->](../module-12-capstone/lab.md)
+[<- Lab M10](../module-10-security-auth/lab.md) · [<- Jour 5](../README.md) · **Lab M11** · [Lab M13 ->](../module-13-finops-observability/lab.md)

@@ -1,6 +1,6 @@
 # 🧪 Lab M1 — Créer votre premier projet Terraform Snowflake
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-04-variables-outputs/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -58,7 +58,7 @@ Vous êtes Data Platform Engineer. Votre équipe vous demande une zone RAW minim
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** créer une zone RAW minimale (database + schema + warehouse) via Terraform  
 > **Afin de :** garantir un déploiement reproductible, relisible et sans credential exposé
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -670,4 +670,4 @@ terraform plan
 
 ## Navigation
 
-[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M2 ->](../../day-02/module-02-state-management/lab.md)
+[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M4 ->](../module-04-variables-outputs/lab.md)

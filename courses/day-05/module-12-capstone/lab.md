@@ -1,6 +1,6 @@
 # 🧪 Lab M12 — Capstone : Plateforme de données complète
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 12** · [Annexe M14 (optionnel) ->](../module-14-data-products/lab.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -45,7 +45,7 @@ Le comité d'architecture attend une plateforme gouvernée, exploitable et audit
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** assembler tous les modules dans une configuration Capstone unique  
 > **Afin de :** prouver le zero-drift et la gouvernance de la plateforme complète
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -839,4 +839,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M11](../module-11-rbac/lab.md) · [<- Jour 5](../README.md) · **Lab M12** · [Lab M13 ->](../module-13-finops-observability/lab.md)
+[<- Lab M13](../module-13-finops-observability/lab.md) · [<- Jour 5](../README.md) · **Lab M12** · [Annexe Lab M14 ->](../module-14-data-products/lab.md)

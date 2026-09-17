@@ -1,6 +1,6 @@
 # 🧪 Lab M13 — Observabilité et FinOps as Code avec dbt
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 13** · [Module suivant ->](../module-12-capstone/lab.md)
 
 || Élément | Valeur |
 ||---|---|
@@ -45,7 +45,7 @@ Le propriétaire de la plateforme doit attribuer les crédits consommés, détec
 > **En tant que :** FinOps Engineer  
 > **Je veux :** configurer dbt avec `dbt_snowflake_monitoring` pour suivre les crédits et détecter les warehouses inactifs  
 > **Afin de :** prévenir les dépassements budgétaires avant la facture
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -391,4 +391,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M12](../module-12-capstone/lab.md) · [<- Jour 5](../README.md) · **Lab M13** · [Lab M14 ->](../module-14-data-products/lab.md)
+[<- Lab M11](../module-11-rbac/lab.md) · [<- Jour 5](../README.md) · **Lab M13** · [Lab M12 ->](../module-12-capstone/lab.md)

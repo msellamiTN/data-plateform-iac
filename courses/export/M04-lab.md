@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M4 — Variables, locals, outputs et lifecycle
 
-> [<- Jour 1](../README.md) · [<- Module precedent](../module-03-import-brownfield/lab.md) · **Module 4** · [Jour 2 ->](../../day-02/README.md)
+> [<- Jour 1](../README.md) · [<- Module precedent](../module-01-iac-workflow/lab.md) · **Module 4** · [Module suivant ->](../../day-02/module-02-state-management/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -12,15 +14,15 @@
 | **Cleanup** | Conserver — `Reset-Lab.ps1` nettoie au redémarrage |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ Des valeurs dispersées et non validées rendent les environnements incohérents
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** structurer les variables Terraform avec validations, locals et outputs exploitables  
 > **Afin de :** garantir des environnements cohérents et reproductibles
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -66,7 +70,9 @@ flowchart LR
 - ✅ utiliser des `locals` pour centraliser les conventions de nommage;
 - ✅ exposer des outputs exploitables par d'autres modules;
 - ✅ comprendre la précédence des variables avec `-var`;
-- ✅ tester `lifecycle` et `prevent_destroy`.
+- ✅ tester `lifecycle` et `prevent_destroy`;
+- ✅ écrire une `precondition` croisée et comprendre `depends_on`;
+- ✅ expliquer pourquoi le state reste sensible malgré `sensitive = true`.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -485,6 +491,69 @@ terraform plan
 
 ✅ **Checkpoint 5** : `No changes.` — le lifecycle est retiré, le plan est propre.
 
+### 📝 Étape 5.6 — Conditions personnalisées (`precondition`, `depends_on`)
+
+Les `validation {}` de variables valident **une entrée isolée**. Les `precondition`/`postcondition` (dans `lifecycle {}`) valident des **conditions croisées** — par exemple interdire un gros warehouse en DEV.
+
+#### Ajouter une precondition FinOps au warehouse
+
+Dans `labs/m04-variables-outputs/main.tf`, ajoutez un bloc `lifecycle` avec `precondition` :
+
+```hcl
+resource "snowflake_warehouse" "etl" {
+  name                = local.warehouse_name
+  comment             = local.common_comment
+  warehouse_size      = var.warehouse_size
+  auto_suspend        = local.suspend
+  auto_resume         = true
+  initially_suspended = true
+
+  lifecycle {
+    precondition {
+      condition     = !(var.environment == "DEV" && var.warehouse_size == "LARGE")
+      error_message = "FinOps: un warehouse LARGE n'est pas autorise en DEV."
+    }
+  }
+}
+```
+
+```powershell
+terraform fmt
+terraform validate
+terraform plan -var="warehouse_size=LARGE" -var="environment=DEV"
+```
+
+✅ **Checkpoint** : erreur `FinOps: un warehouse LARGE n'est pas autorise en DEV.` — la règle croise **deux** variables, ce qu'une `validation {}` simple ne peut pas faire.
+
+#### `depends_on` — dépendance explicite
+
+Terraform déduit l'ordre des ressources des références (`schema.database = snowflake_database.raw.name`). Quand aucune référence n'existe mais qu'un ordre est requis (ex. provisionner le warehouse avant un objet qui l'utilise indirectement) :
+
+```hcl
+  depends_on = [snowflake_database.raw]
+```
+
+> 💡 **Règle** : préférez toujours les références implicites ; `depends_on` est l'exception documentée.
+
+#### Retirer la precondition (optionnel)
+
+Retirez le bloc `lifecycle` pour garder le lab minimal, ou conservez-le comme garde-fou.
+
+### 📝 Étape 5.7 — Données sensibles : au-delà de `sensitive = true`
+
+`sensitive = true` masque la valeur dans les logs — mais **le state stocke toujours les secrets en clair** (JSON non chiffré côté client).
+
+```powershell
+# Le secret apparaît dans le state même si l'output est sensitive
+terraform show -json | Select-String "sensitive"
+```
+
+> 📌 **À retenir** :
+> - `sensitive = true` → masque l'affichage, **pas** le stockage;
+> - le fichier `terraform.tfstate` est un secret → backend distant chiffré + RBAC (Jour 2);
+> - en production : passer les secrets via variables d'environnement (`TF_VAR_*`) ou un coffre (Azure Key Vault — utilisé en Jour 5 ; HashiCorp Vault en alternative), jamais en `.tfvars` commité;
+> - horizon : Terraform ≥ 1.10 ajoute les **ressources éphémères** et arguments **write-only** qui n'écrivent jamais le secret dans le state.
+
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
 
 *La gouvernance FinOps exige que les tailles de warehouse soient contraintes dès la déclaration, sans jamais interroger l'API Snowflake :*
@@ -574,4 +643,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M3](../module-03-import-brownfield/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M5 ->](../../day-03/module-05-modules/lab.md)
+[<- Lab M1](../module-01-iac-workflow/lab.md) · [<- Jour 1](../README.md) · **Lab M4** · [Lab M2 ->](../../day-02/module-02-state-management/lab.md)

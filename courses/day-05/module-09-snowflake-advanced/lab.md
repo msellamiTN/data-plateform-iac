@@ -45,7 +45,7 @@ La valeur Data commence quand les fichiers arrivent de façon fiable dans Snowfl
 > **En tant que :** Data Engineer  
 > **Je veux :** créer un module d'ingestion Snowflake avec stage, file format et table  
 > **Afin de :** charger des fichiers CSV de façon fiable et auditable
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---

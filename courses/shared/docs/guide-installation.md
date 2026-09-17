@@ -46,7 +46,7 @@ Si Windows affiche « commande introuvable », le PATH n'est pas pris en compte.
 3. En bas à gauche, cliquer sur votre nom d'utilisateur.
 4. Choisir **Settings** (Paramètres) ou **My Profile**.
 5. Section **Programmatic Access Tokens** / **Authentication**.
-   - ![Capture](../../terraform-initiation-3jours/assets/screenshots/pat-snowsight.png)
+   - Cliquez sur **Connect a tool** > **Programmatic Access Tokens** (ou **Authentication > Tokens** selon la version de Snowsight).
 6. **Generate new token**.
 7. Donner un nom : `terraform-formation`.
 8. Durée : la plus longue autorisée pour la formation (souvent 15 ou 90 jours).

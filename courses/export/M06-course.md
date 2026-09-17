@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 6 : Cours : Logique Dynamique
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../module-07-cicd-pipeline/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../../day-04/module-07-cicd-pipeline/lab.md)
 
 ## Contexte métier
 
@@ -99,6 +101,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M5](../module-05-modules/course.md) · [<- Jour 2](../README.md) · **Course M6** · [Course M7 ->](../module-07-cicd-pipeline/course.md)
+[<- Course M5](../module-05-modules/course.md) · [<- Jour 3](../README.md) · **Course M6** · [Course M7 ->](../../day-04/module-07-cicd-pipeline/course.md)
 
 

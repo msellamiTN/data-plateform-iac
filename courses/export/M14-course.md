@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Cours M14 — Data Products as Code
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 14** · [Fin ->](../../README.md)
 
 ## Pourquoi cette capacité existe
 
@@ -59,5 +61,5 @@ Le Golden Path produit un environnement de domaine complet avec un appel de modu
 
 ## Navigation
 
-[<- Course M13](../module-13-finops-observability/course.md) · [<- Jour 4](../README.md) · **Course M14** · [Fin de formation ->](../../README.md)
+[<- Course M12](../module-12-capstone/course.md) · [<- Jour 5](../README.md) · **Course M14** · [Fin de formation ->](../../README.md)
 

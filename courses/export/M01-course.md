@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Cours M1 — Premier déploiement Terraform Snowflake
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-04-variables-outputs/lab.md)
 
 **Durée de lecture :** 20 minutes
 
@@ -15,7 +17,7 @@ Une plateforme Data doit transformer une intention versionnée en changement pr�
 - distinguer configuration, provider, ressource et state;
 - expliquer le workflow Terraform;
 - reconnaître une dépendance implicite;
-- protéger les credentials grâce au profil Snowflake CLI;
+- protéger les credentials grâce au PAT Snowflake et au fichier secret hors Git;
 - expliquer l’idempotence.
 
 ## Modèle mental
@@ -66,11 +68,15 @@ Le provider utilise :
 
 ```hcl
 provider "snowflake" {
-  profile = var.snowflake_profile
+  organization_name = var.snowflake_organization
+  account_name      = var.snowflake_account
+  user              = var.snowflake_user
+  authenticator     = "PROGRAMMATIC_ACCESS_TOKEN"
+  token             = local.snowflake_token
 }
 ```
 
-Le credential reste dans la configuration locale Snowflake CLI préparée au M0. Le projet ne contient ni password, ni PAT, ni clé privée. Cette simplification est adaptée au premier lab; les identités de service et JWT sont approfondis au Jour 4.
+Le credential (PAT) est lu depuis un fichier ignoré local (`secrets/snowflake_pat.txt`) ou depuis la variable d'environnement `TF_VAR_snowflake_token`. Le projet ne contient ni mot de passe en dur, ni PAT, ni clé privée dans Git. Cette authentification est la base pédagogique; les identités de service, JWT et provider aliases sont approfondis au Jour 5.
 
 ## Idempotence
 
@@ -103,4 +109,4 @@ Le workflow professionnel est `écrire → formater → initialiser → valider 
 
 ## Navigation
 
-[<- Course M00](../../day-00/module-00-setup/course.md) · [<- Jour 1](../README.md) · **Course M1** · [Course M2 ->](../module-02-state-management/course.md)
+[<- Course M00](../../day-00/module-00-setup/course.md) · [<- Jour 1](../README.md) · **Course M1** · [Course M4 ->](../module-04-variables-outputs/course.md)

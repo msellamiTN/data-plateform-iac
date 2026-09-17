@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M1 — Créer votre premier projet Terraform Snowflake
 
-> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-02-state-management/lab.md)
+> [<- Jour 1](../README.md) · [<- Jour 0](../../day-00/README.md) · **Module 1** · [Module suivant ->](../module-04-variables-outputs/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -12,23 +14,24 @@
 | **Cleanup** | Conserver — `Reset-Lab.ps1` nettoie au redémarrage |
 
 > `[IMPORTANT]` **Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** (nouveau terminal).**
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** (nouveau terminal).**
 > Les variables d'environnement ne persistent pas entre les sessions.
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. **Aucun login Azure n'est requis pour les Jours 1 a 3** —
+> l'infrastructure Azure (backend, Key Vault) est preconfiguree par le formateur
+> et ne devient necessaire qu'au Jour 4.
 >
-> `[IMPORTANT]` **Verifiez que la session est bien le SP** (et non l'utilisateur AAD) :
-> ```powershell
-> az account show --query "user.name" -o tsv
-> # doit retourner l'appId du SP (ab35eee0-...), pas apprenantXX@...
+> ```bash
+> # macOS / Linux (Git Bash)
+> cd ~/Data2AI-Labs/data-platform
+> source ./scripts/learner-login.sh APP01 --snowflake-only
 > ```
-> Si vous voyez l'utilisateur AAD, voir `troubleshooting.md` entree 34 (Jour 0).
 >
 > Ensuite, réinitialisez le lab pour partir d'un état propre :
 >
@@ -57,6 +60,8 @@ Vous êtes Data Platform Engineer. Votre équipe vous demande une zone RAW minim
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** créer une zone RAW minimale (database + schema + warehouse) via Terraform  
 > **Afin de :** garantir un déploiement reproductible, relisible et sans credential exposé
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -78,7 +83,7 @@ flowchart LR
 ![Architecture Atelier](assets/lab-architecture.png)
 
 ## 🎯 3. Objectifs Pédagogiques Vérifiables
-
+![Architecture Atelier](assets/ClickOps-vs-IacOps.png)
 - ✅ créer une configuration Terraform depuis le clone du projet type;
 - ✅ authentifier le provider Snowflake avec un PAT sans placer de secret dans le code;
 - ✅ expliquer les blocs `terraform`, `required_providers`, `provider` et `resource`;
@@ -94,19 +99,19 @@ flowchart LR
 - [ ] `snow sql -q 'SELECT 1' -c training` réussit;
 - [ ] le clone `data-platform-starter` existe sous `$HOME/Data2AI-Labs/data-platform`;
 - [ ] vous connaissez votre préfixe unique (variable `LEARNER_PREFIX` dans `.env`);
-- [ ] `Learner-Login.ps1` a été exécuté dans **cette session** (les variables d'environnement ne persistent pas) ;
-- [ ] `az account show --query 'user.name' -o tsv` affiche l'appId du SP (pas l'utilisateur AAD).
+- [ ] `Learner-Login.ps1 -SnowflakeOnly` a été exécuté dans **cette session** (les variables d'environnement ne persistent pas) ;
+- [ ] `Test-TerraformReady.ps1` affiche `READY` (les éventuels `[WARN] ARM_*` sont normaux en Jours 1-3).
 
 ### Initialisation de session
 
 ✅ **Checkpoint 0 :** La commande affiche `Toolchain: READY`, `Snowflake Connection: READY`, `Workspace: CLEAN`.
 
-> `[IMPORTANT]` Si `Test-TerraformReady.ps1` affiche `[FAIL] LEARNER_PREFIX not set` ou
-> `[FAIL] ARM_SUBSCRIPTION_ID not set`, c'est que `Learner-Login.ps1` n'a pas été exécuté
+> `[IMPORTANT]` Si `Test-TerraformReady.ps1` affiche `[FAIL] LEARNER_PREFIX not set`,
+> c'est que `Learner-Login.ps1 -SnowflakeOnly` n'a pas été exécuté
 > dans **ce terminal**. Retournez à la racine du projet et relancez-le :
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 
 ---
@@ -186,7 +191,7 @@ terraform {
 - `source` identifie le provider officiel;
 - `= 2.14.0` épingle exactement la version du provider, sans accepter de correctif non testé.
 
-> 💡 **Note** : Pourquoi pas `~> 2.14.0` ? Voir [docs/version-policy.md](../../docs/version-policy.md). Une contrainte souple autorise des versions différentes entre apprenants.
+> 💡 **Note** : Pourquoi pas `~> 2.14.0` ? Voir [docs/version-policy.md](../../../docs/version-policy.md). Une contrainte souple autorise des versions différentes entre apprenants.
 
 #### Examiner `provider.tf`
 
@@ -250,7 +255,7 @@ terraform validate
 
 #### Ajouter `warehouse_size` dans `variables.tf`
 
-Le fichier `variables.tf` est pré-rempli avec les variables de base. **Ajoutez à la fin du fichier** la variable `warehouse_size` (ne modifiez pas les variables existantes) :
+Le fichier `variables.tf` est pré-rempli avec les variables de base (examinées à l'Étape 5.2). **Ajoutez à la fin du fichier** (ne modifiez pas les variables existantes) :
 
 ```hcl
 variable "warehouse_size" {
@@ -265,7 +270,7 @@ variable "warehouse_size" {
 }
 ```
 
-Les validations empêchent les warehouses trop grands pour ce lab.
+La validation empêche les warehouses trop grands pour ce lab.
 
 #### Créer `locals.tf`
 
@@ -413,11 +418,11 @@ Le PAT est lu automatiquement par `provider.tf` — vous n'avez pas à le charge
 > `provider.tf` lit le PAT directement depuis `secrets/snowflake_pat.txt`. Le WARN n'empeche
 > pas `terraform plan` de fonctionner.
 >
-> `[NOTE]` Si le pre-flight affiche `[FAIL] LEARNER_PREFIX not set` ou `[FAIL] ARM_SUBSCRIPTION_ID
-> not set`, retournez à la racine du projet et relancez `Learner-Login.ps1` :
+> `[NOTE]` Si le pre-flight affiche `[FAIL] LEARNER_PREFIX not set`,
+> retournez à la racine du projet et relancez `Learner-Login.ps1 -SnowflakeOnly` :
 > ```powershell
 > cd ..\..
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > cd labs\m01-iac-workflow
 > ..\..\scripts\Test-TerraformReady.ps1
 > ```
@@ -657,9 +662,9 @@ terraform plan
 | `Insufficient privileges` | Le rôle n'a pas les droits de création | Vérifiez que `SNOWFLAKE_ROLE=SYSADMIN` dans `.env` |
 | `snow sql` échoue hors du script | La connexion `training` n'existe pas | Relancez `New-SnowflakeConnection.ps1` |
 | `Private Key authentication requires authenticator set to SNOWFLAKE_JWT` | La variable `SNOWFLAKE_PRIVATE_KEY_FILE` est définie dans la session | Voir `troubleshooting.md` entree 33 (Jour 0). Supprimez-la : `Remove-Item Env:\SNOWFLAKE_PRIVATE_KEY_FILE` |
-| `[FAIL] LEARNER_PREFIX not set` dans Test-TerraformReady | `Learner-Login.ps1` n'a pas été exécuté dans ce terminal | Retournez à la racine et relancez `Learner-Login.ps1` |
-| `[FAIL] ARM_SUBSCRIPTION_ID not set` dans Test-TerraformReady | Idem — variables d'environnement non persistées | Idem — relancez `Learner-Login.ps1` dans la session courante |
-| `[FAIL] Terraform found but 'terraform version' failed` | Terraform n'est pas dans le PATH de la session courante | Relancez `Learner-Login.ps1` (met à jour le PATH) ou utilisez `& "$HOME\.data2ai\bin\terraform.exe"` |
+| `[FAIL] LEARNER_PREFIX not set` dans Test-TerraformReady | `Learner-Login.ps1 -SnowflakeOnly` n'a pas été exécuté dans ce terminal | Retournez à la racine et relancez `Learner-Login.ps1 -SnowflakeOnly` |
+| `[WARN] ARM_* not set` dans Test-TerraformReady | Normal en Jours 1-3 — Azure n'est requis qu'au Jour 4 (backend distant) | Aucune action |
+| `[FAIL] Terraform found but 'terraform version' failed` | Terraform n'est pas dans le PATH de la session courante | Relancez `Learner-Login.ps1 -SnowflakeOnly` (met à jour le PATH) ou utilisez `& "$HOME\.data2ai\bin\terraform.exe"` |
 | `Reset-Lab.ps1` : erreur parse `Le terminateur ' est manquant` | Ancienne version du script avec caractères non-ASCII | `git pull` pour obtenir la version corrigée |
 | `terraform plan` demande `var.snowflake_token` | PAT file manquant ou vide | Voir section dédiée dans `troubleshooting.md` ci-dessous |
 
@@ -667,4 +672,4 @@ terraform plan
 
 ## Navigation
 
-[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M2 ->](../module-02-state-management/lab.md)
+[<- Lab M00](../../day-00/module-00-setup/lab.md) · [<- Jour 1](../README.md) · **Lab M1** · [Lab M4 ->](../module-04-variables-outputs/lab.md)

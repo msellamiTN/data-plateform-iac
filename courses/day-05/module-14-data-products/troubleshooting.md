@@ -1,6 +1,6 @@
 # Runbook — M14 Data Products
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 14** · [Fin ->](../../README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 14** · [Fin ->](../../README.md)
 
 ## Le module ne trouve pas le warehouse
 

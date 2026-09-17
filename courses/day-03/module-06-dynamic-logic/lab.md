@@ -45,7 +45,7 @@ La plateforme doit absorber de nouveaux schémas, warehouses et domaines sans du
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** piloter la création de ressources Snowflake par métadonnées avec `for_each` et `dynamic`  
 > **Afin de :** absorber de nouveaux domaines sans duplication de code
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---

@@ -41,7 +41,7 @@ Les changements manuels ne fournissent ni séparation des responsabilités ni pr
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** configurer un pipeline CI/CD Azure DevOps pour Terraform  
 > **Afin de :** garantir la séparation des responsabilités et l'approbation avant déploiement
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---

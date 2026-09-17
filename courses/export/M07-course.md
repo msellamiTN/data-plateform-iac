@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 7 – Cours : Pipeline CI/CD
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
+> [<- Jour 4](../README.md) · [<- Module precedent](../../day-03/module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
 
 ## Contexte métier
 
@@ -31,21 +33,23 @@ Le pattern **GitOps Promotion Pipeline** sépare validation, plan et apply, cons
 
 ```mermaid
 sequenceDiagram
-    participant GH as GitHub
-    participant CI as Actions
-    participant Blob as State Azure Blob
+    participant REPOS as Azure Repos
+    participant ADO as Azure DevOps Pipeline
+    participant Blob as State Azure Blob (préconfiguré)
     participant SF as Snowflake
 
-    GH->>CI: PR opened
-    CI->>CI: fmt, validate, tflint (syntaxe et styles), tfsec (audit sécurité)
-    CI->>CI: terraform init
-    CI->>Blob: read state
-    CI->>SF: terraform plan
-    CI->>GH: Comment plan summary
+    REPOS->>ADO: PR opened
+    ADO->>ADO: fmt, validate (syntaxe et styles)
+    ADO->>ADO: terraform init (backend préconfiguré)
+    ADO->>Blob: read state
+    ADO->>SF: terraform plan
+    ADO->>REPOS: Comment plan summary + publish artifact
 
-    GH->>CI: Merge to main
-    CI->>SF: terraform apply -auto-approve
-    CI->>Blob: write state
+    REPOS->>ADO: Merge to main
+    ADO->>ADO: Approval gate (Environment)
+    ADO->>SF: terraform apply tfplan (le plan approuvé)
+    ADO->>Blob: write state
+    ADO->>ADO: terraform plan -detailed-exitcode (audit)
 ```
 
 ## 2. Plan sur PR, Apply sur main
@@ -88,9 +92,11 @@ Le pipeline `azure-pipelines.yml` implémente le même comportement (validate, p
 
 Le pipeline s'authentifie auprès d'Azure via **Workload Identity Federation** (WIF). Un `AzureCLI@2` récupère un token OIDC et exporte `ARM_CLIENT_ID`, `ARM_TENANT_ID`, `ARM_SUBSCRIPTION_ID` et `ARM_OIDC_TOKEN`.
 
+> La configuration WIF, le service connection et le pool d'agents sont **préconfigurés par le formateur**. L'apprenant consomme le pipeline ; il n'administre ni l'agent, ni la service connection, ni le projet Azure DevOps.
+
 ### Agent pool
 
-Le pipeline cible le pool `azure-vm-agents`, un agent Linux auto-hébergé provisionné par `project/07-devops-agents` via cloud-init.
+Le pipeline cible le pool `azure-vm-agents`, un agent Linux auto-hébergé provisionné par le formateur.
 
 ### Correspondance des concepts CI/CD :
 
@@ -202,7 +208,7 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M6](../module-06-dynamic-logic/course.md) · [<- Jour 2](../README.md) · **Course M7** · [Course M8 ->](../module-08-environments/course.md)
+[<- Course M6](../../day-03/module-06-dynamic-logic/course.md) · [<- Jour 4](../README.md) · **Course M7** · [Course M8 ->](../module-08-environments/course.md)
 
 
 

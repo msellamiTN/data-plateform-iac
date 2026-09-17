@@ -1,3 +1,5 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Slides — Jour 0 : Preparer votre environnement
 
 **Duree : 15 min (presentation) + 1 h 15 (lab)**

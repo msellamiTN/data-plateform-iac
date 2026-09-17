@@ -1,3 +1,5 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Jour 0 — Concepts : environnement, outils et sécurité
 
 > [<- Jour 0](../README.md) · **M00 Setup** · [Jour 1 ->](../../day-01/module-01-iac-workflow/lab.md)
@@ -20,7 +22,7 @@ Le Jour 0 prépare votre poste pour les 5 jours de pratique. Un poste mal config
 | VS Code | latest | Éditeur recommandé | Optional |
 | OpenSSL | latest | Génération de clés RSA | Optional |
 
-Les versions sont définies dans la [politique de versions](../../docs/version-policy.md).
+Les versions sont définies dans la [politique de versions](../../../docs/version-policy.md).
 
 ## Où sont installés les outils
 

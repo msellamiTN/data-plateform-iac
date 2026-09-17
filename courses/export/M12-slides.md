@@ -1,3 +1,5 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 12 — Slides : Projet Fil Rouge
 
 ---

@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M6 — Déploiement dynamique avec `for_each`, `for` et `dynamic`
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../module-07-cicd-pipeline/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../module-05-modules/lab.md) · **Module 06** · [Module suivant ->](../../day-04/module-07-cicd-pipeline/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -12,15 +14,15 @@
 | **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ La plateforme doit absorber de nouveaux schémas, warehouses et domaines sans du
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** piloter la création de ressources Snowflake par métadonnées avec `for_each` et `dynamic`  
 > **Afin de :** absorber de nouveaux domaines sans duplication de code
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -62,7 +66,10 @@ flowchart LR
 - utiliser `for_each` pour créer plusieurs ressources à partir d'une map;
 - utiliser `for` pour transformer des collections;
 - utiliser `dynamic` pour générer des blocs répétitifs;
-- comprendre la différence entre `count` et `for_each`.
+- comprendre la différence entre `count` et `for_each`;
+- lire des objets existants avec les `data` sources;
+- combiner les fonctions de transformation (`merge`, `coalesce`, `flatten`, `try`, `format`);
+- écrire un `check` block d'assertion post-apply.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
 
@@ -143,7 +150,7 @@ variable "data_retention_days" {
 #### Créer les dossiers
 
 ```bash
-mkdir -p modules/landing-zone
+New-Item -ItemType Directory -Force -Path "modules/landing-zone" | Out-Null
 ```
 
 #### Créer `modules/landing-zone/variables.tf`
@@ -154,8 +161,8 @@ variable "learner_prefix" {
   description = "Unique uppercase prefix assigned to the learner"
 
   validation {
-    condition     = can(regex("^[A-Z][A-Z0-9]{2,9}$", var.learner_prefix))
-    error_message = "learner_prefix must contain 3-10 uppercase letters or digits."
+    condition     = can(regex("^[A-Z][A-Z0-9]{2,4}$", var.learner_prefix))
+    error_message = "learner_prefix must contain 3-5 uppercase letters or digits."
   }
 }
 
@@ -577,6 +584,100 @@ terraform apply
 3. Vérifiez la présence des schemas créés dynamiquement (`RAW`, `CLEAN`, `CURATED`, et le conditionnel `MONITORING`).
 4. Cliquez sur chaque schema pour vérifier ses commentaires et la cohérence des attributs (retention, etc.).
 
+### 📝 Étape 5.5 — Data sources : lire l'existant
+
+Jusqu'ici Terraform **crée** tout. Les `data` blocks font l'inverse : **lire** des objets existants (créés manuellement, par une autre stack, ou par l'organisation) pour s'y référencer.
+
+#### Lire le compte courant
+
+Ajoutez dans `labs/m06-dynamic-logic/main.tf` :
+
+```hcl
+data "snowflake_current_account" "this" {}
+```
+
+Et dans `outputs.tf` :
+
+```hcl
+output "account_info" {
+  value = {
+    account = data.snowflake_current_account.this.account
+    region  = data.snowflake_current_account.this.region
+    url     = data.snowflake_current_account.this.url
+  }
+}
+```
+
+```powershell
+terraform plan
+terraform apply
+```
+
+✅ **Checkpoint** : l'output affiche votre compte — Terraform a **lu** Snowflake sans rien créer.
+
+#### Lire des objets existants (pattern métier)
+
+Cas réel GlobalBank : la base `SHARED` de l'équipe Platform existe déjà — l'équipe Data Engineering veut y référencer un schema sans la recréer :
+
+```hcl
+data "snowflake_databases" "shared" {
+  like = "${var.learner_prefix}_%"
+}
+```
+
+> 📌 **Règle** : `resource` = je possède et je gère ; `data` = je lis pour m'adapter. Tout objet créé hors Terraform (importé ou géré par une autre équipe) se consomme via `data`.
+
+### 📝 Étape 5.6 — Boîte à outils fonctions
+
+Au-delà de `lookup`/`toset`/`try`, les fonctions qui transforment les collections dans les modules :
+
+| Fonction | Rôle | Exemple |
+|---|---|---|
+| `merge(a, b)` | Fusionne des maps (b écrase a) | `merge(var.defaults, var.overrides)` |
+| `coalesce(a, b)` | 1re valeur non-null/vide | `coalesce(var.custom_name, local.default)` |
+| `flatten(list)` | Aplati listes imbriquées | `flatten([for w in var.wh : w.tags])` |
+| `distinct(list)` | Dédoublonne | `distinct(var.environments)` |
+| `format(fmt, ...)` | `printf` | `format("WH_%s_%s", var.prefix, var.env)` |
+| `try(expr, fallback)` | Anti-erreur | `try(var.cfg.size, "X-SMALL")` |
+| `can(expr)` | Teste sans échouer | `can(regex(...))` (déjà vu en M04) |
+| `jsonencode(v)` | Sérialise | policies, commentaires structurés |
+
+#### Exercice : defaults + overrides
+
+Dans `locals.tf` :
+
+```hcl
+locals {
+  defaults   = { size = "X-SMALL", auto_suspend = 60 }
+  warehouses = { for k, w in var.warehouses : k => merge(local.defaults, w) }
+}
+```
+
+✅ **Checkpoint** : chaque warehouse hérite des defaults sauf si la map le surcharge — c'est le pattern « config par défaut + exceptions » des plateformes.
+
+### 📝 Étape 5.7 — `check` block : assertion post-apply
+
+Un `check` vérifie une **invariante** après chaque plan/apply — un filet de sécurité déclaré en code :
+
+```hcl
+check "warehouse_deployed" {
+  data "snowflake_warehouses" "m06" {
+    like = "WH_${var.learner_prefix}_M06_%"
+  }
+
+  assert {
+    condition     = length(data.snowflake_warehouses.m06.warehouses) > 0
+    error_message = "Aucun warehouse M06 trouve : le deploiement dynamique a echoue."
+  }
+}
+```
+
+```powershell
+terraform plan
+```
+
+✅ **Checkpoint** : le check apparaît dans le plan ; une assertion fausse produit un **warning** (pas un blocage) — à distinguer de `precondition` (bloquant, M04).
+
 ---
 
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
@@ -665,4 +766,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M5](../module-05-modules/lab.md) · [<- Jour 2](../README.md) · **Lab M6** · [Lab M7 ->](../module-07-cicd-pipeline/lab.md)
+[<- Lab M5](../module-05-modules/lab.md) · [<- Jour 3](../README.md) · **Lab M6** · [Lab M7 ->](../../day-04/module-07-cicd-pipeline/lab.md)

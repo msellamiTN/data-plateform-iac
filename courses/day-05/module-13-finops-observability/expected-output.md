@@ -1,6 +1,6 @@
 # Résultat attendu — M13
 
-> [<- Jour 5](../README.md) · [<- Module precedent](../module-12-capstone/lab.md) · **Module 13** · [Module suivant ->](../module-14-data-products/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 13** · [Module suivant ->](../module-12-capstone/lab.md)
 
 ## dbt
 

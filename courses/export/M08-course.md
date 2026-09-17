@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 8 : Cours : Gestion des environnements
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-07-cicd-pipeline/lab.md) · **Module 08** · [Jour 3 ->](../../day-03/README.md)
+> [<- Jour 4](../README.md) · [<- Module precedent](../module-07-cicd-pipeline/lab.md) · **Module 08** · [Jour 5 ->](../../day-05/README.md)
 
 ## Contexte métier
 
@@ -57,6 +59,8 @@ terraform workspace select prod
 
 State séparé automatiquement (`env:/prod/`). Utile pour prototypes ; en entreprise, répertoires + CI explicite est plus lisible.
 
+> 🎓 **Vocabulaire HCP Terraform** (référentiel officiel, domaine collaboration) : dans HCP Terraform, un *workspace* = state + variables + credentials + historique des runs — autrement dit l'équivalent géré de notre trio « répertoire env + `.tfvars` + clé de backend ». Le *run workflow* HCP (plan → review → apply hébergé) correspond à notre pipeline Azure DevOps de M07 ; les *run tasks* et l'*access management* correspondent aux stages de validation et aux approvals. Même boucle, outil managé vs assemblé.
+
 ## 3. Matrice de paramètres
 
 | Paramètre | DEV | TEST | PROD |
@@ -95,6 +99,6 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M7](../module-07-cicd-pipeline/course.md) · [<- Jour 2](../README.md) · **Course M8** · [Course M9 ->](../../day-03/module-09-snowflake-advanced/course.md)
+[<- Course M7](../module-07-cicd-pipeline/course.md) · [<- Jour 4](../README.md) · **Course M8** · [Course M9 ->](../../day-05/module-09-snowflake-advanced/course.md)
 
 

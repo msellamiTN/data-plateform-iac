@@ -1,10 +1,14 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 10 ? Cours : Sécurité et Authentification
 
-> [<- Jour 3](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Jour 4 ->](../../day-04/README.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-09-snowflake-advanced/lab.md) · **Module 10** · [Module suivant ->](../module-11-rbac/lab.md)
 
 ## Contexte métier
 
 Une identité partagée avec mot de passe empêche l'attribution des actions et augmente le risque de compromission. JWT, Key Vault et rotation séparent identité, secret et autorisation.
+
+> Le Key Vault Azure et l'identité technique Entra ID sont **préconfigurés par le formateur**. L'apprenant génère ses clés RSA localement (hors Git) et apprend à les injecter sans les exposer.
 
 ## Contexte architecture
 
@@ -76,6 +80,28 @@ Pour être conforme aux réglementations sur la protection des données (RGPD), 
 ---
 
 ## 6. Provider Aliases (Multi-Rôle Snowflake)
+
+### 6.0 Architecture plugin : comment Terraform parle à Snowflake
+
+Terraform est découpé en deux processus qui communiquent par RPC :
+
+```mermaid
+flowchart LR
+    CORE["Terraform Core<br/>(binaire terraform)<br/>• parse HCL, construit le graphe<br/>• plan/apply, gère le state"]
+    PROV["Provider Snowflake<br/>(terraform-provider-snowflake)<br/>• traduit les ressources en appels API<br/>• CRUD + read (refresh)"]
+    REG["Registry<br/>registry.terraform.io<br/>• distribution versionnée<br/>• signatures + checksums"]
+    SF[("Snowflake API")]
+
+    CORE -->|"init: télécharge et épingle<br/>(.terraform.lock.hcl)"| REG
+    CORE -->|"plan/apply: RPC"| PROV
+    PROV -->|"HTTPS"| SF
+```
+
+Points clés :
+- **`terraform init`** résout `required_providers`, télécharge le binaire provider dans `.terraform/providers/` et fige version + checksums dans `.terraform.lock.hcl`.
+- **Un provider = un processus plugin** : plusieurs configs (aliases) = plusieurs instances du même binaire.
+- **Debug** : `TF_LOG=DEBUG` montre les échanges core↔provider ; `terraform providers` liste les providers requis.
+- En environnement fermé : `terraform providers mirror` permet un registry local.
 
 Le provider Snowflake supporte les **aliases** pour opérer avec différents rôles dans la même exécution Terraform. Cela permet de séparer les préoccupations (SYSADMIN pour infrastructure, SECURITYADMIN pour rôles, USERADMIN pour utilisateurs).
 
@@ -169,7 +195,7 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète.
 
 ## Navigation
 
-[<- Course M9](../module-09-snowflake-advanced/course.md) · [<- Jour 3](../README.md) · **Course M10** · [Course M11 ->](../../day-04/module-11-rbac/course.md)
+[<- Course M9](../module-09-snowflake-advanced/course.md) · [<- Jour 5](../README.md) · **Course M10** · [Course M11 ->](../module-11-rbac/course.md)
 
 
 

@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M5 — Module Landing Zone réutilisable
 
-> [<- Jour 2](../README.md) · [<- Jour 1](../../day-01/README.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -12,15 +14,15 @@
 | **Cleanup** | `terraform destroy -auto-approve` à la fin |
 
 > `[IMPORTANT]` Avant de commencer, vous devez etre dans la racine du clone
-> et avoir execute `Learner-Login.ps1` dans **cette session** :
+> et avoir execute `Learner-Login.ps1 -SnowflakeOnly` dans **cette session** :
 >
 > ```powershell
 > cd "$HOME\Data2AI-Labs\data-platform"
-> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01
+> .\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
 > ```
 >
 > Cela set `TF_VAR_snowflake_token` (depuis `secrets/snowflake_pat.txt`)
-> et les variables `ARM_*` pour Terraform.
+> et `LEARNER_PREFIX`. Aucun login Azure n'est requis pour ce lab (state local).
 >
 > Réinitialisez le lab pour partir d'un état propre :
 >
@@ -45,6 +47,8 @@ Les domaines Data ont besoin d'une plateforme cohérente sans copier des centain
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** extraire les ressources Snowflake dans un module Terraform réutilisable  
 > **Afin de :** provisionner plusieurs domaines Data sans duplication de code
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
+
 
 ---
 
@@ -70,6 +74,7 @@ flowchart TD
 - créer les ressources directement, puis les extraire dans un module;
 - appeler le module depuis `labs/m05-modules/`;
 - versionner le module avec un `README.md` et des `outputs`;
+- appeler un module par source Git versionnée (`git::...?ref=tag`) et connaître la règle provider-in-module;
 - réutiliser le module pour un second domaine.
 
 ## � 4. Pre-Flight Diagnostic (Vérification Initiale)
@@ -268,7 +273,7 @@ Maintenant que les ressources existent, vous allez les extraire dans un module r
 #### Créer les dossiers
 
 ```bash
-mkdir -p modules/landing-zone
+New-Item -ItemType Directory -Force -Path "modules/landing-zone" | Out-Null
 ```
 
 #### Créer `modules/landing-zone/variables.tf`
@@ -279,8 +284,8 @@ variable "learner_prefix" {
   description = "Unique uppercase prefix assigned to the learner"
 
   validation {
-    condition     = can(regex("^[A-Z][A-Z0-9]{2,9}$", var.learner_prefix))
-    error_message = "learner_prefix must contain 3-10 uppercase letters or digits."
+    condition     = can(regex("^[A-Z][A-Z0-9]{2,4}$", var.learner_prefix))
+    error_message = "learner_prefix must contain 3-5 uppercase letters or digits."
   }
 }
 
@@ -478,8 +483,30 @@ module "landing_zone" {
 }
 ```
 
+#### Ajouter les blocs `moved`
+
+Sans blocs `moved`, Terraform verrait les ressources du module comme **nouvelles** et proposerait de détruire puis recréer la database, le schema et le warehouse (`3 to add, 3 to destroy`). Ajoutez en haut de `main.tf` pour déplacer les ressources existantes dans le state sans les recréer :
+
+```hcl
+moved {
+  from = snowflake_database.raw
+  to   = module.landing_zone.snowflake_database.raw
+}
+
+moved {
+  from = snowflake_schema.ingestion
+  to   = module.landing_zone.snowflake_schema.ingestion
+}
+
+moved {
+  from = snowflake_warehouse.etl
+  to   = module.landing_zone.snowflake_warehouse.etl
+}
+```
+
 > Les ressources (database, schema, warehouse) sont maintenant dans le module.
-> `main.tf` ne contient plus que l'appel du module.
+> `main.tf` ne contient plus que l'appel du module et les blocs `moved`.
+> Une fois le move appliqué (`terraform apply`), vous pouvez supprimer les blocs `moved`.
 
 #### Supprimer `locals.tf`
 
@@ -597,6 +624,65 @@ terraform apply
 2. Naviguez dans **Data > Databases** et vérifiez que vos bases originales (créées au M01/M04) existent toujours intactes à côté de la nouvelle base `SALES`.
 3. Le refactoring en module n'a provoqué aucune recréation : la migration de code ne détruit rien si les adresses de ressources sont correctement gérées.
 
+### 📝 Étape 5.5 — Versionner un module (sources & tags Git)
+
+Jusqu'ici le module est appelé par chemin local (`./modules/landing-zone`). En équipe, un module se **versionne** comme une librairie.
+
+#### Les trois sources de modules
+
+| Source | Exemple | Usage |
+|---|---|---|
+| Locale | `source = "./modules/landing-zone"` | Monorepo, développement |
+| Registry | `source = "Snowflake-Labs/snowflake/snowflake"` + `version = "~> 1.0"` | Modules publics/entreprise publiés |
+| Git | `source = "git::https://github.com/org/modules.git//landing-zone?ref=v1.2.0"` | Modules privés versionnés |
+
+> 📌 `?ref=` accepte un **tag** (`v1.2.0` — recommandé), une branche ou un SHA. Le `//` sépare la racine du repo du sous-dossier du module.
+
+#### Hands-on : versionner le module en Git local (sans remote)
+
+Un repo Git local suffit à démontrer le mécanisme :
+
+```powershell
+# 1. Transformer le dossier du module en repo Git indépendant
+cd labs\m05-modules\modules\landing-zone
+git init
+git add .
+git commit -m "v1.0.0 landing-zone module"
+git tag v1.0.0
+
+# 2. Appeler le module par source Git versionnee (chemin file://)
+#    dans main.tf d'un dossier de test :
+```
+
+```hcl
+module "landing_zone_v1" {
+  source = "git::file:///C:/Data2AI-Labs/data-platform/labs/m05-modules/modules/landing-zone?ref=v1.0.0"
+  # ... mêmes inputs
+}
+```
+
+```powershell
+# 3. Simuler une évolution : bump majeur
+git commit -am "v2: breaking change" ; git tag v2.0.0
+# Changer ?ref=v2.0.0 → terraform init re-télécharge la version épinglée
+```
+
+✅ **Checkpoint** : `terraform init` affiche `Downloading git::file:///... for landing_zone_v1` puis `- landing_zone_v1 in .terraform\modules`. Changez `?ref=` → `init -upgrade` récupère l'autre version : **le consommateur choisit sa version, le producteur publie des tags**.
+
+#### Règle d'or : les providers dans les modules
+
+Un module réutilisable ne déclare **jamais** de bloc `provider {}` — il hérite celui de la configuration racine. Pour cibler un provider **aliasé** (ex. rôle sécurité vs rôle sysadmin, cf. M10), l'appelant passe la map `providers` :
+
+```hcl
+module "landing_zone" {
+  source    = "./modules/landing-zone"
+  providers = { snowflake = snowflake.security_admin }
+  # ...
+}
+```
+
+✅ Vous l'appliquerez concrètement au Jour 5 (M10) avec les provider aliases.
+
 ---
 
 ## 🐛 6. Incident Contrôlé (*Chaos Engineering Lab*)
@@ -681,4 +767,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 2](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)
+[<- Lab M3](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 3](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)

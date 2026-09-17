@@ -64,9 +64,10 @@ flowchart TD
 | 12:05 - 12:35 | 30 min | 🧠 Concept | RBAC scalable, hiérarchies et Future Grants (M11) |
 | *12:35 - 13:35* | *1h00* | 🥪 *Pause déjeuner* | |
 | 13:35 - 14:35 | 1h00 | 🛠️ Pratique | **Lab M11** — RBAC as Code et Future Grants (60 min) |
-| 14:35 - 15:35 | 1h00 | 🏆 Synthèse | **Lab M12** — Capstone Plateforme complète & Zéro-Drift (60 min) |
-| 15:35 - 16:55 | 1h20 | 🎯 Clôture | Soutenances, Q&A certification, cleanup final |
-| *Optionnel* | *1h00* | � Annexe | M13 FinOps / M14 Data products (hors parcours 3+2) |
+| 14:35 - 15:25 | 50 min | 🛠️ Pratique | **Lab M13** — FinOps, Resource Monitors & Observabilité (50 min) |
+| 15:25 - 16:25 | 1h00 | 🏆 Synthèse | **Lab M12** — Capstone Plateforme complète & Zéro-Drift (60 min) |
+| 16:25 - 17:15 | 50 min | 🎯 Clôture | Soutenances, Q&A certification, cleanup final |
+| *Optionnel* | *1h00* | 📎 Annexe | M14 Data products (hors parcours 3+2) |
 
 **Total : 6h nettes** (2h concepts/synthèse · 4h pratique).
 
@@ -89,21 +90,25 @@ flowchart TD
 - **Lab :** [courses/day-05/module-11-rbac/lab.md](module-11-rbac/lab.md)
 - **Dossier de travail :** `labs/m11-rbac/`
 
+### M13 — FinOps, Observabilité & Secrets dans le state
+- **Cours :** [courses/day-05/module-13-finops-observability/course.md](module-13-finops-observability/course.md)
+- **Lab :** [courses/day-05/module-13-finops-observability/lab.md](module-13-finops-observability/lab.md)
+- **Dossier de travail :** `labs/m13-finops-observability/`
+- **Objectif :** Resource Monitors, tags de coût, lecture des données sensibles dans le state.
+
 ### M12 — Projet Capstone (Synthèse)
 - **Cours :** [courses/day-05/module-12-capstone/course.md](module-12-capstone/course.md)
 - **Lab :** [courses/day-05/module-12-capstone/lab.md](module-12-capstone/lab.md)
 - **Dossier de travail :** `labs/m12-capstone/`
-- **Objectif :** Déploiement complet, audit `terraform plan -detailed-exitcode` = 0 (zéro drift).
+- **Objectif :** Déploiement complet, audit `terraform plan -detailed-exitcode` = 0 (zéro drift), `terraform test` et check block.
 
-### M13 + M14 — FinOps, Observabilité & Data Products (Annexes optionnelles)
+### M14 — Data Products (Annexe optionnelle)
 
-> Ces modules sont **hors parcours 3+2**. Ils peuvent être traités en autonomie après la formation.
+> Ce module est **hors parcours 3+2**. Il peut être traité en autonomie après la formation.
 
-- **Cours FinOps :** [courses/day-05/module-13-finops-observability/course.md](module-13-finops-observability/course.md)
-- **Lab FinOps :** [courses/day-05/module-13-finops-observability/lab.md](module-13-finops-observability/lab.md)
-- **Cours Data Products :** [courses/day-05/module-14-data-products/course.md](module-14-data-products/course.md)
-- **Lab Data Products :** [courses/day-05/module-14-data-products/lab.md](module-14-data-products/lab.md)
-- **Dossier de travail :** `labs/m13-finops-observability/` & `labs/m14-data-products/`
+- **Cours :** [courses/day-05/module-14-data-products/course.md](module-14-data-products/course.md)
+- **Lab :** [courses/day-05/module-14-data-products/lab.md](module-14-data-products/lab.md)
+- **Dossier de travail :** `labs/m14-data-products/`
 
 ---
 

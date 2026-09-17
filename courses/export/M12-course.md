@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Module 12 – Cours : Projet Fil Rouge
 
-> [<- Jour 4](../README.md) · [<- Module precedent](../module-11-rbac/lab.md) · **Module 12** · [Module suivant ->](../module-13-finops-observability/lab.md)
+> [<- Jour 5](../README.md) · [<- Module precedent](../module-13-finops-observability/lab.md) · **Module 12** · [Annexe M14 (optionnel) ->](../module-14-data-products/lab.md)
 
 ## Contexte métier
 
@@ -38,7 +40,7 @@ Le capstone assemble tous les modules et illustre une plateforme de données gou
 | Resource Monitors | `modules/landing-zone` | Optimisation des Coûts |
 | Object Tagging | `modules/landing-zone` | Excellence Opérationnelle |
 | Network Policy | Capstone `main.tf` | Sécurité |
-| CI/CD Pipeline | `azure-pipelines.yml` / `.github/workflows/terraform.yml` | Excellence Opérationnelle |
+| CI/CD Pipeline | `azure-pipelines.yml` | Excellence Opérationnelle |
 
 ```mermaid
 flowchart TB
@@ -58,10 +60,10 @@ flowchart TB
 
 | Phase | Durée | Action | Pilier |
 |-------|-------|--------|--------|
-| Bootstrap | 15 min | Backend Azure Blob, secrets, clé privée | Sécurité / Fiabilité |
+| Bootstrap | 15 min | Backend Azure Blob, secrets et clé privée fournis/préconfigurés | Sécurité / Fiabilité |
 | Deploy DEV | 30 min | Apply landing + rbac + resource monitor + tags | Performance / Coûts |
 | Ingestion | 20 min | Stage + file format | Performance |
-| CI | 20 min | PR + merge (GitHub Actions ou Azure Pipelines) | Excellence Opérationnelle |
+| CI | 20 min | PR + merge via Azure Pipelines (Azure DevOps) | Excellence Opérationnelle |
 | Audit | 15 min | Plan zero-diff + `SHOW GRANTS` + `SHOW FUTURE GRANTS` | Sécurité |
 | Rétro | 20 min | Documentation, runbook, comparaison Well-Architected | Excellence Opérationnelle |
 
@@ -130,7 +132,7 @@ Voir [lab.md](./lab.md) pour la mise en pratique complète. La grille d'évaluat
 
 ## Navigation
 
-[<- Course M11](../module-11-rbac/course.md) · [<- Jour 4](../README.md) · **Course M12** · [Course M13 ->](../module-13-finops-observability/course.md)
+[<- Course M13](../module-13-finops-observability/course.md) · [<- Jour 5](../README.md) · **Course M12** · [Annexe Course M14 ->](../module-14-data-products/course.md)
 
 
 

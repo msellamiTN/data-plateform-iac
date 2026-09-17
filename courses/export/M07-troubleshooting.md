@@ -1,6 +1,8 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # Dépannage — M7 : Pipeline CI/CD
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
+> [<- Jour 4](../README.md) · [<- Module precedent](../../day-03/module-06-dynamic-logic/lab.md) · **Module 07** · [Module suivant ->](../module-08-environments/lab.md)
 
 | Symptôme | Cause | Solution |
 |----------|-------|----------|

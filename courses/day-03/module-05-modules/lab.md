@@ -1,6 +1,6 @@
 # 🧪 Lab M5 — Module Landing Zone réutilisable
 
-> [<- Jour 3](../README.md) · [<- Jour 2](../../day-02/README.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
+> [<- Jour 3](../README.md) · [<- Module precedent](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · **Module 05** · [Module suivant ->](../module-06-dynamic-logic/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -45,7 +45,7 @@ Les domaines Data ont besoin d'une plateforme cohérente sans copier des centain
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** extraire les ressources Snowflake dans un module Terraform réutilisable  
 > **Afin de :** provisionner plusieurs domaines Data sans duplication de code
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -765,4 +765,4 @@ terraform destroy -auto-approve
 
 ## Navigation
 
-[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 3](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)
+[<- Lab M3](../../day-02/module-02-state-management/module-03-import-brownfield/lab.md) · [<- Jour 3](../README.md) · **Lab M5** · [Lab M6 ->](../module-06-dynamic-logic/lab.md)

@@ -1,3 +1,5 @@
+> _Fichier genere a partir de `courses/day-XX/module-YY/` — les liens relatifs internes pointent vers l'arborescence source._
+
 # 🧪 Lab M00 — Préparer votre environnement de formation
 
 > [<- Jour 0](../README.md) · **M00 Setup** · [Jour 1 ->](../../day-01/module-01-iac-workflow/lab.md)
@@ -113,7 +115,7 @@ cd "$HOME/Data2AI-Labs/data-platform"
 ### Vérifier que les scripts sont présents
 
 ```bash
-ls scripts/
+Get-ChildItem scripts/
 ```
 
 ✅ **Checkpoint 0 :**
@@ -318,7 +320,7 @@ dbt --version
 ```
 </details>
 
-**Checkpoint** : chaque commande retourne une version. Les versions doivent correspondre a la [politique de versions](../../docs/version-policy.md).
+**Checkpoint** : chaque commande retourne une version. Les versions doivent correspondre a la [politique de versions](../../../docs/version-policy.md).
 
 #### Comprendre ce que le script a fait
 
@@ -397,8 +399,8 @@ Get-Content .env | Select-String 'LEARNER_PREFIX'
 ```
 ```bash
 # Linux/macOS
-test -f .env && echo "OK"
-grep LEARNER_PREFIX .env
+Test-Path .env
+Select-String -Path .env -Pattern LEARNER_PREFIX
 ```
 
 **Résultat attendu :** `True` / `OK` et `LEARNER_PREFIX=APP01` (ou votre préfixe).
@@ -421,7 +423,7 @@ Test-Path config/shared.env
 ```
 ```bash
 # Linux/macOS
-test -f config/shared.env && echo "OK"
+Test-Path config/shared.env
 ```
 
 **Résultat attendu :** `True` / `OK`.
@@ -444,18 +446,57 @@ test -f config/shared.env && echo "OK"
 
 Cette étape vous connecte à Azure, récupère **tous les secrets** depuis Key Vault
 (identifiants SP + PAT Snowflake) et les persiste dans `secrets/` pour les sessions futures.
-Il existe **deux modes** — choisissez selon votre situation :
+Il existe **trois modes** — choisissez selon votre situation :
 
 #### Quel mode utiliser ?
 
 | Situation | Mode | Commande |
 |---|---|---|
-| Vous avez un compte AAD apprenant (fourni par le formateur) | **KV-first** (recommandé) | Étape A ci-dessous |
+| **Initiation Jours 1-3** : demarrer Terraform/Snowflake sans Azure | **Snowflake-only** (le plus simple) | `.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly` |
+| Vous avez un compte AAD apprenant (fourni par le formateur) — requis pour le Jour 2 (state distant) et les Jours 4-5 | **KV-first** | Étape A ci-dessous |
 | Le compte AAD n'est pas configuré, ou vous n'avez pas de navigateur | **Fallback** | Étape B ci-dessous |
 
 ---
 
-#### Étape A — Mode KV-first (recommandé, aucun fichier secret requis)
+#### Étape 0 — Mode Snowflake-only (Jours 1-3, aucun navigateur)
+
+Si le formateur vous a remis un fichier `secrets/snowflake_pat.txt` (ou un PAT à coller dedans), ce mode suffit pour tous les labs en state local (M01, M04, M05, M06, M09, M10, M11, M13, M14) :
+
+<details>
+<summary>🪟 <b>Windows (PowerShell)</b></summary>
+
+```powershell
+.\scripts\Learner-Login.ps1 -LearnerPrefix APP01 -SnowflakeOnly
+```
+</details>
+
+<details>
+<summary>🧠<b>Linux/macOS (Bash)</b></summary>
+
+```bash
+source ./scripts/learner-login.sh APP01 --snowflake-only
+```
+</details>
+
+**Résultat attendu :**
+
+```text
+[PASS] Snowflake PAT loaded from secrets/snowflake_pat.txt
+[PASS] TF_VAR_snowflake_token set
+[PASS] Environment variables set:
+       LEARNER_PREFIX = APP01
+       TF_VAR_snowflake_token (hidden)
+============================================================
+ Ready for Snowflake labs (Days 1-3)
+============================================================
+```
+
+> `[IMPORTANT]` Le mode Snowflake-only ne configure **pas** Azure. Vous passerez au mode
+> complet (Étape A ou B) au Jour 2 lorsque le lab M02 utilisera le backend distant.
+
+---
+
+#### Étape A — Mode KV-first (labs Azure, aucun fichier secret requis)
 
 **1.** Lancez le script **sans** `-ForceFallback` :
 
@@ -583,8 +624,8 @@ Get-Content secrets\shared-sp.txt | Select-String 'ARM_'
 ```
 ```bash
 # Linux/macOS
-test -f secrets/shared-sp.txt && echo "OK"
-grep 'ARM_' secrets/shared-sp.txt
+Test-Path secrets/shared-sp.txt
+Select-String -Path secrets/shared-sp.txt -Pattern 'ARM_'
 ```
 
 **Résultat attendu :** `True` / `OK` et 4 lignes :
@@ -603,7 +644,7 @@ Test-Path secrets\snowflake_pat.txt
 ```
 ```bash
 # Linux/macOS
-test -f secrets/snowflake_pat.txt && echo "OK"
+Test-Path secrets/snowflake_pat.txt
 ```
 
 **Résultat attendu :** `True` / `OK`.
@@ -623,11 +664,11 @@ $env:TF_VAR_snowflake_token
 ```
 ```bash
 # Linux/macOS
-echo $ARM_CLIENT_ID
-echo $ARM_TENANT_ID
-echo $ARM_SUBSCRIPTION_ID
-echo $LEARNER_PREFIX
-echo $TF_VAR_snowflake_token
+$env:ARM_CLIENT_ID
+$env:ARM_TENANT_ID
+$env:ARM_SUBSCRIPTION_ID
+$env:LEARNER_PREFIX
+$env:TF_VAR_snowflake_token
 ```
 
 **Résultat attendu :** chaque variable affiche une valeur non vide (le token est une longue chaîne JWT).
@@ -656,8 +697,8 @@ Test-Path secrets\snowflake_pat.txt
 ```
 ```bash
 # Linux/macOS
-test -f secrets/shared-sp.txt && echo "shared-sp OK"
-test -f secrets/snowflake_pat.txt && echo "snowflake_pat OK"
+Test-Path secrets/shared-sp.txt
+Test-Path secrets/snowflake_pat.txt
 ```
 
 **Si le résultat n'est pas `True` / `OK`**, demandez ces fichiers au formateur.
@@ -716,7 +757,7 @@ $env:LEARNER_PREFIX
 ```
 ```bash
 # Linux/macOS
-echo $LEARNER_PREFIX
+$env:LEARNER_PREFIX
 ```
 
 **Résultat attendu :** votre préfixe (ex: `APP01`).
@@ -740,7 +781,7 @@ Test-Path .env
 ```
 ```bash
 # Linux/macOS
-test -f .env && echo "OK"
+Test-Path .env
 ```
 
 **Si le résultat n'est pas `True` / `OK`, revenez à l'étape 5.2.**
@@ -818,11 +859,11 @@ pour acceder a l'interface web.
 #### Lister les dossiers
 
 ```bash
-ls -la
-ls environments/
-ls modules/
-ls docs/
-ls scripts/
+Get-ChildItem -Force
+Get-ChildItem environments/
+Get-ChildItem modules/
+Get-ChildItem docs/
+Get-ChildItem scripts/
 ```
 
 **Checkpoint** :

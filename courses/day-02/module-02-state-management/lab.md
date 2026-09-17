@@ -1,6 +1,6 @@
 # Lab M2 — State distant Azure Blob Storage
 
-> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-01-iac-workflow/lab.md) · **Module 2** · [Module suivant ->](../module-03-import-brownfield/lab.md)
+> [<- Jour 2](../README.md) · [<- Module precedent](../../day-01/module-04-variables-outputs/lab.md) · **Module 2** · [Module suivant ->](module-03-import-brownfield/lab.md)
 
 | Élément | Valeur |
 |---|---|
@@ -45,7 +45,7 @@ Votre state est actuellement local. En équipe, cela pose trois problèmes : pas
 > **En tant que :** Data Platform Engineer  
 > **Je veux :** migrer le state Terraform local vers Azure Blob Storage avec verrouillage natif  
 > **Afin de :** permettre le travail en équipe avec verrou, historique et partage du state
-> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../../shared/docs/personas-globalbank.md)).
+> **Votre persona GlobalBank :** appliquez ce lab sur les objets de votre équipe — 🔵 Platform, 🟢 Data Engineering, 🟠 Business Data, 🟣 BI (voir [personas-globalbank.md](../../shared/docs/personas-globalbank.md)).
 
 
 ---
@@ -1057,4 +1057,4 @@ cd "$HOME\Data2AI-Labs\data-platform"
 
 ## Navigation
 
-[<- Lab M1](../../day-01/module-01-iac-workflow/lab.md) · [<- Jour 2](../README.md) · **Lab M2** · [Lab M3 ->](../module-03-import-brownfield/lab.md)
+[<- Lab M4](../../day-01/module-04-variables-outputs/lab.md) · [<- Jour 2](../README.md) · **Lab M2** · [Lab M3 ->](module-03-import-brownfield/lab.md)
