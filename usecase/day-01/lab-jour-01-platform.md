@@ -75,7 +75,7 @@ Dans ce lab, vous industrialisez la création et le contrôle d'objets Snowflake
 
 4. Cliquez **Create Warehouse**.
 
-![Snowsight — le warehouse créé dans la liste](../assets/j1-01-warehouse-created.png.png)
+![Snowsight — le warehouse créé dans la liste](../day-01/assets/j1-01-warehouse-created.png)
 
 > 🧠 **Retenez les champs que vous venez de remplir.** Dans 10 minutes, vous allez écrire exactement les mêmes en Terraform.
 
@@ -281,7 +281,7 @@ No changes. Your infrastructure matches the configuration.
 
 > ✅ **Checkpoint :** `No changes.` = le code et la réalité sont alignés. C'est la preuve que tout est sous contrôle.
 
-![Snowsight — le warehouse WH_APP01_INGEST_DEV visible](../assets/j1-02-warehouse-visible.png)
+> 📷 **[CAPTURE]** Snowsight — le warehouse WH_APP01_INGEST_DEV visible — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -309,7 +309,7 @@ terraform plan
 terraform apply    # remet le commentaire du code
 ```
 
-![Le plan qui détecte la dérive](../assets/j1-06-drift-plan.png)
+> 📷 **[CAPTURE]** Le plan qui détecte la dérive — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 

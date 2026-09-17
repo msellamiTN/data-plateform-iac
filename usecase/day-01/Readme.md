@@ -106,7 +106,7 @@ Vous partagez tous **le même compte Snowflake**. Chaque apprenant reçoit un **
 
 **Admin → Warehouses → `+ Warehouse`**
 
-![Liste des warehouses](assets/j1-01-warehouses-liste.png)
+> 📷 **[CAPTURE]** Liste des warehouses — voir `usecase/screenshots/MANIFEST.md`
 
 ```
    ┌─ Create Warehouse ──────────────────────────────────┐
@@ -122,7 +122,7 @@ Vous partagez tous **le même compte Snowflake**. Chaque apprenant reçoit un **
    └─────────────────────────────────────────────────────┘
 ```
 
-![Formulaire rempli](assets/j1-02-formulaire-rempli.png)
+> 📷 **[CAPTURE]** Formulaire rempli — voir `usecase/screenshots/MANIFEST.md`
 
 > 💰 **Le champ ② vaut de l'argent.** Un X-Small consomme 1 crédit par heure, un X-Large en consomme 16. Le `DS_WH` du design cible, en X-Large laissé actif en continu, coûterait **34 560 $ par mois**. En formation, tout le monde reste en **X-Small**.
 >
@@ -752,7 +752,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 
 **Étape 5.** Retournez dans Snowsight.
 
-![Objet recréé par Terraform](assets/j1-05-apres-terraform.png)
+> 📷 **[CAPTURE]** Objet recréé par Terraform — voir `usecase/screenshots/MANIFEST.md`
 
 ✅ L'objet est de retour, **identique** — mais cette fois **décrit dans un fichier**.
 

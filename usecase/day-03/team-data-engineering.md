@@ -93,7 +93,7 @@ Plan: 0 to add, 0 to change, 0 to destroy.
 
 > 🧠 **`moved` met à jour la mémoire de Terraform sans toucher Snowflake.** Les données sont préservées.
 
-![Le plan has moved to — 0 destroy](../screenshots/j3-01-moved-plan.png)
+> 📷 **[CAPTURE]** Le plan has moved to — 0 destroy — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -135,7 +135,7 @@ No changes.   # ← le code correspond à l'objet réel
 
 > 🧠 **`import` = adoption.** L'objet était orphelin, il est maintenant sous gestion Terraform.
 
-![terraform state list montrant legacy](../screenshots/j3-02-state-list.png)
+> 📷 **[CAPTURE]** terraform state list montrant legacy — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -242,7 +242,7 @@ terraform apply
 
 > 🧠 **Un module = une fonction.** Entrées (`variables`), traitement (`main.tf`), sorties (`outputs`). Écrit une fois, appelé N fois.
 
-![L'arborescence modules/ dans VS Code](../screenshots/j3-03-modules-arborescence.png)
+> 📷 **[CAPTURE]** L'arborescence modules/ dans VS Code — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -282,7 +282,7 @@ terraform output warehouse_lu
 
 > 🧠 **`resource` = je crée et je gère. `data` = je lis seulement.** C'est le `SELECT` de Terraform.
 
-![terraform output montrant le warehouse lu](../screenshots/j3-04-output-data-source.png)
+> 📷 **[CAPTURE]** terraform output montrant le warehouse lu — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 

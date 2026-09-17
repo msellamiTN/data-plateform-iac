@@ -103,10 +103,10 @@ Error: Duplicate variable definition
 1. Vérifiez que vous êtes dans le bon répertoire :
 
    ```powershell
-   pwd  # doit afficher labs/m12-name/
+   pwd  # doit afficher labs/m12-capstone/
    ```
 
-2. Si vous êtes dans `environments/dev/`, vous êtes dans l'ancienne structure. Déplacez-vous vers `labs/m12-name/`.
+2. Si vous êtes dans `environments/dev/`, vous êtes dans l'ancienne structure. Déplacez-vous vers `labs/m12-capstone/`.
 
 3. Si le fichier contient des doublons, **remplacez tout le contenu** au lieu d'ajouter à la fin.
 

@@ -95,7 +95,7 @@ No changes.   # ← le nom calculé est identique, juste mieux écrit
 
 > 🧠 **`No changes.` = refactoring réussi.** Vous avez changé *comment* le nom est écrit, pas *ce qu'il vaut*.
 
-![Le plan No changes. après l'introduction du local](../screenshots/j2-01-no-changes.png)
+> 📷 **[CAPTURE]** Le plan No changes. après l'introduction du local — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -128,7 +128,7 @@ variable "environment" {
 
 > 🧠 **L'erreur arrive AVANT tout contact avec Snowflake.** Remettez `DEV` → `plan` → `No changes.`
 
-![L'erreur de validation dans le terminal](../screenshots/j2-02-validation-error.png)
+> 📷 **[CAPTURE]** L'erreur de validation dans le terminal — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -189,7 +189,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
 > 🧠 **Pour ajouter un 4ᵉ rôle demain :** une ligne dans `terraform.tfvars`. Zéro ligne de code.
 
-![Snowsight — les 3 rôles créés](../screenshots/j2-03-3-objects-snowsight.png)
+> 📷 **[CAPTURE]** Snowsight — les 3 rôles créés — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -232,7 +232,7 @@ warehouse_name = "WH_APP01_INGEST_DEV"
 
 > 🧠 **`output` = ce que je promets aux autres équipes.** Demain, on lira les outputs des autres pour se connecter.
 
-![terraform output dans le terminal](../screenshots/j2-04-terraform-output.png)
+> 📷 **[CAPTURE]** terraform output dans le terminal — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 

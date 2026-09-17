@@ -100,10 +100,10 @@ Error: Duplicate variable definition
 1. Vérifiez que vous êtes dans le bon répertoire :
 
    ```powershell
-   pwd  # doit afficher labs/m04-name/
+   pwd  # doit afficher labs/m04-variables-outputs/
    ```
 
-2. Si vous êtes dans `environments/dev/`, vous êtes dans l'ancienne structure. Déplacez-vous vers `labs/m04-name/`.
+2. Si vous êtes dans `environments/dev/`, vous êtes dans l'ancienne structure. Déplacez-vous vers `labs/m04-variables-outputs/`.
 
 3. Si le fichier contient des doublons, **remplacez tout le contenu** au lieu d'ajouter à la fin.
 

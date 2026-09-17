@@ -67,7 +67,7 @@ terraform version    # doit afficher 1.14.x
 2. Menu **Data → Databases → + Database**.
 3. Name : `APP04_RAW_DEV` *(votre nom du tableau)* → **Create**.
 
-![Snowsight — la database créée](../screenshots/j1-03-database-created.png)
+> 📷 **[CAPTURE]** Snowsight — la database créée — voir `usecase/screenshots/MANIFEST.md`
 
 ### 1b. Le schema
 
@@ -86,7 +86,7 @@ terraform version    # doit afficher 1.14.x
 
 3. **Create**.
 
-![Snowsight — l'arborescence database → schema → table](../screenshots/j1-04-arborescence.png)
+> 📷 **[CAPTURE]** Snowsight — l'arborescence database → schema → table — voir `usecase/screenshots/MANIFEST.md`
 
 > 🧠 **Retenez les champs remplis.** Dans 10 minutes, vous écrirez exactement les mêmes en Terraform.
 
@@ -281,7 +281,7 @@ terraform apply     # 5. APPLIQUE
 
 Retapez `terraform plan` → `No changes.`
 
-![Snowsight — les 3 objets créés](../screenshots/j1-05-3-objects-created.png)
+> 📷 **[CAPTURE]** Snowsight — les 3 objets créés — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -298,7 +298,7 @@ Retapez `terraform plan` → `No changes.`
 
 > 🧠 **Terraform voit tout.** Le code est la source de vérité.
 
-![Le plan qui détecte la dérive](../screenshots/j1-06-drift-plan.png)
+> 📷 **[CAPTURE]** Le plan qui détecte la dérive — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 

@@ -96,7 +96,7 @@ No changes.   # ← refactoring réussi
 
 > 🧠 **`No changes.` = refactoring réussi.**
 
-![Le plan No changes. après l'introduction du local](../screenshots/j2-01-no-changes.png)
+> 📷 **[CAPTURE]** Le plan No changes. après l'introduction du local — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -115,7 +115,7 @@ Votre `variables.tf` a déjà la validation sur `environment` — **testez le ga
 
 > 🧠 **L'erreur arrive AVANT.** Remettez `DEV` → `plan` → `No changes.`
 
-![L'erreur de validation dans le terminal](../screenshots/j2-02-validation-error.png)
+> 📷 **[CAPTURE]** L'erreur de validation dans le terminal — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -184,7 +184,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
 > 🧠 **Pour ajouter une 4ᵉ table demain :** une ligne dans `terraform.tfvars`. Zéro ligne de code.
 
-![Snowsight — les 3 tables créées](../screenshots/j2-03-3-objects-snowsight.png)
+> 📷 **[CAPTURE]** Snowsight — les 3 tables créées — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -232,7 +232,7 @@ table_names = {
 
 > 🧠 **`output` = ce que je promets aux autres équipes.**
 
-![terraform output dans le terminal](../screenshots/j2-04-terraform-output.png)
+> 📷 **[CAPTURE]** terraform output dans le terminal — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 

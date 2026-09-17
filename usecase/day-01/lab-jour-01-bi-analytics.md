@@ -69,7 +69,7 @@ Dans ce lab, vous industrialisez la création et le contrôle d'objets Snowflake
 2. Menu **Data → Databases → + Database**.
 3. Name : `APP09_CUSTOMER_MART_DEV` *(votre nom du tableau)* → **Create**.
 
-![Snowsight — la database créée](../assets/j1-03-database-created.png)
+> 📷 **[CAPTURE]** Snowsight — la database créée — voir `usecase/screenshots/MANIFEST.md`
 
 ### 1b. Le schema
 
@@ -88,7 +88,7 @@ Dans ce lab, vous industrialisez la création et le contrôle d'objets Snowflake
 
 3. **Create**.
 
-![Snowsight — l'arborescence database → schema → table](../assets/j1-04-arborescence.png)
+> 📷 **[CAPTURE]** Snowsight — l'arborescence database → schema → table — voir `usecase/screenshots/MANIFEST.md`
 
 > 🧠 **Retenez les champs remplis.** Dans 10 minutes, vous écrirez exactement les mêmes en Terraform.
 
@@ -283,7 +283,7 @@ terraform apply     # 5. APPLIQUE
 
 Retapez `terraform plan` → `No changes.`
 
-![Snowsight — les 3 objets créés](../assets/j1-05-3-objects-created.png)
+> 📷 **[CAPTURE]** Snowsight — les 3 objets créés — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
@@ -300,7 +300,7 @@ Retapez `terraform plan` → `No changes.`
 
 > 🧠 **Terraform voit tout.** Le code est la source de vérité.
 
-![Le plan qui détecte la dérive](../assets/j1-06-drift-plan.png)
+> 📷 **[CAPTURE]** Le plan qui détecte la dérive — voir `usecase/screenshots/MANIFEST.md`
 
 ---
 
